@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EShop.Core.Interfaces.Repositories
+namespace EShop.Core.DTOs.ViewModels.Account
 {
-    interface IGenericRepository
+    class AccountViewModel
     {
     }
 }

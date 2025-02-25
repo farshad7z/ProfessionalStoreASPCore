@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EShop.Core.ViewModels.Product
+namespace EShop.Core.DTOs.ViewModels.Account
 {
-    class ProductViewModel
+    class RegisterViewModel
     {
     }
 }

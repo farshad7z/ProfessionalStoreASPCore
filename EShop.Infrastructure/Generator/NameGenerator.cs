@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EShop.Core.ViewModels.Payment
+namespace EShop.Infrastructure.Generator
 {
-    class PaymentViewModel
+    class NameGenerator
     {
     }
 }

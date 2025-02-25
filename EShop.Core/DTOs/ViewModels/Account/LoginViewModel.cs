@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EShop.BLL.CQRS.Handlers
+namespace EShop.Core.DTOs.ViewModels.Account
 {
-    class OrderCommandHandler
+    class LoginViewModel
     {
     }
 }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EShop.Core.Interfaces.Repositories
+namespace EShop.Infrastructure.Security
 {
-    interface IGenericRepository
+    class PasswordHasher
     {
     }
 }

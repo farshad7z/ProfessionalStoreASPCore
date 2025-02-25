@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EShop.Core.ViewModels.Order
+namespace EShop.Core.DTOs.ViewModels.Order
 {
     class OrderViewModel
     {

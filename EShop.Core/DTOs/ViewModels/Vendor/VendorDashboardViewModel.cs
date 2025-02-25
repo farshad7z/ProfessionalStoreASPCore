@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EShop.Core.ViewModels.Account
+namespace EShop.Core.DTOs.ViewModels.Vendor
 {
-    class LoginViewModel
+    class VendorDashboardViewModel
     {
     }
 }

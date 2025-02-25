@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Interfaces\Services\" />
-    <Folder Include="DTOs\" />
     <Folder Include="ViewModels\Admin\OtherAdminViewModels\" />
     <Folder Include="ViewModels\Admin\SuperAdminViewModels\" />
     <Folder Include="Utilities\" />

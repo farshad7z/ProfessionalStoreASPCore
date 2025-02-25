@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EShop.BLL.CQRS.Queries
+namespace EShop.Core.DTOs.ViewModels.Vendor
 {
-    class GetProductDetailsQuery
+    class StoreProfileViewModel
     {
     }
 }
