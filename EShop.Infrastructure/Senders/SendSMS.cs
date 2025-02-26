@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EShop.DAL.UnitOfWork
+namespace EShop.Infrastructure.Senders
 {
-    class IUnitOfWork
+    class SendSMS
     {
     }
 }

@@ -1,4 +1,9 @@
-﻿using System;
+﻿using EShop.Core.Interfaces.Repositories;
+using EShop.Core.Interfaces.UnitOfWork;
+using EShop.DAL.Repositories;
+using EShop.DAL.UnitOfWork;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,21 +13,25 @@ namespace EShop.Infrastructure.DependencyInjection
 {
     public static class ServiceRegistration
     {
-        //public static IServiceCollection AddApplicationServices(this IServiceCollection services)
-        //{
-        //    // ثبت سرویس‌های BLL
-        //    services.AddScoped<IProductService, ProductService>();
-        //    services.AddScoped<ICategoryService, CategoryService>();
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        {
+             
+            #region Submit Bll Services
+            //services.AddScoped<IProductService, ProductService>();
+            //services.AddScoped<ICategoryService, CategoryService>();
+            #endregion
 
-        //    // ثبت سرویس‌های Repository
-        //    services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        //    services.AddScoped<IProductRepository, ProductRepository>();
-        //    services.AddScoped<ICategoryRepository, CategoryRepository>();
+            #region Submit Repository Services
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            //services.AddScoped<IProductRepository, ProductRepository>();
+            //services.AddScoped<ICategoryRepository, CategoryRepository>();
+            #endregion
 
-        //    // ثبت Unit of Work
-        //    services.AddScoped<IUnitOfWork, UnitOfWork>();
+            #region Submit Repository Services
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            #endregion
 
-        //    return services;
-        //}
+            return services;
+        }
     }
 }

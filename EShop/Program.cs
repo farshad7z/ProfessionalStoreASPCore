@@ -1,4 +1,21 @@
+﻿using EShop.DAL.Context;
+using Microsoft.EntityFrameworkCore;
+using EShop.Infrastructure.DependencyInjection;
+
 var builder = WebApplication.CreateBuilder(args);
+
+
+
+#region
+builder.Services.AddDbContext<EShopDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+#endregion
+
+// خواندن ConnectionString از appsettings.json
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// اضافه کردن سرویس‌های پروژه
+builder.Services.AddApplicationServices();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

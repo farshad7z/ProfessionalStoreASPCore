@@ -2,10 +2,10 @@
 
 namespace EShop.Core.DTOs.ViewModels.Customer
 {
-    public class OrderDTO
+    public class OrderViewModel
     {
         public int OrderId { get; set; }
         public int CustomerId { get; set; }
-        public List<ProductDTO> Products { get; set; }
+        public List<ProductViewModel>? Products { get; set; }
     }
 }

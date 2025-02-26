@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <Folder Include="Interfaces\Services\" />
-    <Folder Include="ViewModels\Admin\OtherAdminViewModels\" />
-    <Folder Include="ViewModels\Admin\SuperAdminViewModels\" />
+    <Folder Include="DTOs\ViewModels\Admin\OtherAdminViewModels\" />
+    <Folder Include="DTOs\ViewModels\Admin\SuperAdminViewModels\" />
     <Folder Include="Utilities\" />
   </ItemGroup>
 
