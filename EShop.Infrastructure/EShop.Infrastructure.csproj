@@ -7,12 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Extensions\" />
-    <Folder Include="Convertors\" />
+    <Compile Remove="bin\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <None Remove="bin\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EShop.DA\EShop.DAL.csproj" />
+    <Folder Include="Convertors\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EShop.Core\EShop.Core.csproj" />
+    <ProjectReference Include="..\EShop.DAL\EShop.DAL.csproj" />
+  </ItemGroup>
+
 
 </Project>

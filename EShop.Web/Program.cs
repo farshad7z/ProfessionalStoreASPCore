@@ -8,11 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 #region
 builder.Services.AddDbContext<EShopDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        b => b.MigrationsAssembly("EShop.DAL") // نام اسمبلی که Migrationها در آن ساخته می‌شود
+    ));
+
 #endregion
 
-// خواندن ConnectionString از appsettings.json
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+//// خواندن ConnectionString از appsettings.json
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 // اضافه کردن سرویس‌های پروژه
 builder.Services.AddApplicationServices();

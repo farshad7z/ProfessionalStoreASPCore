@@ -15,7 +15,7 @@ namespace EShop.Infrastructure.DependencyInjection
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-             
+
             #region Submit Bll Services
             //services.AddScoped<IProductService, ProductService>();
             //services.AddScoped<ICategoryService, CategoryService>();
