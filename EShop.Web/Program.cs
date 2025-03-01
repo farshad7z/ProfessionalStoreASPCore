@@ -1,6 +1,8 @@
 ﻿using EShop.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using EShop.Infrastructure.DependencyInjection;
+using EShop.Infrastructure.Security;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,24 @@ builder.Services.AddDbContext<EShopDbContext>(options =>
 
 // اضافه کردن سرویس‌های پروژه
 builder.Services.AddApplicationServices();
+// ثبت سیاست‌های دسترسی
+builder.Services.AddCustomPolicies();
+
+#region Authentication
+
+
+// تنظیمات احراز هویت (Authentication)
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {        //options.LoginPath = "/Account/Login"; // مسیر ورود
+        //options.LogoutPath = "/Account/Logout"; // مسیر خروج
+        //options.ExpireTimeSpan = TimeSpan.FromDays(7); // مدت زمان اعتبار کوکی
+        //options.SlidingExpiration = true; // تمدید اعتبار کوکی
+
+    });
+// اضافه کردن سرویس AuthenticationService
+builder.Services.AddScoped<AuthenticationService>();
+#endregion
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

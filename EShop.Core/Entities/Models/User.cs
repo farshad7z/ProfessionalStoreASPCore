@@ -21,6 +21,7 @@ namespace EShop.Core.Entities.Models
         [MaxLength(300)]
         public required string PhoneNumber { get; set; }
         [MaxLength(300)]
+        public bool HasShop { get; set; }
         public string? ActiveCode { get; set; }
         public bool IsActive{ get; set; }
         public DateTime? DateOfBirth { get; set; }
@@ -29,6 +30,8 @@ namespace EShop.Core.Entities.Models
 
         #region Relations
         public ICollection<UserRole>? UserRoles { get; set; }
+        public ICollection<UserClaim>? UserClaims { get; set; }
+
         #endregion
     }
 }

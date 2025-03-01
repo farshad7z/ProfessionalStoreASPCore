@@ -1,6 +1,6 @@
 ﻿using EShop.Core.Entities.Models;
 
-namespace OnlineStore.Core.Constants
+namespace EShop.Core.Constants
 {
     public static class Roles
     {
