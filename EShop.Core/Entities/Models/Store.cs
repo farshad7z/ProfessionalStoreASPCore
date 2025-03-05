@@ -22,7 +22,9 @@ namespace EShop.Core.Entities.Models
         public DateTime? UpdatedAt { get; set; } // تاریخ آخرین به‌روزرسانی
 
         // ایجاد رابطه با کاربر صاحب فروشگاه
+        #region Relations
         public required User Owner { get; set; }
+        #endregion
     }
 
 }

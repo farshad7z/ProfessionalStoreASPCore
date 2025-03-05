@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using EShop.Core.Constants;
+using EShop.Core.Enums;
 
 
 namespace EShop.DAL.Context
@@ -18,12 +19,24 @@ namespace EShop.DAL.Context
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<AppClaim> AppClaims { get; set; }
         public DbSet<UserClaim> UserClaims { get; set; }
+        #endregion
+
+        #region Product
+        public DbSet<ProductCategory> productCategories { get; set; }
 
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             #region Table attribute definition
+
+            modelBuilder.Entity<ProductCategory>(entity =>
+            {
+                entity.HasKey(pc => pc.CategoryId);
+
+            });
+
+
             modelBuilder.Entity<Role>(entity =>
             {
                 entity.HasKey(r => r.RoleId);
@@ -45,9 +58,17 @@ namespace EShop.DAL.Context
                 entity.HasKey(uc => new { uc.UserId, uc.ClaimId })
                       .HasName("PK_UserClaims");
             });
+
             #endregion
 
             #region Relations
+
+            modelBuilder.Entity<ProductCategory>(entity =>
+            entity.HasOne(pc => pc.Parent)
+            .WithMany(p => p.Children)
+            .HasForeignKey(PC => PC.ParentId)
+            .OnDelete(DeleteBehavior.Restrict)); // جلوگیری از حذف دسته‌بندی‌ها اگر والد حذف شود
+
             modelBuilder.Entity<UserRole>(entity =>
             {
                 entity.HasOne(ur => ur.User)
@@ -72,15 +93,246 @@ namespace EShop.DAL.Context
                       .HasConstraintName("FK_UserClaims_Users");
 
                 entity.HasOne(uc => uc.Claim)
-                      .WithMany(r => r.UserClaims)
-                      .HasForeignKey(ur => ur.ClaimId)
-                      .OnDelete(DeleteBehavior.Restrict)
-                      .HasConstraintName("FK_UserRole_Claims");
+                        .WithMany(c => c.UserClaims) 
+                        .HasForeignKey(uc => uc.ClaimId)  
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_UserClaims_Claims");
             });
 
             #endregion
 
             #region Seed
+
+
+            modelBuilder.Entity<ProductCategory>().HasData(
+                new List<ProductCategory>
+                { 
+        // 🟢 دسته‌بندی‌های منوی اصلی
+        new ProductCategory
+        {
+            CategoryId = 1,
+            Name = "الکترونیک",
+            Description = "محصولات الکترونیکی",
+            MenuType = MenuType.MainMenu,
+            IconClass = "bi bi-phone",
+            Slug = "electronics",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+        new ProductCategory
+        {
+            CategoryId = 2,
+            Name = "خانه و آشپزخانه",
+            Description = "ابزارهای خانگی",
+            MenuType = MenuType.MainMenu,
+            IconClass = "bi bi-house-door",
+            Slug = "home-kitchen",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+        new ProductCategory
+        {
+            CategoryId = 3,
+            Name = "مد و پوشاک",
+            Description = "لباس و پوشاک",
+            MenuType = MenuType.MainMenu,
+            IconClass = "bi bi-bag",
+            Slug = "fashion-clothing",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+        
+        // 🟡 زیردسته‌های الکترونیک
+        new ProductCategory
+        {
+            CategoryId = 4,
+            Name = "موبایل",
+            Description = "موبایل‌های هوشمند",
+            MenuType = MenuType.SecondaryMenu,
+            ParentId = 1,
+            IconClass = "bi bi-phone-fill",
+            Slug = "mobiles",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+        new ProductCategory
+        {
+            CategoryId = 5,
+            Name = "لوازم جانبی موبایل",
+            Description = "محصولات جانبی موبایل",
+            MenuType = MenuType.SecondaryMenu,
+            ParentId = 1,
+            IconClass = "bi bi-headphones",
+            Slug = "mobile-accessories",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+        new ProductCategory
+        {
+            CategoryId = 6,
+            Name = "لپ‌تاپ",
+            Description = "لپ‌تاپ‌های حرفه‌ای",
+            MenuType = MenuType.SecondaryMenu,
+            ParentId = 1,
+            IconClass = "bi bi-laptop",
+            Slug = "laptops",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+        new ProductCategory
+        {
+            CategoryId = 7,
+            Name = "هدفون و هندزفری",
+            Description = "انواع هدفون و هندزفری",
+            MenuType = MenuType.SecondaryMenu,
+            ParentId = 1,
+            IconClass = "bi bi-earbuds",
+            Slug = "headphones-earbuds",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+
+        // 🟡 زیردسته‌های خانه و آشپزخانه
+        new ProductCategory
+        {
+            CategoryId = 8,
+            Name = "ابزار آشپزخانه",
+            Description = "ابزارهای موردنیاز آشپزخانه",
+            MenuType = MenuType.SecondaryMenu,
+            ParentId = 2,
+            IconClass = "bi bi-utensils",
+            Slug = "kitchen-tools",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+        new ProductCategory
+        {
+            CategoryId = 9,
+            Name = "وسایل برقی آشپزخانه",
+            Description = "لوازم برقی آشپزخانه",
+            MenuType = MenuType.SecondaryMenu,
+            ParentId = 2,
+            IconClass = "bi bi-plug",
+            Slug = "kitchen-electronics",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+        new ProductCategory
+        {
+            CategoryId = 10,
+            Name = "فرش و موکت",
+            Description = "انواع فرش و موکت",
+            MenuType = MenuType.SecondaryMenu,
+            ParentId = 2,
+            IconClass = "bi bi-carpet",
+            Slug = "carpets-rugs",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+
+        // 🟡 زیردسته‌های مد و پوشاک
+        new ProductCategory
+        {
+            CategoryId = 11,
+            Name = "لباس مردانه",
+            Description = "انواع لباس‌های مردانه",
+            MenuType = MenuType.SecondaryMenu,
+            ParentId = 3,
+            IconClass = "bi bi-shirt",
+            Slug = "mens-clothing",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+        new ProductCategory
+        {
+            CategoryId = 12,
+            Name = "لباس زنانه",
+            Description = "انواع لباس‌های زنانه",
+            MenuType = MenuType.SecondaryMenu,
+            ParentId = 3,
+            IconClass = "bi bi-dress",
+            Slug = "womens-clothing",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+        new ProductCategory
+        {
+            CategoryId = 13,
+            Name = "کفش",
+            Description = "انواع کفش‌های مردانه و زنانه",
+            MenuType = MenuType.SecondaryMenu,
+            ParentId = 3,
+            IconClass = "bi bi-shoe",
+            Slug = "shoes",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+
+        // 🔵 دسته‌بندی‌های عمومی
+        new ProductCategory
+        {
+            CategoryId = 14,
+            Name = "کتاب‌ها",
+            Description = "کتاب‌های مختلف",
+            MenuType = MenuType.CategoryOnly,
+            IconClass = "bi bi-book",
+            Slug = "books",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+        new ProductCategory
+        {
+            CategoryId = 15,
+            Name = "لوازم تحریر",
+            Description = "لوازم تحریر مدرسه و دفتر",
+            MenuType = MenuType.CategoryOnly,
+            IconClass = "bi bi-pencil",
+            Slug = "stationery",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+        new ProductCategory
+        {
+            CategoryId = 16,
+            Name = "ورزش و سفر",
+            Description = "لوازم ورزشی و مسافرتی",
+            MenuType = MenuType.CategoryOnly,
+            IconClass = "bi bi-bicycle",
+            Slug = "sports-travel",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+
+        // 🔵 دسته‌بندی‌های اضافی
+        new ProductCategory
+        {
+            CategoryId = 17,
+            Name = "زیبایی و سلامتی",
+            Description = "محصولات زیبایی و بهداشتی",
+            MenuType = MenuType.CategoryOnly,
+            IconClass = "bi bi-heart",
+            Slug = "beauty-health",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+        new ProductCategory
+        {
+            CategoryId = 18,
+            Name = "موسیقی و فیلم",
+            Description = "موسیقی و فیلم‌های مختلف",
+            MenuType = MenuType.CategoryOnly,
+            IconClass = "bi bi-music-note",
+            Slug = "music-films",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+        new ProductCategory
+        {
+            CategoryId = 19,
+            Name = "بازی‌های ویدئویی",
+            Description = "بازی‌های کامپیوتری و کنسول",
+            MenuType = MenuType.CategoryOnly,
+            IconClass = "bi bi-controller",
+            Slug = "video-games",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        },
+        new ProductCategory
+        {
+            CategoryId = 20,
+            Name = "مبلمان",
+            Description = "مبلمان و دکوراسیون منزل",
+            MenuType = MenuType.CategoryOnly,
+            IconClass = "bi bi-couch",
+            Slug = "furniture",
+            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+        }
+                });
+
+
+
+
             modelBuilder.Entity<Role>().HasData(
                 new List<Role>
                 {

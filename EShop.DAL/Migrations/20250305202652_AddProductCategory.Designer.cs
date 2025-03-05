@@ -4,6 +4,7 @@ using EShop.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EShop.DAL.Migrations
 {
     [DbContext(typeof(EShopDbContext))]
-    partial class EShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250305202652_AddProductCategory")]
+    partial class AddProductCategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -203,218 +206,6 @@ namespace EShop.DAL.Migrations
                     b.HasIndex("ParentId");
 
                     b.ToTable("productCategories");
-
-                    b.HasData(
-                        new
-                        {
-                            CategoryId = 1,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "محصولات الکترونیکی",
-                            IconClass = "bi bi-phone",
-                            MenuType = 1,
-                            Name = "الکترونیک",
-                            Slug = "electronics"
-                        },
-                        new
-                        {
-                            CategoryId = 2,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "ابزارهای خانگی",
-                            IconClass = "bi bi-house-door",
-                            MenuType = 1,
-                            Name = "خانه و آشپزخانه",
-                            Slug = "home-kitchen"
-                        },
-                        new
-                        {
-                            CategoryId = 3,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "لباس و پوشاک",
-                            IconClass = "bi bi-bag",
-                            MenuType = 1,
-                            Name = "مد و پوشاک",
-                            Slug = "fashion-clothing"
-                        },
-                        new
-                        {
-                            CategoryId = 4,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "موبایل‌های هوشمند",
-                            IconClass = "bi bi-phone-fill",
-                            MenuType = 2,
-                            Name = "موبایل",
-                            ParentId = 1,
-                            Slug = "mobiles"
-                        },
-                        new
-                        {
-                            CategoryId = 5,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "محصولات جانبی موبایل",
-                            IconClass = "bi bi-headphones",
-                            MenuType = 2,
-                            Name = "لوازم جانبی موبایل",
-                            ParentId = 1,
-                            Slug = "mobile-accessories"
-                        },
-                        new
-                        {
-                            CategoryId = 6,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "لپ‌تاپ‌های حرفه‌ای",
-                            IconClass = "bi bi-laptop",
-                            MenuType = 2,
-                            Name = "لپ‌تاپ",
-                            ParentId = 1,
-                            Slug = "laptops"
-                        },
-                        new
-                        {
-                            CategoryId = 7,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "انواع هدفون و هندزفری",
-                            IconClass = "bi bi-earbuds",
-                            MenuType = 2,
-                            Name = "هدفون و هندزفری",
-                            ParentId = 1,
-                            Slug = "headphones-earbuds"
-                        },
-                        new
-                        {
-                            CategoryId = 8,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "ابزارهای موردنیاز آشپزخانه",
-                            IconClass = "bi bi-utensils",
-                            MenuType = 2,
-                            Name = "ابزار آشپزخانه",
-                            ParentId = 2,
-                            Slug = "kitchen-tools"
-                        },
-                        new
-                        {
-                            CategoryId = 9,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "لوازم برقی آشپزخانه",
-                            IconClass = "bi bi-plug",
-                            MenuType = 2,
-                            Name = "وسایل برقی آشپزخانه",
-                            ParentId = 2,
-                            Slug = "kitchen-electronics"
-                        },
-                        new
-                        {
-                            CategoryId = 10,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "انواع فرش و موکت",
-                            IconClass = "bi bi-carpet",
-                            MenuType = 2,
-                            Name = "فرش و موکت",
-                            ParentId = 2,
-                            Slug = "carpets-rugs"
-                        },
-                        new
-                        {
-                            CategoryId = 11,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "انواع لباس‌های مردانه",
-                            IconClass = "bi bi-shirt",
-                            MenuType = 2,
-                            Name = "لباس مردانه",
-                            ParentId = 3,
-                            Slug = "mens-clothing"
-                        },
-                        new
-                        {
-                            CategoryId = 12,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "انواع لباس‌های زنانه",
-                            IconClass = "bi bi-dress",
-                            MenuType = 2,
-                            Name = "لباس زنانه",
-                            ParentId = 3,
-                            Slug = "womens-clothing"
-                        },
-                        new
-                        {
-                            CategoryId = 13,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "انواع کفش‌های مردانه و زنانه",
-                            IconClass = "bi bi-shoe",
-                            MenuType = 2,
-                            Name = "کفش",
-                            ParentId = 3,
-                            Slug = "shoes"
-                        },
-                        new
-                        {
-                            CategoryId = 14,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "کتاب‌های مختلف",
-                            IconClass = "bi bi-book",
-                            MenuType = 0,
-                            Name = "کتاب‌ها",
-                            Slug = "books"
-                        },
-                        new
-                        {
-                            CategoryId = 15,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "لوازم تحریر مدرسه و دفتر",
-                            IconClass = "bi bi-pencil",
-                            MenuType = 0,
-                            Name = "لوازم تحریر",
-                            Slug = "stationery"
-                        },
-                        new
-                        {
-                            CategoryId = 16,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "لوازم ورزشی و مسافرتی",
-                            IconClass = "bi bi-bicycle",
-                            MenuType = 0,
-                            Name = "ورزش و سفر",
-                            Slug = "sports-travel"
-                        },
-                        new
-                        {
-                            CategoryId = 17,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "محصولات زیبایی و بهداشتی",
-                            IconClass = "bi bi-heart",
-                            MenuType = 0,
-                            Name = "زیبایی و سلامتی",
-                            Slug = "beauty-health"
-                        },
-                        new
-                        {
-                            CategoryId = 18,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "موسیقی و فیلم‌های مختلف",
-                            IconClass = "bi bi-music-note",
-                            MenuType = 0,
-                            Name = "موسیقی و فیلم",
-                            Slug = "music-films"
-                        },
-                        new
-                        {
-                            CategoryId = 19,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "بازی‌های کامپیوتری و کنسول",
-                            IconClass = "bi bi-controller",
-                            MenuType = 0,
-                            Name = "بازی‌های ویدئویی",
-                            Slug = "video-games"
-                        },
-                        new
-                        {
-                            CategoryId = 20,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "مبلمان و دکوراسیون منزل",
-                            IconClass = "bi bi-couch",
-                            MenuType = 0,
-                            Name = "مبلمان",
-                            Slug = "furniture"
-                        });
                 });
 
             modelBuilder.Entity("EShop.Core.Entities.Models.Role", b =>

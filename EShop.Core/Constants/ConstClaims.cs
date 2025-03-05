@@ -39,7 +39,7 @@
         public const string CanManageUsers = "CanManageUsers";
         public const string CanAddUsersOnShop = "CanAddUsersOnShop";
         public const string CanRemoveUsersOnShop = "CanRemoveUsersOnShop";
-        public const string ManageAccessUsers = "AdminManageAccessUsers";
+        public const string ManageAccessUsers = "ManageAccessUsers";
 
     }
 }
