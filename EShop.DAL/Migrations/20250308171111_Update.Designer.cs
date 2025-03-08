@@ -4,6 +4,7 @@ using EShop.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EShop.DAL.Migrations
 {
     [DbContext(typeof(EShopDbContext))]
-    partial class EShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250308171111_Update")]
+    partial class Update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -179,10 +182,6 @@ namespace EShop.DAL.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("IconColor")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<bool>("IsCategoryOnMain")
                         .HasColumnType("bit");
 
@@ -221,7 +220,6 @@ namespace EShop.DAL.Migrations
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "محصولات الکترونیکی",
                             IconClass = "bi bi-phone",
-                            IconColor = "#3b82f6",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
                             MenuType = 1,
@@ -234,7 +232,6 @@ namespace EShop.DAL.Migrations
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "ابزارهای خانگی",
                             IconClass = "bi bi-house-door",
-                            IconColor = "#10b981",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
                             MenuType = 1,
@@ -247,7 +244,6 @@ namespace EShop.DAL.Migrations
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "لباس و پوشاک",
                             IconClass = "bi bi-bag",
-                            IconColor = "#ec4899",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
                             MenuType = 1,
@@ -258,35 +254,8 @@ namespace EShop.DAL.Migrations
                         {
                             CategoryId = 4,
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "کتاب‌های مختلف",
-                            IconClass = "bi bi-book",
-                            IconColor = "#f59e0b",
-                            IsCategoryOnMain = false,
-                            IsDeleted = false,
-                            MenuType = 1,
-                            Name = "کتاب‌ها",
-                            Slug = "books"
-                        },
-                        new
-                        {
-                            CategoryId = 5,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "لوازم تحریر مدرسه و دفتر",
-                            IconClass = "bi bi-pencil",
-                            IconColor = "#ef4444",
-                            IsCategoryOnMain = false,
-                            IsDeleted = false,
-                            MenuType = 1,
-                            Name = "لوازم تحریر",
-                            Slug = "stationery"
-                        },
-                        new
-                        {
-                            CategoryId = 6,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "موبایل‌های هوشمند",
                             IconClass = "bi bi-phone-fill",
-                            IconColor = "#2563eb",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
                             MenuType = 2,
@@ -296,11 +265,10 @@ namespace EShop.DAL.Migrations
                         },
                         new
                         {
-                            CategoryId = 7,
+                            CategoryId = 5,
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "محصولات جانبی موبایل",
                             IconClass = "bi bi-headphones",
-                            IconColor = "#6366f1",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
                             MenuType = 2,
@@ -310,11 +278,10 @@ namespace EShop.DAL.Migrations
                         },
                         new
                         {
-                            CategoryId = 8,
+                            CategoryId = 6,
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "لپ‌تاپ‌های حرفه‌ای",
                             IconClass = "bi bi-laptop",
-                            IconColor = "#3b82f6",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
                             MenuType = 2,
@@ -324,39 +291,23 @@ namespace EShop.DAL.Migrations
                         },
                         new
                         {
-                            CategoryId = 9,
+                            CategoryId = 7,
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "تبلت‌های مختلف",
-                            IconClass = "bi bi-tablet",
-                            IconColor = "#10b981",
+                            Description = "انواع هدفون و هندزفری",
+                            IconClass = "bi bi-earbuds",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
                             MenuType = 2,
-                            Name = "تبلت",
+                            Name = "هدفون و هندزفری",
                             ParentId = 1,
-                            Slug = "tablets"
+                            Slug = "headphones-earbuds"
                         },
                         new
                         {
-                            CategoryId = 10,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "دوربین‌های عکاسی و فیلمبرداری",
-                            IconClass = "bi bi-camera",
-                            IconColor = "#6366f1",
-                            IsCategoryOnMain = false,
-                            IsDeleted = false,
-                            MenuType = 2,
-                            Name = "دوربین عکاسی",
-                            ParentId = 1,
-                            Slug = "cameras"
-                        },
-                        new
-                        {
-                            CategoryId = 11,
+                            CategoryId = 8,
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "ابزارهای موردنیاز آشپزخانه",
                             IconClass = "bi bi-utensils",
-                            IconColor = "#10b981",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
                             MenuType = 2,
@@ -366,11 +317,10 @@ namespace EShop.DAL.Migrations
                         },
                         new
                         {
-                            CategoryId = 12,
+                            CategoryId = 9,
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "لوازم برقی آشپزخانه",
                             IconClass = "bi bi-plug",
-                            IconColor = "#2563eb",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
                             MenuType = 2,
@@ -380,39 +330,23 @@ namespace EShop.DAL.Migrations
                         },
                         new
                         {
-                            CategoryId = 13,
+                            CategoryId = 10,
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "مبلمان و دکوراسیون خانه",
-                            IconClass = "bi bi-couch",
-                            IconColor = "#6b4226",
+                            Description = "انواع فرش و موکت",
+                            IconClass = "bi bi-carpet",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
                             MenuType = 2,
-                            Name = "مبلمان خانه",
+                            Name = "فرش و موکت",
                             ParentId = 2,
-                            Slug = "home-furniture"
+                            Slug = "carpets-rugs"
                         },
                         new
                         {
-                            CategoryId = 14,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "لوازم خانگی برقی از قبیل یخچال، تلویزیون و...",
-                            IconClass = "bi bi-tv",
-                            IconColor = "#2563eb",
-                            IsCategoryOnMain = false,
-                            IsDeleted = false,
-                            MenuType = 2,
-                            Name = "لوازم خانگی برقی",
-                            ParentId = 2,
-                            Slug = "home-appliances"
-                        },
-                        new
-                        {
-                            CategoryId = 15,
+                            CategoryId = 11,
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "انواع لباس‌های مردانه",
                             IconClass = "bi bi-shirt",
-                            IconColor = "#ec4899",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
                             MenuType = 2,
@@ -422,11 +356,10 @@ namespace EShop.DAL.Migrations
                         },
                         new
                         {
-                            CategoryId = 16,
+                            CategoryId = 12,
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "انواع لباس‌های زنانه",
                             IconClass = "bi bi-dress",
-                            IconColor = "#ec4899",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
                             MenuType = 2,
@@ -436,11 +369,10 @@ namespace EShop.DAL.Migrations
                         },
                         new
                         {
-                            CategoryId = 17,
+                            CategoryId = 13,
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "کفش‌های مردانه و زنانه",
+                            Description = "انواع کفش‌های مردانه و زنانه",
                             IconClass = "bi bi-shoe",
-                            IconColor = "#ec4899",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
                             MenuType = 2,
@@ -450,25 +382,46 @@ namespace EShop.DAL.Migrations
                         },
                         new
                         {
-                            CategoryId = 18,
+                            CategoryId = 14,
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "اکسسوری‌ها و لوازم جانبی",
-                            IconClass = "bi bi-hat",
-                            IconColor = "#ec4899",
+                            Description = "کتاب‌های مختلف",
+                            IconClass = "bi bi-book",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
-                            MenuType = 2,
-                            Name = "اکسسوری",
-                            ParentId = 3,
-                            Slug = "accessories"
+                            MenuType = 0,
+                            Name = "کتاب‌ها",
+                            Slug = "books"
                         },
                         new
                         {
-                            CategoryId = 19,
+                            CategoryId = 15,
+                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "لوازم تحریر مدرسه و دفتر",
+                            IconClass = "bi bi-pencil",
+                            IsCategoryOnMain = false,
+                            IsDeleted = false,
+                            MenuType = 0,
+                            Name = "لوازم تحریر",
+                            Slug = "stationery"
+                        },
+                        new
+                        {
+                            CategoryId = 16,
+                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "لوازم ورزشی و مسافرتی",
+                            IconClass = "bi bi-bicycle",
+                            IsCategoryOnMain = false,
+                            IsDeleted = false,
+                            MenuType = 0,
+                            Name = "ورزش و سفر",
+                            Slug = "sports-travel"
+                        },
+                        new
+                        {
+                            CategoryId = 17,
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "محصولات زیبایی و بهداشتی",
                             IconClass = "bi bi-heart",
-                            IconColor = "#a855f7",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
                             MenuType = 0,
@@ -477,11 +430,10 @@ namespace EShop.DAL.Migrations
                         },
                         new
                         {
-                            CategoryId = 20,
+                            CategoryId = 18,
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "موسیقی و فیلم‌های مختلف",
                             IconClass = "bi bi-music-note",
-                            IconColor = "#ef4444",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
                             MenuType = 0,
@@ -490,11 +442,10 @@ namespace EShop.DAL.Migrations
                         },
                         new
                         {
-                            CategoryId = 21,
+                            CategoryId = 19,
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "بازی‌های کامپیوتری و کنسول",
                             IconClass = "bi bi-controller",
-                            IconColor = "#9ca3af",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
                             MenuType = 0,
@@ -503,81 +454,15 @@ namespace EShop.DAL.Migrations
                         },
                         new
                         {
-                            CategoryId = 22,
+                            CategoryId = 20,
                             CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "مبلمان و دکوراسیون منزل",
                             IconClass = "bi bi-couch",
-                            IconColor = "#6b4226",
                             IsCategoryOnMain = false,
                             IsDeleted = false,
                             MenuType = 0,
                             Name = "مبلمان",
                             Slug = "furniture"
-                        },
-                        new
-                        {
-                            CategoryId = 23,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "لوازم جانبی دیگر",
-                            IconClass = "bi bi-plug",
-                            IconColor = "#2563eb",
-                            IsCategoryOnMain = false,
-                            IsDeleted = false,
-                            MenuType = 0,
-                            Name = "لوازم جانبی",
-                            Slug = "accessories-other"
-                        },
-                        new
-                        {
-                            CategoryId = 24,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "محصولات مربوط به خودرو",
-                            IconClass = "bi bi-car-front",
-                            IconColor = "#f97316",
-                            IsCategoryOnMain = false,
-                            IsDeleted = false,
-                            MenuType = 1,
-                            Name = "خودرو",
-                            Slug = "automobile"
-                        },
-                        new
-                        {
-                            CategoryId = 25,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "لوازم موردنیاز سفر",
-                            IconClass = "bi bi-suitcase",
-                            IconColor = "#f97316",
-                            IsCategoryOnMain = false,
-                            IsDeleted = false,
-                            MenuType = 1,
-                            Name = "لوازم سفر",
-                            Slug = "travel"
-                        },
-                        new
-                        {
-                            CategoryId = 26,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "محصولات تکنولوژی پیشرفته",
-                            IconClass = "bi bi-gear",
-                            IconColor = "#3b82f6",
-                            IsCategoryOnMain = false,
-                            IsDeleted = false,
-                            MenuType = 1,
-                            Name = "تکنولوژی",
-                            Slug = "technology"
-                        },
-                        new
-                        {
-                            CategoryId = 27,
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "محصولات مربوط به حیوانات خانگی",
-                            IconClass = "bi bi-paw",
-                            IconColor = "#ec4899",
-                            IsCategoryOnMain = false,
-                            IsDeleted = false,
-                            MenuType = 1,
-                            Name = "حیوانات خانگی",
-                            Slug = "pets"
                         });
                 });
 

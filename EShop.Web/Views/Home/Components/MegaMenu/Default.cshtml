@@ -1,0 +1,63 @@
+﻿@model IEnumerable<ProductCategory>
+
+
+<ul>
+    <li class="category-list">
+        <a href="#">
+            <i class="bi bi-text-indent-left"></i>دسته بندی کالاها
+        </a>
+        <ul>
+            @{
+                foreach (var item in Model.Where(c => c.MenuType == MenuType.MainMenu))
+                {
+                    <li>
+                        <a href="#">
+                            <i class="bi @item.IconClass" style="color:@item.IconColor"></i> @item.Name
+
+                        </a>
+                        <ul class="row">
+                            <li class="col-12">
+                                <a href="#">همه دسته‌بندی‌های @item.Name</a>
+                            </li>
+                            @foreach (var itemSubTwo in Model.Where(c => c.MenuType == MenuType.SecondaryMenu && c.ParentId == item.CategoryId))
+                            {
+                                <li class="col-3">
+                                    <a href="@itemSubTwo.Slug"><i class="bi @item.IconClass" style="color:@itemSubTwo.IconColor"></i>@itemSubTwo.Name</a>
+                                    <ul>
+                                        @foreach (var itemSubTertiary in Model.Where(c => c.MenuType == MenuType.TertiaryMenu && c.ParentId == itemSubTwo.CategoryId))
+                                        {
+
+                                            <li>
+                                                <a href="#">@itemSubTertiary.Name</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+
+                        </ul>
+                    </li>
+                }
+            }
+
+
+        </ul>
+
+    </li>
+    <li>
+        <a href="#">
+            <i class="bi bi-shop text-warning"></i>فروشگاه ها
+        </a>
+    </li>
+    <li>
+        <a href="#">
+            <i class="bi bi-book-half text-success"></i>مقالات
+        </a>
+    </li>
+    <li>
+        <a href="#">
+            <i class="bi bi-patch-question text-info"></i>سوال دارید؟
+        </a>
+    </li>
+</ul>
+

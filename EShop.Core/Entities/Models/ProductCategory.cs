@@ -29,12 +29,19 @@ namespace EShop.Core.Entities.Models
 
         [StringLength(50, ErrorMessage = "کلاس آیکون نمی‌تواند بیشتر از {1} کاراکتر باشد.")]
         public string? IconClass { get; set; } // کلاس آیکون دسته‌بندی (برای UI)
+        [StringLength(50, ErrorMessage = "کلاس آیکون نمی‌تواند بیشتر از {1} کاراکتر باشد.")]
+        public string? IconColor { get; set; } // _ آیکون دسته‌بندی (برای رنگ
 
         [StringLength(150, ErrorMessage = "Slug نمی‌تواند بیشتر از {1} کاراکتر باشد.")]
         public string? Slug { get; set; } // آدرس سئو شده دسته‌بندی (اختیاری)
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow; // تاریخ ایجاد
         public DateTime? UpdatedAt { get; set; } // آخرین بروزرسانی
+
+        public bool IsCategoryOnMain { get; set; } = false;
+
+        public bool IsDeleted { get; set; } = false; 
+        
 
         #region Relations
         public virtual ProductCategory? Parent { get; set; }

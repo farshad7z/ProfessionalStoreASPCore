@@ -103,10 +103,9 @@ namespace EShop.DAL.Context
 
             #region Seed
 
-
             modelBuilder.Entity<ProductCategory>().HasData(
                 new List<ProductCategory>
-                { 
+                {
         // 🟢 دسته‌بندی‌های منوی اصلی
         new ProductCategory
         {
@@ -116,7 +115,8 @@ namespace EShop.DAL.Context
             MenuType = MenuType.MainMenu,
             IconClass = "bi bi-phone",
             Slug = "electronics",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#3b82f6" // آبی
         },
         new ProductCategory
         {
@@ -126,7 +126,8 @@ namespace EShop.DAL.Context
             MenuType = MenuType.MainMenu,
             IconClass = "bi bi-house-door",
             Slug = "home-kitchen",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#10b981" // سبز
         },
         new ProductCategory
         {
@@ -136,200 +137,298 @@ namespace EShop.DAL.Context
             MenuType = MenuType.MainMenu,
             IconClass = "bi bi-bag",
             Slug = "fashion-clothing",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#ec4899" // صورتی
         },
-        
-        // 🟡 زیردسته‌های الکترونیک
         new ProductCategory
         {
             CategoryId = 4,
+            Name = "کتاب‌ها",
+            Description = "کتاب‌های مختلف",
+            MenuType = MenuType.MainMenu,
+            IconClass = "bi bi-book",
+            Slug = "books",
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#f59e0b" // زرد
+        },
+        new ProductCategory
+        {
+            CategoryId = 5,
+            Name = "لوازم تحریر",
+            Description = "لوازم تحریر مدرسه و دفتر",
+            MenuType = MenuType.MainMenu,
+            IconClass = "bi bi-pencil",
+            Slug = "stationery",
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#ef4444" // قرمز
+        },
+
+        // 🟡 زیردسته‌های الکترونیک
+        new ProductCategory
+        {
+            CategoryId = 6,
             Name = "موبایل",
             Description = "موبایل‌های هوشمند",
             MenuType = MenuType.SecondaryMenu,
             ParentId = 1,
             IconClass = "bi bi-phone-fill",
             Slug = "mobiles",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#2563eb" // آبی روشن
         },
         new ProductCategory
         {
-            CategoryId = 5,
+            CategoryId = 7,
             Name = "لوازم جانبی موبایل",
             Description = "محصولات جانبی موبایل",
             MenuType = MenuType.SecondaryMenu,
             ParentId = 1,
             IconClass = "bi bi-headphones",
             Slug = "mobile-accessories",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#6366f1" // بنفش روشن
         },
         new ProductCategory
         {
-            CategoryId = 6,
+            CategoryId = 8,
             Name = "لپ‌تاپ",
             Description = "لپ‌تاپ‌های حرفه‌ای",
             MenuType = MenuType.SecondaryMenu,
             ParentId = 1,
             IconClass = "bi bi-laptop",
             Slug = "laptops",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#3b82f6" // آبی
         },
         new ProductCategory
         {
-            CategoryId = 7,
-            Name = "هدفون و هندزفری",
-            Description = "انواع هدفون و هندزفری",
+            CategoryId = 9,
+            Name = "تبلت",
+            Description = "تبلت‌های مختلف",
             MenuType = MenuType.SecondaryMenu,
             ParentId = 1,
-            IconClass = "bi bi-earbuds",
-            Slug = "headphones-earbuds",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+            IconClass = "bi bi-tablet",
+            Slug = "tablets",
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#10b981" // سبز
+        },
+        new ProductCategory
+        {
+            CategoryId = 10,
+            Name = "دوربین عکاسی",
+            Description = "دوربین‌های عکاسی و فیلمبرداری",
+            MenuType = MenuType.SecondaryMenu,
+            ParentId = 1,
+            IconClass = "bi bi-camera",
+            Slug = "cameras",
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#6366f1" // بنفش روشن
         },
 
         // 🟡 زیردسته‌های خانه و آشپزخانه
         new ProductCategory
         {
-            CategoryId = 8,
+            CategoryId = 11,
             Name = "ابزار آشپزخانه",
             Description = "ابزارهای موردنیاز آشپزخانه",
             MenuType = MenuType.SecondaryMenu,
             ParentId = 2,
             IconClass = "bi bi-utensils",
             Slug = "kitchen-tools",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#10b981" // سبز
         },
         new ProductCategory
         {
-            CategoryId = 9,
+            CategoryId = 12,
             Name = "وسایل برقی آشپزخانه",
             Description = "لوازم برقی آشپزخانه",
             MenuType = MenuType.SecondaryMenu,
             ParentId = 2,
             IconClass = "bi bi-plug",
             Slug = "kitchen-electronics",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#2563eb" // آبی روشن
         },
         new ProductCategory
         {
-            CategoryId = 10,
-            Name = "فرش و موکت",
-            Description = "انواع فرش و موکت",
+            CategoryId = 13,
+            Name = "مبلمان خانه",
+            Description = "مبلمان و دکوراسیون خانه",
             MenuType = MenuType.SecondaryMenu,
             ParentId = 2,
-            IconClass = "bi bi-carpet",
-            Slug = "carpets-rugs",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+            IconClass = "bi bi-couch",
+            Slug = "home-furniture",
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#6b4226" // قهوه‌ای
+        },
+        new ProductCategory
+        {
+            CategoryId = 14,
+            Name = "لوازم خانگی برقی",
+            Description = "لوازم خانگی برقی از قبیل یخچال، تلویزیون و...",
+            MenuType = MenuType.SecondaryMenu,
+            ParentId = 2,
+            IconClass = "bi bi-tv",
+            Slug = "home-appliances",
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#2563eb" // آبی روشن
         },
 
         // 🟡 زیردسته‌های مد و پوشاک
         new ProductCategory
         {
-            CategoryId = 11,
+            CategoryId = 15,
             Name = "لباس مردانه",
             Description = "انواع لباس‌های مردانه",
             MenuType = MenuType.SecondaryMenu,
             ParentId = 3,
             IconClass = "bi bi-shirt",
             Slug = "mens-clothing",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#ec4899" // صورتی
         },
         new ProductCategory
         {
-            CategoryId = 12,
+            CategoryId = 16,
             Name = "لباس زنانه",
             Description = "انواع لباس‌های زنانه",
             MenuType = MenuType.SecondaryMenu,
             ParentId = 3,
             IconClass = "bi bi-dress",
             Slug = "womens-clothing",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#ec4899" // صورتی
         },
         new ProductCategory
         {
-            CategoryId = 13,
+            CategoryId = 17,
             Name = "کفش",
-            Description = "انواع کفش‌های مردانه و زنانه",
+            Description = "کفش‌های مردانه و زنانه",
             MenuType = MenuType.SecondaryMenu,
             ParentId = 3,
             IconClass = "bi bi-shoe",
             Slug = "shoes",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#ec4899" // صورتی
+        },
+        new ProductCategory
+        {
+            CategoryId = 18,
+            Name = "اکسسوری",
+            Description = "اکسسوری‌ها و لوازم جانبی",
+            MenuType = MenuType.SecondaryMenu,
+            ParentId = 3,
+            IconClass = "bi bi-hat",
+            Slug = "accessories",
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#ec4899" // صورتی
         },
 
         // 🔵 دسته‌بندی‌های عمومی
         new ProductCategory
         {
-            CategoryId = 14,
-            Name = "کتاب‌ها",
-            Description = "کتاب‌های مختلف",
-            MenuType = MenuType.CategoryOnly,
-            IconClass = "bi bi-book",
-            Slug = "books",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
-        },
-        new ProductCategory
-        {
-            CategoryId = 15,
-            Name = "لوازم تحریر",
-            Description = "لوازم تحریر مدرسه و دفتر",
-            MenuType = MenuType.CategoryOnly,
-            IconClass = "bi bi-pencil",
-            Slug = "stationery",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
-        },
-        new ProductCategory
-        {
-            CategoryId = 16,
-            Name = "ورزش و سفر",
-            Description = "لوازم ورزشی و مسافرتی",
-            MenuType = MenuType.CategoryOnly,
-            IconClass = "bi bi-bicycle",
-            Slug = "sports-travel",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
-        },
-
-        // 🔵 دسته‌بندی‌های اضافی
-        new ProductCategory
-        {
-            CategoryId = 17,
+            CategoryId = 19,
             Name = "زیبایی و سلامتی",
             Description = "محصولات زیبایی و بهداشتی",
             MenuType = MenuType.CategoryOnly,
             IconClass = "bi bi-heart",
             Slug = "beauty-health",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#a855f7" // بنفش
         },
         new ProductCategory
         {
-            CategoryId = 18,
+            CategoryId = 20,
             Name = "موسیقی و فیلم",
             Description = "موسیقی و فیلم‌های مختلف",
             MenuType = MenuType.CategoryOnly,
             IconClass = "bi bi-music-note",
             Slug = "music-films",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#ef4444" // قرمز
         },
         new ProductCategory
         {
-            CategoryId = 19,
+            CategoryId = 21,
             Name = "بازی‌های ویدئویی",
             Description = "بازی‌های کامپیوتری و کنسول",
             MenuType = MenuType.CategoryOnly,
             IconClass = "bi bi-controller",
             Slug = "video-games",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#9ca3af" // خاکی
         },
         new ProductCategory
         {
-            CategoryId = 20,
+            CategoryId = 22,
             Name = "مبلمان",
             Description = "مبلمان و دکوراسیون منزل",
             MenuType = MenuType.CategoryOnly,
             IconClass = "bi bi-couch",
             Slug = "furniture",
-            CreatedAt = new DateTime(2025, 3, 6)  // تاریخ ثابت
-        }
-                });
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#6b4226" // قهوه‌ای
+        },
+        new ProductCategory
+        {
+            CategoryId = 23,
+            Name = "لوازم جانبی",
+            Description = "لوازم جانبی دیگر",
+            MenuType = MenuType.CategoryOnly,
+            IconClass = "bi bi-plug",
+            Slug = "accessories-other",
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#2563eb" // آبی روشن
+        },
 
+        // 🟠 سایر دسته‌ها
+        new ProductCategory
+        {
+            CategoryId = 24,
+            Name = "خودرو",
+            Description = "محصولات مربوط به خودرو",
+            MenuType = MenuType.MainMenu,
+            IconClass = "bi bi-car-front",
+            Slug = "automobile",
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#f97316" // نارنجی
+        },
+        new ProductCategory
+        {
+            CategoryId = 25,
+            Name = "لوازم سفر",
+            Description = "لوازم موردنیاز سفر",
+            MenuType = MenuType.MainMenu,
+            IconClass = "bi bi-suitcase",
+            Slug = "travel",
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#f97316" // نارنجی
+        },
+        new ProductCategory
+        {
+            CategoryId = 26,
+            Name = "تکنولوژی",
+            Description = "محصولات تکنولوژی پیشرفته",
+            MenuType = MenuType.MainMenu,
+            IconClass = "bi bi-gear",
+            Slug = "technology",
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#3b82f6" // آبی
+        },
+        new ProductCategory
+        {
+            CategoryId = 27,
+            Name = "حیوانات خانگی",
+            Description = "محصولات مربوط به حیوانات خانگی",
+            MenuType = MenuType.MainMenu,
+            IconClass = "bi bi-paw",
+            Slug = "pets",
+            CreatedAt = new DateTime(2025, 3, 6),
+            IconColor = "#ec4899" // صورتی
+        }
+                }
+            );
 
 
 
