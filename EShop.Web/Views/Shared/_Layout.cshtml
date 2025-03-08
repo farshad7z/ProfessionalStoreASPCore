@@ -944,23 +944,56 @@
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-5  ">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a class="icon-login-logout" href="/account/logoutuser/">
+                                <i class="bi bi-door-open-fill"></i>
+                                <span> خروج </span>
+                            </a>
+                        }
                         <div class="top-access">
                             <ul class="text-center">
-                                <li data-bs-toggle="tooltip" data-bs-placement="bottom" title="حساب کاربری"
-                                    class="d-inline-block">
-                                    <a href="panel-user-profile.html">
-                                        <i class="bi bi-person"></i>
-                                        <span style="display: block !important;">
-                                            کابر عزیز خوش آمدید
-                                        </span>
-                                    </a>
-                                </li>
-                                <li data-bs-toggle="modal" data-bs-target="#loginRegisterModal" data-bs-placement="bottom" title="ورود | ثبت نام " class="d-inline-block">
-                                    <a href="#">
-                                        <i class="bi bi-door-open"></i>
-                                        <span style="display: block !important;">ورود | ثبت نام</span>
-                                    </a>
-                                </li>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <li data-bs-toggle="tooltip"
+                                        data-bs-placement="bottom"
+                                        title="حساب کاربری"
+                                        class="d-inline-block">
+                                        <a asp-controller="Account" asp-action="LoginRegister">
+                                            <i class="bi bi-person"></i>
+                                            <span style="display: block !important;">
+                                                @(User.FindFirst(ClaimTypes.Name)?.Value ?? "کاربر") عزیز خوش آمدید
+                                            </span>
+                                        </a>
+                                    </li>
+                                }
+                                else
+                                {
+
+                                    <li data-bs-toggle="tooltip"
+                                        data-bs-placement="bottom"
+                                        title="ثبت نام ورود"
+                                        class="d-inline-block">
+                                        <a asp-controller="Account" asp-action="LoginRegister">
+                                            <i class="bi bi-person"></i>
+                                            <span style="display: block !important;">ورود | ثبت نام</span>
+                                        </a>
+                                    </li>
+
+
+
+
+                                }
+                                @*            <li data-bs-toggle="modal"
+                                        data-bs-target="#loginRegisterModal"
+                                        data-bs-placement="bottom"
+                                        title="ورود | ثبت نام"
+                                        class="d-inline-block">
+                                        <a href="#">
+                                            <i class="bi bi-door-open"></i>
+                                            <span style="display: block !important;">ورود | ثبت نام</span>
+                                        </a>
+                                    </li> *@
                                 <li data-bs-toggle="modal" data-bs-target="#searchModal" data-bs-placement="bottom" title="جستجو" class="d-inline-block">
                                     <a href="#">
                                         <i class="bi bi-search"></i>
@@ -989,6 +1022,7 @@
             </div>
         </div>
 
+
         <!--*********-->
         <!--*********-->
         <!-- cart item -->
@@ -1005,7 +1039,7 @@
                 <!-- محصول 1 -->
                 <div class="product-flow-item">
                     <div class="items-center product">
-                        <img src="~/images/1 (3).jpg" alt="محصول ۱" class="product-cartFlow-image">
+                        <img src="img/1 (3).jpg" alt="محصول ۱" class="product-cartFlow-image">
                         <div class="product-quantity">
                             <div class="flex border">
                                 <!-- دکمه افزایش مقدار -->
@@ -1015,7 +1049,7 @@
                                 <div class="error-message" style="display: none;">حداکثر مقدار</div>
 
                                 <!-- فیلد ورودی عددی برای نمایش تعداد محصولات -->
-                                <input type="number" class="quantity" value="1" min="1" max="3" readonly="">
+                                <input type="text" class="quantity cart-input-quantity" value="1" min="1" max="3" readonly="">
                                 <!-- دکمه کاهش مقدار با آیکون سطل آشغال یا علامت کم کردن -->
                                 <button class="decrease trash"><i class="bi bi-trash"></i></button>
                             </div>
@@ -1033,7 +1067,33 @@
 
                 <div class="product-flow-item">
                     <div class="items-center product">
-                        <img src="~/images/1 (3).jpg" alt="محصول ۱" class="product-cartFlow-image">
+                        <img src="img/1 (3).jpg" alt="محصول ۱" class="product-cartFlow-image">
+                        <div class="product-quantity">
+                            <div class="flex border">
+                                <!-- دکمه افزایش مقدار -->
+                                <button class="increase">
+                                    <i class="bi bi-plus"></i> <!-- علامت اضافه کردن -->
+                                </button>
+                                <div class="error-message" style="display: none;">حداکثر مقدار</div>
+
+                                <!-- فیلد ورودی عددی برای نمایش تعداد محصولات -->
+                                <input type="text" class="quantity cart-input-quantity" value="1" min="1" max="3" readonly="">
+                                <!-- دکمه کاهش مقدار با آیکون سطل آشغال یا علامت کم کردن -->
+                                <button class="decrease trash"><i class="bi bi-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <p class="product-cartFlow-name">نام محصول ۱</p>
+                        <p class="product-color">رنگ: قرمز</p>
+                        <p class="product-price">قیمت: ۲۰۰,۰۰۰ تومان</p>
+
+                        <p class="product-total ">مجموع: ۴۰۰,۰۰۰ تومان</p>
+
+                    </div>
+                </div>       <div class="product-flow-item">
+                    <div class="items-center product">
+                        <img src="img/1 (3).jpg" alt="محصول ۱" class="product-cartFlow-image">
                         <div class="product-quantity">
                             <div class="flex border">
                                 <!-- دکمه افزایش مقدار -->
@@ -1059,33 +1119,7 @@
                     </div>
                 </div>       <div class="product-flow-item">
                     <div class="items-center product">
-                        <img src="~/images/1 (3).jpg" alt="محصول ۱" class="product-cartFlow-image">
-                        <div class="product-quantity">
-                            <div class="flex border">
-                                <!-- دکمه افزایش مقدار -->
-                                <button class="increase">
-                                    <i class="bi bi-plus"></i> <!-- علامت اضافه کردن -->
-                                </button>
-                                <div class="error-message" style="display: none;">حداکثر مقدار</div>
-
-                                <!-- فیلد ورودی عددی برای نمایش تعداد محصولات -->
-                                <input type="number" class="quantity" value="1" min="1" max="3" readonly="">
-                                <!-- دکمه کاهش مقدار با آیکون سطل آشغال یا علامت کم کردن -->
-                                <button class="decrease trash"><i class="bi bi-trash"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <p class="product-cartFlow-name">نام محصول ۱</p>
-                        <p class="product-color">رنگ: قرمز</p>
-                        <p class="product-price">قیمت: ۲۰۰,۰۰۰ تومان</p>
-
-                        <p class="product-total ">مجموع: ۴۰۰,۰۰۰ تومان</p>
-
-                    </div>
-                </div>       <div class="product-flow-item">
-                    <div class="items-center product">
-                        <img src="~/images/1 (3).jpg" alt="محصول ۱" class="product-cartFlow-image">
+                        <img src="img/1 (3).jpg" alt="محصول ۱" class="product-cartFlow-image">
                         <div class="product-quantity">
                             <div class="flex border">
                                 <!-- دکمه افزایش مقدار -->
@@ -1139,1086 +1173,20 @@
 
     </header>
 
-    <section class="main-slider">
-        <div class="container-fluid px-0">
-            <div class="slider-box">
-                <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-indicators">
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
-                                aria-current="true" aria-label="Slide 1"></button>
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
-                                aria-label="Slide 2"></button>
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
-                                aria-label="Slide 3"></button>
-                    </div>
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <img src="~/images/slider/slider (3).jpg" class="d-block w-100" alt="Slide 1">
-                            <div class="carousel-caption">
-                                <h5>عنوان اول</h5>
-                                <p>
-                                    این یک متن توضیحی است که برای اسلاید اول استفاده شده است و باید به درستی در همه اندازه‌ها
-                                    نمایش داده شود.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <img src="~/images/slider/slider (1).jpg" class="d-block w-100" alt="Slide 2">
-                            <div class="carousel-caption">
-                                <h5>عنوان دوم</h5>
-                                <p>این یک متن توضیحی برای اسلاید دوم است که نیاز به تنظیمات ویژه در نمایش موبایل دارد.</p>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <img src="~/images/slider/slider (2).jpg" class="d-block w-100" alt="Slide 3">
-                            <div class="carousel-caption">
-                                <h5>عنوان سوم</h5>
-                                <p>این متن نیز باید برای دستگاه‌های کوچک‌تر بهینه شود.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
-                            data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
-                            data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-
-            </div>
-        </div>
-    </section>
 
     <!-- END Main Top -->
     <!-- Start Categories  -->
-    <section class="index-categories-shop  stayle-border-bottom">
-        <div class="title-all">
-            <h1>دسته‌بندی محصولات</h1>
-            <p>با آرامش ببین و بگرد</p>
-        </div>
-        <div class="categories-shop p-3 bg-white rounded my-3">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                        <div class="shop-cat-box">
-                            <img class="img-fluid" src="~/images/category/t-shirts-img.jpg" alt="تیشرت" />
-                            <a class="btn hvr-hover" href="#">تیشرت</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                        <div class="shop-cat-box">
-                            <img class="img-fluid" src="~/images/category/shirt-img.jpg" alt="پیراهن" />
-                            <a class="btn hvr-hover" href="#">پیراهن</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                        <div class="shop-cat-box">
-                            <img class="img-fluid" src="~/images/category/wallet-img.jpg" alt="کیف" />
-                            <a class="btn hvr-hover" href="#">کیف پول</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                        <div class="shop-cat-box">
-                            <img class="img-fluid" src="~/images/category/women-shoes-img.jpg " alt="شلوار جین" />
-                            <a class="btn hvr-hover" href="#">کفش زنانه</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                        <div class="shop-cat-box">
-                            <img class="img-fluid" src="~/images/category/women-bag-img.jpg" alt="کیف" />
-                            <a class="btn hvr-hover" href="#">کیف</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                        <div class="shop-cat-box">
-                            <img class="img-fluid" src="~/images/category/shoes-img.jpg" alt="کفش" />
-                            <a class="btn hvr-hover" href="#">کفش</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    @RenderBody();
     <!-- End Categories -->
     <!-- Special Discounts Section -->
-    <section class="special-discounts stayle-border-bottom">
-        <div class="container-fluid">
-            <div class="swiper">
-                <div class="swiper-wrapper align-items-center">
-                    <div class="swiper-slide">
-                        <div class="d-flex justify-content-center align-items-center flex-column">
-                            <img src="~/images/discount/amazingv2.png" class="img-fluid" width="150" alt="">
-                            <a href="#" class="mt-2 text-white">
-                                مشاهده بیشتر <i class="fa fa-chevron-left"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="products-single fix">
-                            <div class="box-img-hover">
-                                <div class="type-lb">
-                                    <p class="sale">فروش</p>
-                                </div>
-                                <img src="~/images/img-pro-04.jpg" class="img-fluid" alt="Image">
-
-                            </div>
-                            <div class="mask-icon">
-                                <ul class="p-0">
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مشاهده">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مقایسه کنید">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right"
-                                           title="افزودن به علاقه مندی ها"><i class="bi bi-heart"></i></a>
-                                    </li>
-                                </ul>
-                                <a class="cart" href="#">افزودن به سبد خرید</a>
-                            </div>
-                            <div class="desc">
-                                <div class="title">
-                                    <h6 class="title-fa">ساعت هوشمند</h6>
-                                    <h6 class="title-en text-muted">Samsung Galaxy Watch</h6>
-                                    <div class="progress mt-3">
-                                        <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
-                                             aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <div class="my-2">
-                                        <span class="fw-bold me-1">50%</span>
-                                        <span class="text-muted font-12">فروش رفته</span>
-                                    </div>
-                                </div>
-                                <div class="foot d-flex justify-content-between align-items-center">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        <div class="add hint--left" data-hint="افزودن به سبد خرید">
-                                            <i class="bi bi-shopping-basket"></i>
-                                        </div>
-                                    </div>
-                                    <div class="price flex-column justify-content-end">
-                                        <div>
-                                            <span class="font-18 fw-bold">200.000</span>
-                                        </div>
-                                        <div class="d-flex justify-content-center align-items-center">
-                                            <span class="text-muted font-14 text-decoration-line-through">400.000</span>
-                                            <span class="text-muted font-14 ms-2">تومان</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="timer text-center">
-                                    <div class="countdown" data-date="2025-03-07" data-time="19:30"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="swiper-slide">
-                        <div class="products-single fix">
-                            <div class="box-img-hover">
-                                <div class="type-lb">
-                                    <p class="sale">فروش</p>
-                                </div>
-                                <img src="~/images/img-pro-04.jpg" class="img-fluid" alt="Image">
-
-                            </div>
-                            <div class="mask-icon">
-                                <ul class="p-0">
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مشاهده">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مقایسه کنید">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right"
-                                           title="افزودن به علاقه مندی ها"><i class="bi bi-heart"></i></a>
-                                    </li>
-                                </ul>
-                                <a class="cart" href="#">افزودن به سبد خرید</a>
-                            </div>
-                            <div class="desc">
-                                <div class="title">
-                                    <h6 class="title-bi">ساعت هوشمند</h6>
-                                    <h6 class="title-en text-muted">Samsung Galaxy Watch</h6>
-                                    <div class="progress mt-3">
-                                        <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
-                                             aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <div class="my-2">
-                                        <span class="fw-bold me-1">50%</span>
-                                        <span class="text-muted font-12">فروش رفته</span>
-                                    </div>
-                                </div>
-                                <div class="foot d-flex justify-content-between align-items-center">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        <div class="add hint--left" data-hint="افزودن به سبد خرید">
-                                            <i class="bi bi-shopping-basket"></i>
-                                        </div>
-                                    </div>
-                                    <div class="price flex-column justify-content-end">
-                                        <div>
-                                            <span class="font-18 fw-bold">200.000</span>
-                                        </div>
-                                        <div class="d-flex justify-content-center align-items-center">
-                                            <span class="text-muted font-14 text-decoration-line-through">400.000</span>
-                                            <span class="text-muted font-14 ms-2">تومان</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="timer text-center">
-                                    <div class="countdown" data-date="2025-03-07" data-time="19:30"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="products-single fix">
-                            <div class="box-img-hover">
-                                <div class="type-lb">
-                                    <p class="sale">فروش</p>
-                                </div>
-                                <img src="~/images/img-pro-04.jpg" class="img-fluid" alt="Image">
-
-                            </div>
-                            <div class="mask-icon">
-                                <ul class="p-0">
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مشاهده">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مقایسه کنید">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right"
-                                           title="افزودن به علاقه مندی ها"><i class="bi bi-heart"></i></a>
-                                    </li>
-                                </ul>
-                                <a class="cart" href="#">افزودن به سبد خرید</a>
-                            </div>
-                            <div class="desc">
-                                <div class="title">
-                                    <h6 class="title-bi">ساعت هوشمند</h6>
-                                    <h6 class="title-en text-muted">Samsung Galaxy Watch</h6>
-                                    <div class="progress mt-3">
-                                        <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
-                                             aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <div class="my-2">
-                                        <span class="fw-bold me-1">50%</span>
-                                        <span class="text-muted font-12">فروش رفته</span>
-                                    </div>
-                                </div>
-                                <div class="foot d-flex justify-content-between align-items-center">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        <div class="add hint--left" data-hint="افزودن به سبد خرید">
-                                            <i class="bi bi-shopping-basket"></i>
-                                        </div>
-                                    </div>
-                                    <div class="price flex-column justify-content-end">
-                                        <div>
-                                            <span class="font-18 fw-bold">200.000</span>
-                                        </div>
-                                        <div class="d-flex justify-content-center align-items-center">
-                                            <span class="text-muted font-14 text-decoration-line-through">400.000</span>
-                                            <span class="text-muted font-14 ms-2">تومان</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="timer text-center">
-                                    <div class="countdown" data-date="2025-03-07" data-time="19:30"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="products-single fix">
-                            <div class="box-img-hover">
-                                <div class="type-lb">
-                                    <p class="sale">فروش</p>
-                                </div>
-                                <img src="~/images/img-pro-04.jpg" class="img-fluid" alt="Image">
-
-                            </div>
-                            <div class="mask-icon">
-                                <ul class="p-0">
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مشاهده">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مقایسه کنید">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right"
-                                           title="افزودن به علاقه مندی ها"><i class="bi bi-heart"></i></a>
-                                    </li>
-                                </ul>
-                                <a class="cart" href="#">افزودن به سبد خرید</a>
-                            </div>
-                            <div class="desc">
-                                <div class="title">
-                                    <h6 class="title-bi">ساعت هوشمند</h6>
-                                    <h6 class="title-en text-muted">Samsung Galaxy Watch</h6>
-                                    <div class="progress mt-3">
-                                        <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
-                                             aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <div class="my-2">
-                                        <span class="fw-bold me-1">50%</span>
-                                        <span class="text-muted font-12">فروش رفته</span>
-                                    </div>
-                                </div>
-                                <div class="foot d-flex justify-content-between align-items-center">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        <div class="add hint--left" data-hint="افزودن به سبد خرید">
-                                            <i class="bi bi-shopping-basket"></i>
-                                        </div>
-                                    </div>
-                                    <div class="price flex-column justify-content-end">
-                                        <div>
-                                            <span class="font-18 fw-bold">200.000</span>
-                                        </div>
-                                        <div class="d-flex justify-content-center align-items-center">
-                                            <span class="text-muted font-14 text-decoration-line-through">400.000</span>
-                                            <span class="text-muted font-14 ms-2">تومان</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="timer text-center">
-                                    <div class="countdown" data-date="2025-03-07" data-time="19:30"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="products-single fix">
-                            <div class="box-img-hover">
-                                <div class="type-lb">
-                                    <p class="sale">فروش</p>
-                                </div>
-                                <img src="~/images/img-pro-04.jpg" class="img-fluid" alt="Image">
-
-                            </div>
-                            <div class="mask-icon">
-                                <ul class="p-0">
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مشاهده">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مقایسه کنید">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right"
-                                           title="افزودن به علاقه مندی ها"><i class="bi bi-heart"></i></a>
-                                    </li>
-                                </ul>
-                                <a class="cart" href="#">افزودن به سبد خرید</a>
-                            </div>
-                            <div class="desc">
-                                <div class="title">
-                                    <h6 class="title-bi">ساعت هوشمند</h6>
-                                    <h6 class="title-en text-muted">Samsung Galaxy Watch</h6>
-                                    <div class="progress mt-3">
-                                        <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
-                                             aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <div class="my-2">
-                                        <span class="fw-bold me-1">50%</span>
-                                        <span class="text-muted font-12">فروش رفته</span>
-                                    </div>
-                                </div>
-                                <div class="foot d-flex justify-content-between align-items-center">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        <div class="add hint--left" data-hint="افزودن به سبد خرید">
-                                            <i class="bi bi-shopping-basket"></i>
-                                        </div>
-                                    </div>
-                                    <div class="price flex-column justify-content-end">
-                                        <div>
-                                            <span class="font-18 fw-bold">200.000</span>
-                                        </div>
-                                        <div class="d-flex justify-content-center align-items-center">
-                                            <span class="text-muted font-14 text-decoration-line-through">400.000</span>
-                                            <span class="text-muted font-14 ms-2">تومان</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="timer text-center">
-                                    <div class="countdown" data-date="2025-03-07" data-time="19:30"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="products-single fix">
-                            <div class="box-img-hover">
-                                <div class="type-lb">
-                                    <p class="sale">فروش</p>
-                                </div>
-                                <img src="~/images/img-pro-04.jpg" class="img-fluid" alt="Image">
-
-                            </div>
-                            <div class="mask-icon">
-                                <ul class="p-0">
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مشاهده">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مقایسه کنید">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right"
-                                           title="افزودن به علاقه مندی ها"><i class="bi bi-heart"></i></a>
-                                    </li>
-                                </ul>
-                                <a class="cart" href="#">افزودن به سبد خرید</a>
-                            </div>
-                            <div class="desc">
-                                <div class="title">
-                                    <h6 class="title-bi">ساعت هوشمند</h6>
-                                    <h6 class="title-en text-muted">Samsung Galaxy Watch</h6>
-                                    <div class="progress mt-3">
-                                        <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
-                                             aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <div class="my-2">
-                                        <span class="fw-bold me-1">50%</span>
-                                        <span class="text-muted font-12">فروش رفته</span>
-                                    </div>
-                                </div>
-                                <div class="foot d-flex justify-content-between align-items-center">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        <div class="add hint--left" data-hint="افزودن به سبد خرید">
-                                            <i class="bi bi-shopping-basket"></i>
-                                        </div>
-                                    </div>
-                                    <div class="price flex-column justify-content-end">
-                                        <div>
-                                            <span class="font-18 fw-bold">200.000</span>
-                                        </div>
-                                        <div class="d-flex justify-content-center align-items-center">
-                                            <span class="text-muted font-14 text-decoration-line-through">400.000</span>
-                                            <span class="text-muted font-14 ms-2">تومان</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="timer text-center">
-                                    <div class="countdown" data-date="2025-03-07" data-time="19:30"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="products-single fix">
-                            <div class="box-img-hover">
-                                <div class="type-lb">
-                                    <p class="sale">فروش</p>
-                                </div>
-                                <img src="~/images/img-pro-04.jpg" class="img-fluid" alt="Image">
-
-                            </div>
-                            <div class="mask-icon">
-                                <ul class="p-0">
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مشاهده">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مقایسه کنید">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right"
-                                           title="افزودن به علاقه مندی ها"><i class="bi bi-heart"></i></a>
-                                    </li>
-                                </ul>
-                                <a class="cart" href="#">افزودن به سبد خرید</a>
-                            </div>
-                            <div class="desc">
-                                <div class="title">
-                                    <h6 class="title-bi">ساعت هوشمند</h6>
-                                    <h6 class="title-en text-muted">Samsung Galaxy Watch</h6>
-                                    <div class="progress mt-3">
-                                        <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
-                                             aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <div class="my-2">
-                                        <span class="fw-bold me-1">50%</span>
-                                        <span class="text-muted font-12">فروش رفته</span>
-                                    </div>
-                                </div>
-                                <div class="foot d-flex justify-content-between align-items-center">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        <div class="add hint--left" data-hint="افزودن به سبد خرید">
-                                            <i class="bi bi-shopping-basket"></i>
-                                        </div>
-                                    </div>
-                                    <div class="price flex-column justify-content-end">
-                                        <div>
-                                            <span class="font-18 fw-bold">200.000</span>
-                                        </div>
-                                        <div class="d-flex justify-content-center align-items-center">
-                                            <span class="text-muted font-14 text-decoration-line-through">400.000</span>
-                                            <span class="text-muted font-14 ms-2">تومان</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="timer text-center">
-                                    <div class="countdown" data-date="2025-03-07" data-time="19:30"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="products-single fix">
-                            <div class="box-img-hover">
-                                <div class="type-lb">
-                                    <p class="sale">فروش</p>
-                                </div>
-                                <img src="~/images/img-pro-04.jpg" class="img-fluid" alt="Image">
-
-                            </div>
-                            <div class="mask-icon">
-                                <ul class="p-0">
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مشاهده">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مقایسه کنید">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right"
-                                           title="افزودن به علاقه مندی ها"><i class="bi bi-heart"></i></a>
-                                    </li>
-                                </ul>
-                                <a class="cart" href="#">افزودن به سبد خرید</a>
-                            </div>
-                            <div class="desc">
-                                <div class="title">
-                                    <h6 class="title-fa">ساعت هوشمند</h6>
-                                    <h6 class="title-en text-muted">Samsung Galaxy Watch</h6>
-                                    <div class="progress mt-3">
-                                        <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
-                                             aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <div class="my-2">
-                                        <span class="fw-bold me-1">50%</span>
-                                        <span class="text-muted font-12">فروش رفته</span>
-                                    </div>
-                                </div>
-                                <div class="foot d-flex justify-content-between align-items-center">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        <div class="add hint--left" data-hint="افزودن به سبد خرید">
-                                            <i class="bi fa-shopping-basket"></i>
-                                        </div>
-                                    </div>
-                                    <div class="price flex-column justify-content-end">
-                                        <div>
-                                            <span class="font-18 fw-bold">200.000</span>
-                                        </div>
-                                        <div class="d-flex justify-content-center align-items-center">
-                                            <span class="text-muted font-14 text-decoration-line-through">400.000</span>
-                                            <span class="text-muted font-14 ms-2">تومان</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="timer text-center">
-                                    <div class="countdown" data-date="2025-03-07" data-time="19:30"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="products-single fix">
-                            <div class="box-img-hover">
-                                <div class="type-lb">
-                                    <p class="sale">فروش</p>
-                                </div>
-                                <img src="~/images/img-pro-04.jpg" class="img-fluid" alt="Image">
-
-                            </div>
-                            <div class="mask-icon">
-                                <ul class="p-0">
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مشاهده">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مقایسه کنید">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right"
-                                           title="افزودن به علاقه مندی ها"><i class="bi bi-heart"></i></a>
-                                    </li>
-                                </ul>
-                                <a class="cart" href="#">افزودن به سبد خرید</a>
-                            </div>
-                            <div class="desc">
-                                <div class="title">
-                                    <h6 class="title-fa">ساعت هوشمند</h6>
-                                    <h6 class="title-en text-muted">Samsung Galaxy Watch</h6>
-                                    <div class="progress mt-3">
-                                        <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
-                                             aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <div class="my-2">
-                                        <span class="fw-bold me-1">50%</span>
-                                        <span class="text-muted font-12">فروش رفته</span>
-                                    </div>
-                                </div>
-                                <div class="foot d-flex justify-content-between align-items-center">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        <div class="add hint--left" data-hint="افزودن به سبد خرید">
-                                            <i class="bi fa-shopping-basket"></i>
-                                        </div>
-                                    </div>
-                                    <div class="price flex-column justify-content-end">
-                                        <div>
-                                            <span class="font-18 fw-bold">200.000</span>
-                                        </div>
-                                        <div class="d-flex justify-content-center align-items-center">
-                                            <span class="text-muted font-14 text-decoration-line-through">400.000</span>
-                                            <span class="text-muted font-14 ms-2">تومان</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="timer text-center">
-                                    <div class="countdown" data-date="2025-03-07" data-time="19:30"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="products-single fix">
-                            <div class="box-img-hover">
-                                <div class="type-lb">
-                                    <p class="sale">فروش</p>
-                                </div>
-                                <img src="~/images/img-pro-04.jpg" class="img-fluid" alt="Image">
-
-                            </div>
-                            <div class="mask-icon">
-                                <ul class="p-0">
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مشاهده">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مقایسه کنید">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right"
-                                           title="افزودن به علاقه مندی ها"><i class="bi bi-heart"></i></a>
-                                    </li>
-                                </ul>
-                                <a class="cart" href="#">افزودن به سبد خرید</a>
-                            </div>
-                            <div class="desc">
-                                <div class="title">
-                                    <h6 class="title-fa">ساعت هوشمند</h6>
-                                    <h6 class="title-en text-muted">Samsung Galaxy Watch</h6>
-                                    <div class="progress mt-3">
-                                        <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
-                                             aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <div class="my-2">
-                                        <span class="fw-bold me-1">50%</span>
-                                        <span class="text-muted font-12">فروش رفته</span>
-                                    </div>
-                                </div>
-                                <div class="foot d-flex justify-content-between align-items-center">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        <div class="add hint--left" data-hint="افزودن به سبد خرید">
-                                            <i class="bi bi-shopping-basket"></i>
-                                        </div>
-                                    </div>
-                                    <div class="price flex-column justify-content-end">
-                                        <div>
-                                            <span class="font-18 fw-bold">200.000</span>
-                                        </div>
-                                        <div class="d-flex justify-content-center align-items-center">
-                                            <span class="text-muted font-14 text-decoration-line-through">400.000</span>
-                                            <span class="text-muted font-14 ms-2">تومان</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="timer text-center">
-                                    <div class="countdown" data-date="2025-03-07" data-time="19:30"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
-            </div>
-        </div>
-    </section>
     <!-- END Special Discounts Section -->
     <!-- Start Products  -->
-    <section class="products-group stayle-border-bottom">
-        <div class="products-box ">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="title-all text-center">
-                            <h1>محصولات ویژه</h1>
-                            <p>مجموعه‌ای از بهترین و جذاب‌ترین محصولات را در اینجا بیابید.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="special-menu text-center">
-                            <div class="button-group filter-button-group">
-                                <button class="active" data-filter="*"> پربازدید ترین ها</button>
-                                <button data-filter=".top-featured">جدیدترین ها</button>
-                                <button data-filter=".best-seller">پر فروش</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row special-list">
-                    <div class="col-lg-3 col-md-6 special-grid best-seller">
-                        <div class="products-single fix">
-                            <div class="box-img-hover">
-                                <div class="type-lb">
-                                    <p class="sale">فروش</p>
-                                </div>
-                                <img src="~/images/img-pro-01.jpg" class="img-fluid" alt="Image">
-                                <div class="mask-icon">
-                                    <ul class="p-0">
-                                        <li>
-                                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مشاهده">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مقایسه کنید">
-                                                <i class="bi bi-arrow-repeat"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="right"
-                                               title="افزودن به علاقه مندی ها"><i class="bi bi-heart"></i></a>
-                                        </li>
-                                    </ul>
-                                    <a class="cart" href="#">افزودن به سبد خرید</a>
-                                </div>
-                            </div>
-                            <div class="why-text">
-                                <h4>Lorem ipsum dolor sit amet</h4>
-                                <h5> $7.79</h5>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-6 special-grid top-featured">
-                        <div class="products-single fix">
-                            <div class="box-img-hover">
-                                <div class="type-lb">
-                                    <p class="new">جدید</p>
-                                </div>
-                                <img src="~/images/img-pro-02.jpg" class="img-fluid" alt="Image">
-                                <div class="mask-icon">
-                                    <ul class="p-0">
-                                        <li>
-                                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مشاهده">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مقایسه کنید">
-                                                <i class="bi bi-arrow-repeat"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="right"
-                                               title="افزودن به علاقه مندی ها"><i class="bi bi-heart"></i></a>
-                                        </li>
-                                    </ul>
-                                    <a class="cart" href="#">افزودن به سبد خرید</a>
-                                </div>
-                            </div>
-                            <div class="why-text">
-                                <h4>Lorem ipsum dolor sit amet</h4>
-                                <h5> $9.79</h5>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-6 special-grid top-featured">
-                        <div class="products-single fix">
-                            <div class="box-img-hover">
-                                <div class="type-lb">
-                                    <p class="sale">فروش</p>
-                                </div>
-                                <img src="~/images/img-pro-04.jpg" class="img-fluid" alt="Image">
-                                <div class="mask-icon">
-                                    <ul class="p-0">
-                                        <li>
-                                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مشاهده">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مقایسه کنید">
-                                                <i class="bi bi-arrow-repeat"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="right"
-                                               title="افزودن به علاقه مندی ها"><i class="bi bi-heart"></i></a>
-                                        </li>
-                                    </ul>
-                                    <a class="cart" href="#">افزودن به سبد خرید</a>
-                                </div>
-                            </div>
-                            <div class="why-text">
-                                <h4>Lorem ipsum dolor sit amet</h4>
-                                <h5> $10.79</h5>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-6 special-grid best-seller">
-                        <div class="products-single fix">
-                            <div class="box-img-hover">
-                                <div class="type-lb">
-                                    <p class="sale">فروش</p>
-                                </div>
-                                <img src="~/images/img-pro-04.jpg" class="img-fluid" alt="Image">
-                                <div class="mask-icon">
-                                    <ul class="p-0">
-                                        <li>
-                                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مشاهده">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مقایسه کنید">
-                                                <i class="bi bi-arrow-repeat"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="right"
-                                               title="افزودن به علاقه مندی ها"><i class="bi bi-heart"></i></a>
-                                        </li>
-                                    </ul>
-                                    <a class="cart" href="#">افزودن به سبد خرید</a>
-                                </div>
-                            </div>
-                            <div class="why-text">
-                                <h4>Lorem ipsum dolor sit amet</h4>
-                                <h5> $15.79</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- End Products  -->
     <!-- Start Product Box --Blog -->
-    <section class="blog-box">
-        <div class="container-fluid">
-            <div class="parent">
-                <div class="content-title">
-                    <div class="item">
-                        <svg xmlns="http: //www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                             class="bi bi-box-seam" viewBox="0 0 16 16">
-                            <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z" />
-                        </svg>
-                        <h5 class="title">خواندنی‌ها</h5>
-                    </div>
-                    <div class="item">
-                        <svg xmlns="http: //www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                             class="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd"
-                                  d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0v-2z" />
-                            <path fill-rule="evenodd"
-                                  d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z" />
-                        </svg>
-                        <a href="">
-                            <h5 class="title">مطالب بیشتر در بازار پال</h5>
-                        </a>
-                    </div>
-                </div>
-                <div class="swiper py-5" id="swiper-box">
-                    <div class="swiper-wrapper" style="height: auto;">
-                        <div class="swiper-slide">
-                            <a href="">
-                                <div class="image-blog text-center">
-                                    <img src="~/images/blog/blog-1.jpg" class="img-fluid" alt="">
-                                    <div class="blog-desc position-absolute bottom-0">
-                                        <h6>بررسی کرم ضد چروک روز لاکچری کوین</h6>
-                                        <div class="d-flex justify-content-between align-items-center my-2">
-                                            <div class="like">
-                                                <span class="icon">
-                                                    <svg xmlns="http: //www.w3.org/2000/svg" width="16" height="16"
-                                                         fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-                                                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
-                                                    </svg>
-                                                </span>
-                                                <span class="counter">18</span>
-                                            </div>
-                                            <div class="date">
-                                                <span>۹ تیر 1403</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="swiper-slide">
-                            <a href="">
-                                <div class="image-blog text-center">
-                                    <img src="~/images/blog/blog-2.jpg" class="img-fluid" alt="">
-                                    <div class="blog-desc position-absolute bottom-0">
-                                        <h6> بررسی کرم ترمیم کننده راکوتن </h6>
-                                        <div class="d-flex justify-content-between align-items-center my-2">
-                                            <div class="like">
-                                                <span class="icon">
-                                                    <svg xmlns="http: //www.w3.org/2000/svg" width="16" height="16"
-                                                         fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-                                                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
-                                                    </svg>
-                                                </span>
-                                                <span class="counter">15</span>
-                                            </div>
-                                            <div class="date">
-                                                <span>۹ بهمن ۱۴۰۲</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="swiper-slide">
-                            <a href="">
-                                <div class="image-blog text-center">
-                                    <img src="~/images/blog/blog-3.jpg" class="img-fluid" alt="">
-                                    <div class="blog-desc position-absolute bottom-0">
-                                        <h6> کدام گلکسی واچ سامسونگ ارزش خرید بیشتری دارد؟ </h6>
-                                        <div class="d-flex justify-content-between align-items-center my-2">
-                                            <div class="like">
-                                                <span class="icon">
-                                                    <svg xmlns="http: //www.w3.org/2000/svg" width="16" height="16"
-                                                         fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-                                                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
-                                                    </svg>
-                                                </span>
-                                                <span class="counter">35</span>
-                                            </div>
-                                            <div class="date">
-                                                <span>۹ بهمن ۱۴۰۲</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="swiper-pagination"></div>
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-button-prev"></div>
-                </div>
-            </div>
-        </div>
-    </section>
     <!-- END Product Box --Blog -->
+    <!-- Start Services Box -->
+    <!-- End Services Box -->
 
-
-    <section class="index-services">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                    <div class="item text-center">
-                        <span class="d-block w-100">
-                            <i class="bi bi-chat-left-text"></i>
-                            <span class="title d-block w-100 py-3">پشتیبانی 24 ساعته</span>
-                            <p>هر سوالی داشتید را از ما پرسید </p>
-
-                        </span>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                    <div class="item text-center">
-                        <span class="d-block w-100">
-                            <i class="bi bi-shield-check"></i>
-                            <span class="title d-block w-100 py-3">ضمانت بازگشت وجه</span>
-                            <p> در صورت انصراف از خرید وجه شما در کمترین زمان ممکن یازگشت داده می شود </p>
-
-                        </span>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                    <div class="item text-center">
-                        <span class="d-block w-100">
-                            <i class="bi bi-geo-alt-fill"></i>
-                            <span class="title d-block w-100 py-3">تحویل فوری</span>
-                            <p>ارسال بسته های شما در کمترین زمان ممکن با پست پیشت، سفاری و تیباکس</p>
-
-                        </span>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                    <div class="item text-center">
-                        <span class="d-block w-100">
-                            <i class="bi bi-award-fill"></i>
-                            <span class="title d-block w-100 py-2">ضمانت محصول</span>
-                            <p>در صورت نارضایتی از محصول تا یک هفته بعد از تحویل می توانید آن راعودت بدهید</p>
-
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-    </section>
 
 
     <footer class="pt-5 mt-5 position-relative">
@@ -2280,117 +1248,110 @@
                             </li>
                             <li class="d-block w-100 py-2">
                                 رویه‌های بازگرداندن کالا
-                            </li>
-                            <li class="d-block w-100 py-2">
-                                حریم خصوصی
-                            </li>
-                            <li class="d-block w-100 py-2">
-                                گزارش باگ
-                            </li>
-                        </ul>
+                                <!-- Start Modal Box -->
+                                <!-- Start Modal Box Login/Register -->
+                                <div class="modal fade" id="loginRegisterModal" tabindex="-1" aria-labelledby="loginRegisterModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <i class="bi bi-house"> ثبت نام </i> | <i class="bi bi-person">ورود</i>
+                                                <form asp-controller="Account" asp-action="LoginRegister" method="post">
+                                                    <input type="text" name="MobileNumber" placeholder="شماره موبایل خود را وارد کنید " pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                                    <input type="password" placeholder="رمز عبور خود را وارد کنید" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                                    <button class="m-3">
+                                                        ورود
+                                                    </button>
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#RegisterModal" data-bs-placement="bottom" class="text-center m-3">ثبت نام کنید�</a>
+                                                </form>
+                                                <a href="#" class="text-center m-3">رمز عبور خود را فراموش</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal fade" id="RegisterModal" tabindex="-1" aria-labelledby="RegisterModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <i class="bi bi-house"> ثبت نام </i>
+                                                <form action="LoginRegister">
+                                                    <input type="text" placeholder="شماره موبایل یا ایمیل خود را وارد کنید " pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                                    <input type="password" placeholder="رمز عبور" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                                    <input type="password" placeholder="تکرار رمز عبور" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                                    <button class="m-3">
+                                                        ثبت نام
+                                                    </button>
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#loginRegisterModal" data-bs-placement="bottom" class="text-center m-3">ورود</a>
+                                                </form>
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#loginRegisterModal" data-bs-placement="bottom" class="text-center m-3">رمز عبور خود را فراموش</a>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- END Modal Box Login/Register -->
+                                <!-- Start Modal Box Search -->
+                                <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <form action="">
+                                                    <input type="text" placeholder="جستجوکنید ...">
+                                                    <button><i class="bi bi-search"></i></button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- END Modal Box Search -->
+                                <!-- End Modal Box -->
+                                <form asp-controller="Account" asp-action="ResetPassword" method="post">
+                                    <div class="mb-3">
+                                        <input type="text" name="EmailOrMobile" placeholder="شماره موبایل یا ایمیل خود را وارد کنید" class="form-control" required>
+                                    </div>
+                                    <button type="submit" class="m-3">
+                                        بازیابی رمز عبور
+                                    </button>
+                                </form>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#loginRegisterModal" class="m-3">ورود</a>
                     </div>
                 </div>
-
             </div>
         </div>
-        <div class="footer-copyright">
-            <p class="footer-company">
-                All Rights Reserved. © 2025 طراحی شده :
-                <a href="#">ّFarshad Zamani 09109999414</a>
-            </p>
-        </div>
-    </footer>
+
+        <!-- End Modal Box -->
 
 
-    <!-- Start Modal Box -->
-    <!-- Start Modal Box Login/Register -->
-    <div class="modal fade" id="loginRegisterModal" tabindex="-1" aria-labelledby="loginRegisterModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <i class="bi bi-house"> ثبت نام </i> | <i class="bi bi-person">ورود</i>
-                    <form action="">
-                        <input type="text" placeholder="شماره موبایل یا ایمیل خود را وارد کنید " pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                        <input type="password" placeholder="رمز عبور خود را وارد کنید" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                        <button class="m-3">
-                            ورود
-                        </button>
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#RegisterModal" data-bs-placement="bottom" class="text-center m-3">ثبت نام کنید�</a>
-                    </form>
-                    <a href="#" class="text-center m-3">رمز عبور خود را فراموش</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="RegisterModal" tabindex="-1" aria-labelledby="RegisterModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <i class="bi bi-house"> ثبت نام </i>
-                    <form action="">
-                        <input type="text" placeholder="شماره موبایل یا ایمیل خود را وارد کنید " pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                        <input type="password" placeholder="رمز عبور" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                        <input type="password" placeholder="تکرار رمز عبور" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                        <button class="m-3">
-                            ثبت نام
-                        </button>
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#loginRegisterModal" data-bs-placement="bottom" class="text-center m-3">ورود</a>
-                    </form>
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#loginRegisterModal" data-bs-placement="bottom" class="text-center m-3">رمز عبور خود را فراموش</a>
 
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- END Modal Box Login/Register -->
-    <!-- Start Modal Box Search -->
-    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <form action="">
-                        <input type="text" placeholder="جستجوکنید ...">
-                        <button><i class="bi bi-search"></i></button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- END Modal Box Search -->
-    <!-- End Modal Box -->
+        <script src="~/js/jQuery.js"></script>
+        <script src="~/js/popper.js"></script>
+        <script src="~/js/bootstrap.min.js"></script>
+        <script src="~/plugin/zoom/jquery.elevatezoom.js"></script>
+        <script src="~/plugin/zoom/owl.carousel.min.js"></script>
+        <script src="~/plugin/fancybox/jquery.fancybox.min.js"></script>
+
+        <script src="~/js/jquery.simple.timer.js"></script>
+
+        <!-- For Offer -->
+        <script src="~/js/jquery.superslides.min.js"></script>
+        <script src="~/js/inewsticker.js"></script>
+        <script src="~/js/images-loded.min.js"></script>
+        <script src="~/js/baguetteBox.min.js"></script>
+        <!--End For Offer -->
+        <!-- ALL PLUGINS insert 1403.03.23 -->
+        <script src="~/js/bootstrap-select.js"></script>
+        <script src="~/js/isotope.min.js"></script>
+        <!-- END ALL PLUGINS insert 1403.03.23 -->
+        <!-- Discount-->
+        <script src="~/plugin/swiper/swiper-bundle.min.js"></script>
+        <script src="~/plugin/timer/timer.js"></script>
+        <script src="~/plugin/hint-css/hint-css.js"></script>
+        <!--END Discount-->
+        <script src="~/js/cart.js"></script>
 
 
-    <script src="~/js/jQuery.js"></script>
-    <script src="~/js/popper.js"></script>
-    <script src="~/js/bootstrap.min.js"></script>
-    <script src="~/plugin/zoom/jquery.elevatezoom.js"></script>
-    <script src="~/plugin/zoom/owl.carousel.min.js"></script>
-    <script src="~/plugin/fancybox/jquery.fancybox.min.js"></script>
-
-    <script src="~/js/jquery.simple.timer.js"></script>
-
-    <!-- For Offer -->
-    <script src="~/js/jquery.superslides.min.js"></script>
-    <script src="~/js/inewsticker.js"></script>
-    <script src="~/js/images-loded.min.js"></script>
-    <script src="~/js/baguetteBox.min.js"></script>
-    <!--End For Offer -->
-    <!-- ALL PLUGINS insert 1403.03.23 -->
-    <script src="~/js/bootstrap-select.js"></script>
-    <script src="~/js/isotope.min.js"></script>
-    <!-- END ALL PLUGINS insert 1403.03.23 -->
-    <!-- Discount-->
-    <script src="~/plugin/swiper/swiper-bundle.min.js"></script>
-    <script src="~/plugin/timer/timer.js"></script>
-    <script src="~/plugin/hint-css/hint-css.js"></script>
-    <!--END Discount-->
-    <script src="~/js/cart.js"></script>
-
-
-    <script src="~/js/index.js"></script>
+        <script src="~/js/index.js"></script>
 
 
 </body>
 
 </html>
-@RenderBody()

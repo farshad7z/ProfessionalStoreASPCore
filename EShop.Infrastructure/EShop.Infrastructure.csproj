@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EShop.BLL\EShop.BLL.csproj" />
     <ProjectReference Include="..\EShop.Core\EShop.Core.csproj" />
     <ProjectReference Include="..\EShop.DAL\EShop.DAL.csproj" />
   </ItemGroup>

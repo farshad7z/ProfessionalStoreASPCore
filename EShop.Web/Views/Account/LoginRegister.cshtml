@@ -1,0 +1,71 @@
+﻿@model LoginRegisterViewModel
+
+<!-- Start All Title Box -->
+<div class="all-title-box">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2>ورود و ثبت نام</h2>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">خانه</a></li>
+                    <li class="breadcrumb-item active">ورود و ثبت نام</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End All Title Box -->
+
+<section>
+    <div class="container">
+        <div class="row justify-content-center">
+            <!-- ورود به حساب -->
+            <div class="col-md-4">
+                <div class="login-register-div bg-white rounded p-3 mb-3 mb-md-0">
+                    <span class="text-center d-block display-3"><i class="bi bi-house"></i></span>
+                    <span class="text-center d-block my-3">ورود به حساب</span>
+                    <div class="form-div">
+                        <form asp-controller="Account" asp-action="LoginRegister" method="post">
+                            <input asp-for="Login.MobileNumber" placeholder="شماره موبایل خود را وارد کنید" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <span class="text-danger" asp-validation-for="Login.MobileNumber"></span>
+
+                            <input asp-for="Login.Password" type="password" placeholder="رمز عبور">
+                            <span class="text-danger" asp-validation-for="Login.Password"></span>
+
+                            <div class="form-check my-3 pb-2 pt-1">
+                                <input asp-for="Login.RememberMe" class="form-check-input">
+                                <label class="form-check-label px-2" asp-for="Login.RememberMe">مرا به خاطر بسپار</label>
+                            </div>
+@*                             <div asp-validation-summary="All" class="text-danger"></div>
+ *@
+                            <input class="hvr-hover" type="submit" value="ورود">
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ثبت نام -->
+            <div class="col-md-4">
+                <div class="login-register-div bg-white rounded p-3">
+                    <span class="text-center d-block display-3"><i class="bi bi-person"></i></span>
+                    <span class="text-center d-block my-3">ثبت نام جدید</span>
+                    <div class="form-div">
+                        <form asp-controller="Account" asp-action="LoginRegister" method="post">
+                            <input asp-for="Register.MobileNumber" placeholder="شماره موبایل خود را وارد کنید" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <span class="text-danger" asp-validation-for="Register.MobileNumber"></span>
+
+                            <input asp-for="Register.Password" type="password" placeholder="رمز عبور">
+                            <span class="text-danger" asp-validation-for="Register.Password"></span>
+
+                            <input asp-for="Register.ConfirmPassword" type="password" placeholder="تکرار رمز عبور">
+                            <span class="text-danger" asp-validation-for="Register.ConfirmPassword"></span>
+@*                             <div asp-validation-summary="All" class="text-danger"></div>
+ *@
+                            <input class="hvr-hover" type="submit" value="ثبت نام">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

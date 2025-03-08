@@ -1,13 +1,10 @@
 ﻿using EShop.Core.Interfaces.Repositories;
+using EShop.Core.Interfaces.Services;
 using EShop.Core.Interfaces.UnitOfWork;
 using EShop.DAL.Repositories;
 using EShop.DAL.UnitOfWork;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using EShop.BLL.Services.Public;
 
 namespace EShop.Infrastructure.DependencyInjection
 {
@@ -17,6 +14,7 @@ namespace EShop.Infrastructure.DependencyInjection
         {
 
             #region Submit Bll Services
+            services.AddScoped<IAccountServices, AccountServices>();
             //services.AddScoped<IProductService, ProductService>();
             //services.AddScoped<ICategoryService, CategoryService>();
             #endregion

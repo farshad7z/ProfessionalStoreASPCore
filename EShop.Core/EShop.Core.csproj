@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\Services\" />
     <Folder Include="DTOs\ViewModels\Admin\OtherAdminViewModels\" />
     <Folder Include="DTOs\ViewModels\Admin\SuperAdminViewModels\" />
   </ItemGroup>

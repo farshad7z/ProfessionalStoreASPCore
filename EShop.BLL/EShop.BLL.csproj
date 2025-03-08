@@ -9,7 +9,11 @@
   <ItemGroup>
     <ProjectReference Include="..\EShop.Core\EShop.Core.csproj" />
     <ProjectReference Include="..\EShop.DAL\EShop.DAL.csproj" />
-    <ProjectReference Include="..\EShop.Infrastructure\EShop.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\AdminSite\" />
+    <Folder Include="Services\AdminShop\" />
   </ItemGroup>
 
 </Project>

@@ -23,28 +23,36 @@ namespace EShop.DAL.Repositories
         }
         public async Task AddAsync(T entity)
         {
-          await  _dbSet.AddAsync(entity);
+          await _dbSet.AddAsync(entity);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             var entity = await _dbSet.FindAsync(id);
             if (entity != null)
             {
                 _dbSet.Remove(entity);
+                return true;  // حذف شد
             }
+            return false;  // چیزی برای حذف نبود
         }
 
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T,bool>> predicate)
         {
             return await _dbSet.Where(predicate).ToListAsync();
         }
+
+        public async Task<T?> FindSingleOrDefaultAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.SingleOrDefaultAsync(predicate);
+        }
+
         public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
         {
             return await _dbSet.AnyAsync(predicate);
         }
 
-        public async Task<IEnumerable<T?>> GetAllAsync()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
         }
@@ -54,7 +62,7 @@ namespace EShop.DAL.Repositories
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task UpdateAsynv(T entity)
+        public void Update(T entity)
         {
             _dbSet.Update(entity);
         }

@@ -6,13 +6,26 @@ using EShop.Core.Entities.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace EShop.Infrastructure.Security
 {
     public class AuthenticationService
     {
+        private readonly TimeSpan _userAuthExpireTimeSpan = TimeSpan.FromDays(7); // مدت زمان انقضا برای کاربران
+        private readonly TimeSpan _adminAuthExpireTimeSpan = TimeSpan.FromHours(12); // مدت زمان انقضا برای ادمین‌ها
+                                                                                     // تعریف ILogger به صورت generic برای کلاس AuthenticationService
+        private readonly ILogger<AuthenticationService> _logger;
+
+        // دریافت ILogger از طریق سازنده
+        public AuthenticationService(ILogger<AuthenticationService> logger)
+        {
+            _logger = logger;
+        }
+
+
         /// <summary>
-        /// Signs in a regular user.
+        /// Sign in a regular user.
         /// </summary>
         public async Task SignInUser(HttpContext httpContext, User user, bool rememberMe)
         {
@@ -20,29 +33,39 @@ namespace EShop.Infrastructure.Security
                 throw new InvalidOperationException("حساب کاربری فعال نیست.");
 
             var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-        new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
-        new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
-        new Claim("IsActive", user.IsActive.ToString().ToLower()),
-        new Claim("InitialAuth", "true"), // Indicates initial authentication
-        new Claim("HasShop", user.HasShop.ToString().ToLower()),
-    };
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+            new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
+            new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
+            new Claim("IsActive", user.IsActive.ToString().ToLower()),
+            new Claim("InitialAuth", "true"), // Indicates initial authentication
+            new Claim("HasShop", user.HasShop.ToString().ToLower()),
+        };
 
             var claimsIdentity = new ClaimsIdentity(claims, "UserAuth");
 
             var authProperties = new AuthenticationProperties
             {
                 IsPersistent = rememberMe,
-                ExpiresUtc = rememberMe ? DateTime.UtcNow.AddDays(7) : DateTime.UtcNow.AddHours(2),
-                AllowRefresh = true // Optional: Allows token refresh
+                ExpiresUtc = rememberMe ? DateTime.UtcNow.Add(_userAuthExpireTimeSpan) : DateTime.UtcNow.AddHours(2),
+                AllowRefresh = true
             };
 
             await httpContext.SignInAsync("UserAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
+
+            // بررسی مقدار `AuthenticationType`
+            Console.WriteLine($"[AUTH DEBUG] User.Identity.AuthenticationType: {httpContext.User.Identity.AuthenticationType}");
+            Console.WriteLine($"[AUTH DEBUG] User.Identity.IsAuthenticated: {httpContext.User.Identity.IsAuthenticated}");
+
+            _logger.LogInformation("[AUTH DEBUG] User.Identity.AuthenticationType: {AuthType}", httpContext.User.Identity.AuthenticationType);
+            _logger.LogInformation("[AUTH DEBUG] User.Identity.IsAuthenticated: {IsAuthenticated}", httpContext.User.Identity.IsAuthenticated);
+            _logger.LogInformation("User {UserId} signed in successfully.", user.UserId);
+
+            Console.WriteLine($"User {user.UserId} signed in successfully.");
         }
 
         /// <summary>
-        /// Signs in an admin user.
+        /// Sign in an admin user.
         /// </summary>
         public async Task SignInAdmin(HttpContext httpContext, User user)
         {
@@ -50,12 +73,11 @@ namespace EShop.Infrastructure.Security
                 throw new InvalidOperationException("حساب کاربری فعال نیست.");
 
             var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-        new Claim("AdminAuth", "true") // Indicates admin authentication
-    };
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+            new Claim("AdminAuth", "true") // Indicates admin authentication
+        };
 
-            // Add roles and custom claims
             if (user.UserRoles != null)
             {
                 foreach (var role in user.UserRoles)
@@ -77,22 +99,24 @@ namespace EShop.Infrastructure.Security
             var authProperties = new AuthenticationProperties
             {
                 IsPersistent = true,
-                AllowRefresh = true // Optional: Allows token refresh
+                ExpiresUtc = DateTime.UtcNow.Add(_adminAuthExpireTimeSpan),
+                AllowRefresh = true
             };
 
             await httpContext.SignInAsync("AdminAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
         }
+
         /// <summary>
-        /// Signs out the user.
+        /// Sign out the user.
         /// </summary>
         public async Task SignOutUser(HttpContext httpContext)
         {
             await httpContext.SignOutAsync("UserAuth");
             await httpContext.SignOutAsync("AdminAuth");
-            await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             // Redirect to login page after sign-out
             httpContext.Response.Redirect("/Account/Login");
         }
     }
+
 }
