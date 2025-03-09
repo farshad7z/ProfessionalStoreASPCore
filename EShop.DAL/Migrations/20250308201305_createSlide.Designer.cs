@@ -4,6 +4,7 @@ using EShop.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EShop.DAL.Migrations
 {
     [DbContext(typeof(EShopDbContext))]
-    partial class EShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250308201305_createSlide")]
+    partial class createSlide
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,178 +98,69 @@ namespace EShop.DAL.Migrations
                         new
                         {
                             ClaimId = 9,
-                            ClaimType = "CanAddProducts",
-                            Value = "افزودن محصولات فروشگاه"
-                        },
-                        new
-                        {
-                            ClaimId = 10,
-                            ClaimType = "ManageAccessUsers",
-                            Value = "مدیریت دسترسی کاربران فروشگاه"
-                        },
-                        new
-                        {
-                            ClaimId = 11,
                             ClaimType = "AdminCanManageShops",
                             Value = "مدیر سایت - مدیریت فروشگاه‌ها"
                         },
                         new
                         {
-                            ClaimId = 12,
+                            ClaimId = 10,
                             ClaimType = "AdminCanEditShops",
                             Value = "مدیر سایت - ویرایش فروشگاه‌ها"
                         },
                         new
                         {
-                            ClaimId = 13,
+                            ClaimId = 11,
                             ClaimType = "AdminCanRemoveShops",
                             Value = "مدیر سایت - حذف فروشگاه‌ها"
                         },
                         new
                         {
-                            ClaimId = 14,
+                            ClaimId = 12,
                             ClaimType = "AdminCanEditProducts",
                             Value = "مدیر سایت - ویرایش محصولات"
                         },
                         new
                         {
-                            ClaimId = 15,
+                            ClaimId = 13,
                             ClaimType = "AdminCanRemoveProducts",
                             Value = "مدیر سایت - حذف محصولات"
                         },
                         new
                         {
-                            ClaimId = 16,
+                            ClaimId = 14,
                             ClaimType = "AdminCanManageOrders",
                             Value = "مدیر سایت - مدیریت سفارشات"
                         },
                         new
                         {
-                            ClaimId = 17,
+                            ClaimId = 15,
                             ClaimType = "AdminCanAddUsers",
                             Value = "مدیر سایت - افزودن کاربران"
                         },
                         new
                         {
-                            ClaimId = 18,
+                            ClaimId = 16,
                             ClaimType = "AdminCanEditUsers",
                             Value = "مدیر سایت - ویرایش کاربران"
                         },
                         new
                         {
-                            ClaimId = 19,
+                            ClaimId = 17,
                             ClaimType = "AdminCanRemoveUsers",
                             Value = "مدیر سایت - حذف کاربران"
                         },
                         new
                         {
-                            ClaimId = 20,
+                            ClaimId = 18,
                             ClaimType = "AdminCanReplayComments",
                             Value = "مدیر سایت - پاسخ به نظرات"
                         },
                         new
                         {
-                            ClaimId = 21,
+                            ClaimId = 19,
                             ClaimType = "AdminManageAccessUsers",
                             Value = "مدیر سایت - مدیریت دسترسی کاربران"
                         });
-                });
-
-            modelBuilder.Entity("EShop.Core.Entities.Models.Employee", b =>
-                {
-                    b.Property<int>("EmployeeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeId"));
-
-                    b.Property<string>("Address")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<string>("BankAccountIBAN")
-                        .HasMaxLength(34)
-                        .HasColumnType("nvarchar(34)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("NationalCode")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<string>("SecondaryPhoneNumber")
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
-
-                    b.Property<int?>("ShopId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("EmployeeId");
-
-                    b.HasIndex("ShopId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Employees");
-
-                    b.HasData(
-                        new
-                        {
-                            EmployeeId = 1,
-                            Address = "زنجان، ابهر، خیابان اصلی، پلاک ۱۲",
-                            BankAccountIBAN = "IR021000001330000544121545",
-                            CreatedAt = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = true,
-                            IsDeleted = false,
-                            NationalCode = "4400230147",
-                            SecondaryPhoneNumber = "09058794262",
-                            ShopId = 1,
-                            UserId = 1
-                        });
-                });
-
-            modelBuilder.Entity("EShop.Core.Entities.Models.Product", b =>
-                {
-                    b.Property<int>("ProductId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("ShopId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductId");
-
-                    b.HasIndex("ShopId");
-
-                    b.ToTable("Product");
                 });
 
             modelBuilder.Entity("EShop.Core.Entities.Models.ProductCategory", b =>
@@ -748,94 +642,6 @@ namespace EShop.DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("EShop.Core.Entities.Models.Shop", b =>
-                {
-                    b.Property<int>("ShopId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShopId"));
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("FullAddress")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("Latitude")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("Longitude")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("OwnerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("PostalCode")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime>("RegistrationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ShopNameEn")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ShopNameFa")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("ShopId");
-
-                    b.HasIndex("OwnerId")
-                        .IsUnique();
-
-                    b.ToTable("Shops");
-
-                    b.HasData(
-                        new
-                        {
-                            ShopId = 1,
-                            Description = "فروشگاه اینترنتی مدرن با تنوع بالا در محصولات الکترونیکی، پوشاک و لوازم خانگی. ارائه دهنده بهترین قیمت‌ها با تضمین کیفیت!",
-                            Email = "BazarPal_info@gmail.com",
-                            FullAddress = "زنجان، ابهر، خیابان اصلی، پلاک 21",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Latitude = 36.1468m,
-                            Longitude = 49.2332m,
-                            OwnerId = 1,
-                            PhoneNumber = "09109999414",
-                            PostalCode = "445452654",
-                            RegistrationDate = new DateTime(2025, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ShopNameEn = "BazarPal",
-                            ShopNameFa = "بازارپال"
-                        });
-                });
-
             modelBuilder.Entity("EShop.Core.Entities.Models.Slide", b =>
                 {
                     b.Property<int>("SlideId")
@@ -889,6 +695,9 @@ namespace EShop.DAL.Migrations
                     b.Property<string>("ActiveCode")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
 
@@ -900,19 +709,14 @@ namespace EShop.DAL.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
+                    b.Property<bool>("HasShop")
+                        .HasMaxLength(300)
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsEmployeeShop")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsEmployeeSite")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastLoginDate")
+                    b.Property<DateTime?>("LastLogin")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
@@ -925,11 +729,8 @@ namespace EShop.DAL.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
-
-                    b.Property<DateTime>("RegistrationDate")
-                        .HasColumnType("datetime2");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(300)
@@ -943,14 +744,12 @@ namespace EShop.DAL.Migrations
                         new
                         {
                             UserId = 1,
+                            CreatedAt = new DateTime(2024, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified),
                             FirstName = "فرشاد",
+                            HasShop = true,
                             IsActive = true,
-                            IsDeleted = false,
-                            IsEmployeeShop = true,
-                            IsEmployeeSite = true,
                             LastName = "زمانی",
-                            PhoneNumber = "09109999414",
-                            RegistrationDate = new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified)
+                            PhoneNumber = "09109999414"
                         });
                 });
 
@@ -972,20 +771,6 @@ namespace EShop.DAL.Migrations
                     b.HasIndex("ClaimId");
 
                     b.ToTable("UserClaims");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = 1,
-                            ClaimId = 20,
-                            ClaimValue = "CanManageShop"
-                        },
-                        new
-                        {
-                            UserId = 1,
-                            ClaimId = 21,
-                            ClaimValue = "CanEditProducts"
-                        });
                 });
 
             modelBuilder.Entity("EShop.Core.Entities.Models.UserRole", b =>
@@ -1011,31 +796,6 @@ namespace EShop.DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("EShop.Core.Entities.Models.Employee", b =>
-                {
-                    b.HasOne("EShop.Core.Entities.Models.Shop", "Shop")
-                        .WithMany("Employees")
-                        .HasForeignKey("ShopId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("EShop.Core.Entities.Models.User", "User")
-                        .WithOne("Employee")
-                        .HasForeignKey("EShop.Core.Entities.Models.Employee", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Shop");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("EShop.Core.Entities.Models.Product", b =>
-                {
-                    b.HasOne("EShop.Core.Entities.Models.Shop", null)
-                        .WithMany("Products")
-                        .HasForeignKey("ShopId");
-                });
-
             modelBuilder.Entity("EShop.Core.Entities.Models.ProductCategory", b =>
                 {
                     b.HasOne("EShop.Core.Entities.Models.ProductCategory", "Parent")
@@ -1044,17 +804,6 @@ namespace EShop.DAL.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("EShop.Core.Entities.Models.Shop", b =>
-                {
-                    b.HasOne("EShop.Core.Entities.Models.User", "User")
-                        .WithOne("OwnedShop")
-                        .HasForeignKey("EShop.Core.Entities.Models.Shop", "OwnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("EShop.Core.Entities.Models.UserClaim", b =>
@@ -1114,19 +863,8 @@ namespace EShop.DAL.Migrations
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("EShop.Core.Entities.Models.Shop", b =>
-                {
-                    b.Navigation("Employees");
-
-                    b.Navigation("Products");
-                });
-
             modelBuilder.Entity("EShop.Core.Entities.Models.User", b =>
                 {
-                    b.Navigation("Employee");
-
-                    b.Navigation("OwnedShop");
-
                     b.Navigation("UserClaims");
 
                     b.Navigation("UserRoles");

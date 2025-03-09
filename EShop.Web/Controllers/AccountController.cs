@@ -94,9 +94,10 @@ namespace EShop.Web.Controllers
                     PhoneNumber = model.Register.MobileNumber,
                     PasswordHash =PasswordHasher.HashPassword(model.Register.Password),  // رمز عبور باید هش شده باشد
                     IsActive = true,
-                    HasShop = false,
-                    LastLogin=DateTime.Now,
-                    CreatedAt=DateTime.Now,
+                    IsEmployeeShop = false,
+                    IsEmployeeSite=false,
+                    RegistrationDate=DateTime.Now,
+                    LastLoginDate=DateTime.Now,
                 };
 
                 await _accountServices.RegisterUserAsync(user);
@@ -113,7 +114,7 @@ namespace EShop.Web.Controllers
             {
                 // ورود موفق - ایجاد سشن کاربر
                 await _authenticationService.SignInUser(HttpContext, user, rememberMe);
-                user.LastLogin = DateTime.Now;
+                user.LastLoginDate = DateTime.Now;
                 await _accountServices.UpdateUserAsync(user);
                 return true;
             }

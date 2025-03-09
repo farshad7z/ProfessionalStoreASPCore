@@ -39,7 +39,9 @@ namespace EShop.Infrastructure.Security
             new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
             new Claim("IsActive", user.IsActive.ToString().ToLower()),
             new Claim("InitialAuth", "true"), // Indicates initial authentication
-            new Claim("HasShop", user.HasShop.ToString().ToLower()),
+            new Claim("IsEmployeeShop", user.IsEmployeeShop.ToString().ToLower()),
+            new Claim("IsEmployeeSite", user.IsEmployeeSite.ToString().ToLower()),
+
         };
 
             var claimsIdentity = new ClaimsIdentity(claims, "UserAuth");
