@@ -9,9 +9,9 @@ namespace EShop.Core.Interfaces.Services.Public
 {
     public interface IProductCategoryServices
     {
-        Task<IEnumerable<ProductCategory>> GetAll();
-       Task<IEnumerable<ProductCategory>> GetCategoryForMenu();
-        Task<IEnumerable<ProductCategory>> GetCategoryOnMainPage();
+        Task<IEnumerable<ProductCategory>> GetAllAsync();
+       Task<IEnumerable<ProductCategory>> GetCategoryForMenuAsync();
+        Task<IEnumerable<ProductCategory>> GetCategoryOnMainPageAsync();
 
     }
 }

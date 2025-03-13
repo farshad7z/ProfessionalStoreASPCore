@@ -22,6 +22,9 @@ namespace EShop.DAL.Context
         #endregion
 
         #region Product
+        public DbSet<ProductSEO> ProductSEOs { get; set; }
+        public DbSet<ProductSelectCategory> ProductSelectCategories { get; set; }
+        public DbSet<Product> Products { get; set; }
         public DbSet<ProductCategory> productCategories { get; set; }
 
         #endregion
@@ -41,6 +44,15 @@ namespace EShop.DAL.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             #region Table attribute definition
+
+            modelBuilder.Entity<ProductSEO>(entity =>
+            entity.HasKey(pc => pc.Id));
+
+            modelBuilder.Entity<ProductSelectCategory>(entity =>
+            entity.HasKey(pc => pc.Id));
+
+            modelBuilder.Entity<Product>(entity =>
+            entity.HasKey(p => p.Id));
 
             modelBuilder.Entity<Shop>(entity =>
             {
@@ -87,12 +99,39 @@ namespace EShop.DAL.Context
 
             #region Relations
 
+            modelBuilder.Entity<ProductSEO>(entity =>
+            entity.HasOne(ps => ps.Product)
+            .WithOne(p => p.ProductSEO)
+            .OnDelete(DeleteBehavior.Cascade)); // حذف شدن SEO هنگام حذف محصول
+
+            modelBuilder.Entity<ProductSelectCategory>(entity =>
+            {
+
+                entity.HasOne(psc => psc.Product)
+                .WithMany(p => p.ProductSelectCategory)
+                .HasForeignKey(psc => psc.ProductId)
+                .OnDelete(DeleteBehavior.Cascade)
+                 .HasConstraintName("FK_ProductSelectCategory_Product");
+
+                entity.HasOne(psc => psc.ProductCategory)
+                .WithMany(pc => pc.ProductSelectCategory)
+                .HasForeignKey(psc => psc.ProductCategoryId)
+                .OnDelete(DeleteBehavior.Restrict) // جلوگیری از حذف دسته‌ای که هنوز محصولی دارد
+                .HasConstraintName("FK_ProductSelectCategory_ProductCategory");
+            });
+
+            modelBuilder.Entity<Product>(entity =>
+            entity.HasOne(p => p.Shop)
+            .WithMany(s => s.Products)
+            .HasForeignKey(p => p.ShopId)
+             .OnDelete(DeleteBehavior.Restrict));
+
             modelBuilder.Entity<Employee>(entity =>
             {
                 entity.HasOne(e => e.Shop)
                       .WithMany(s => s.Employees)
                       .HasForeignKey(e => e.ShopId)
-                      .OnDelete(DeleteBehavior.Restrict);
+                      .OnDelete(DeleteBehavior.Cascade); // حذف کارمندان در صورت حذف فروشگاه
             });
 
             modelBuilder.Entity<Shop>(entity =>
@@ -179,21 +218,21 @@ namespace EShop.DAL.Context
 
             modelBuilder.Entity<Shop>().HasData(
                 new Shop
-    {
-        ShopId = 1,
-        ShopNameFa = "بازارپال",
-        ShopNameEn = "BazarPal",
-        Description = "فروشگاه اینترنتی مدرن با تنوع بالا در محصولات الکترونیکی، پوشاک و لوازم خانگی. ارائه دهنده بهترین قیمت‌ها با تضمین کیفیت!",
-        FullAddress = "زنجان، ابهر، خیابان اصلی، پلاک 21",
-        PostalCode = "445452654",
-        PhoneNumber = "09109999414",
-        Email = "BazarPal_info@gmail.com",
-        Latitude = 36.1468m,
-        Longitude = 49.2332m,
-        RegistrationDate =new DateTime(2025, 3, 6),
+                {
+                    ShopId = 1,
+                    ShopNameFa = "بازارپال",
+                    ShopNameEn = "BazarPal",
+                    Description = "فروشگاه اینترنتی مدرن با تنوع بالا در محصولات الکترونیکی، پوشاک و لوازم خانگی. ارائه دهنده بهترین قیمت‌ها با تضمین کیفیت!",
+                    FullAddress = "زنجان، ابهر، خیابان اصلی، پلاک 21",
+                    PostalCode = "445452654",
+                    PhoneNumber = "09109999414",
+                    Email = "BazarPal_info@gmail.com",
+                    Latitude = 36.1468m,
+                    Longitude = 49.2332m,
+                    RegistrationDate = new DateTime(2025, 3, 6),
                     IsActive = true,
-        OwnerId = 1 // فرض می‌کنیم کاربر با ID=1 مالک است
-    }
+                    OwnerId = 1 // فرض می‌کنیم کاربر با ID=1 مالک است
+                }
 );
 
 
@@ -568,7 +607,7 @@ namespace EShop.DAL.Context
                     new AppClaim { ClaimId = 19, ClaimType = ConstClaims.AdminCanRemoveUsers, Value = "مدیر سایت - حذف کاربران" },
                     new AppClaim { ClaimId = 20, ClaimType = ConstClaims.AdminCanReplayComments, Value = "مدیر سایت - پاسخ به نظرات" },
                     new AppClaim { ClaimId = 21, ClaimType = ConstClaims.AdminManageAccessUsers, Value = "مدیر سایت - مدیریت دسترسی کاربران" }
-                } );
+                });
 
 
             modelBuilder.Entity<User>().HasData(

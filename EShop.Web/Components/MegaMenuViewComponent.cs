@@ -13,7 +13,7 @@ namespace EShop.Web.Components
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var result = await _productCategoryServices.GetCategoryForMenu();
+            var result = await _productCategoryServices.GetCategoryForMenuAsync();
             return View(result);
 
         }

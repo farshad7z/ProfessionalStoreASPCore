@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using EShop.Core.Enums;
 
 namespace EShop.Core.Entities.Models
@@ -46,6 +45,8 @@ namespace EShop.Core.Entities.Models
         #region Relations
         public virtual ProductCategory? Parent { get; set; }
         public virtual ICollection<ProductCategory> Children { get; set; } = new HashSet<ProductCategory>();
+        public ICollection<ProductSelectCategory>? ProductSelectCategory { get; set; } // گروه‌های انتخابی
+
         #endregion
     }
 }

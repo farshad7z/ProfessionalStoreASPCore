@@ -25,10 +25,8 @@ namespace EShop.Core.Entities.Models
         public int? ShopId { get; set; } // اگر کارمند فروشگاه باشد، شناسه فروشگاه را دارد
         public int UserId { get; set; } // شناسه کاربر اصلی
 
-        #region Relation
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
-        #endregion
 
 
         #region Relations

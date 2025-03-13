@@ -245,28 +245,56 @@ namespace EShop.DAL.Migrations
 
             modelBuilder.Entity("EShop.Core.Entities.Models.Product", b =>
                 {
-                    b.Property<int>("ProductId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<decimal?>("DiscountedPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("FullDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("ShopId")
+                    b.Property<int>("ShopId")
                         .HasColumnType("int");
 
-                    b.HasKey("ProductId");
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ShopId");
 
-                    b.ToTable("Product");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("EShop.Core.Entities.Models.ProductCategory", b =>
@@ -690,6 +718,65 @@ namespace EShop.DAL.Migrations
                         });
                 });
 
+            modelBuilder.Entity("EShop.Core.Entities.Models.ProductSEO", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("MetaDescription")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("MetaKeywords")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("MetaTitle")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("ProductSEOs");
+                });
+
+            modelBuilder.Entity("EShop.Core.Entities.Models.ProductSelectCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductCategoryId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductSelectCategories");
+                });
+
             modelBuilder.Entity("EShop.Core.Entities.Models.Role", b =>
                 {
                     b.Property<int>("RoleId")
@@ -1016,7 +1103,7 @@ namespace EShop.DAL.Migrations
                     b.HasOne("EShop.Core.Entities.Models.Shop", "Shop")
                         .WithMany("Employees")
                         .HasForeignKey("ShopId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("EShop.Core.Entities.Models.User", "User")
                         .WithOne("Employee")
@@ -1031,9 +1118,13 @@ namespace EShop.DAL.Migrations
 
             modelBuilder.Entity("EShop.Core.Entities.Models.Product", b =>
                 {
-                    b.HasOne("EShop.Core.Entities.Models.Shop", null)
+                    b.HasOne("EShop.Core.Entities.Models.Shop", "Shop")
                         .WithMany("Products")
-                        .HasForeignKey("ShopId");
+                        .HasForeignKey("ShopId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Shop");
                 });
 
             modelBuilder.Entity("EShop.Core.Entities.Models.ProductCategory", b =>
@@ -1044,6 +1135,38 @@ namespace EShop.DAL.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("EShop.Core.Entities.Models.ProductSEO", b =>
+                {
+                    b.HasOne("EShop.Core.Entities.Models.Product", "Product")
+                        .WithOne("ProductSEO")
+                        .HasForeignKey("EShop.Core.Entities.Models.ProductSEO", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("EShop.Core.Entities.Models.ProductSelectCategory", b =>
+                {
+                    b.HasOne("EShop.Core.Entities.Models.ProductCategory", "ProductCategory")
+                        .WithMany("ProductSelectCategory")
+                        .HasForeignKey("ProductCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_ProductSelectCategory_ProductCategory");
+
+                    b.HasOne("EShop.Core.Entities.Models.Product", "Product")
+                        .WithMany("ProductSelectCategory")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_ProductSelectCategory_Product");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("ProductCategory");
                 });
 
             modelBuilder.Entity("EShop.Core.Entities.Models.Shop", b =>
@@ -1104,9 +1227,18 @@ namespace EShop.DAL.Migrations
                     b.Navigation("UserClaims");
                 });
 
+            modelBuilder.Entity("EShop.Core.Entities.Models.Product", b =>
+                {
+                    b.Navigation("ProductSEO");
+
+                    b.Navigation("ProductSelectCategory");
+                });
+
             modelBuilder.Entity("EShop.Core.Entities.Models.ProductCategory", b =>
                 {
                     b.Navigation("Children");
+
+                    b.Navigation("ProductSelectCategory");
                 });
 
             modelBuilder.Entity("EShop.Core.Entities.Models.Role", b =>

@@ -15,9 +15,11 @@
   <ItemGroup>
     <Folder Include="DTOs\ViewModels\Admin\OtherAdminViewModels\" />
     <Folder Include="DTOs\ViewModels\Admin\SuperAdminViewModels\" />
+    <Folder Include="DTOs\ViewModels\Product\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 

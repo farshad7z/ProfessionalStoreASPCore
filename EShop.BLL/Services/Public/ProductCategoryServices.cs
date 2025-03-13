@@ -18,17 +18,17 @@ namespace EShop.BLL.Services.Public
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<IEnumerable<ProductCategory>> GetAll()
+        public async Task<IEnumerable<ProductCategory>> GetAllAsync()
         {
            return await _unitOfWork.Repository<ProductCategory>().GetAllAsync();
         }
 
-        public async Task<IEnumerable<ProductCategory>> GetCategoryForMenu()
+        public async Task<IEnumerable<ProductCategory>> GetCategoryForMenuAsync()
         {
             return await _unitOfWork.Repository<ProductCategory>().FindAsync(pc=>pc.MenuType != Core.Enums.MenuType.CategoryOnly);
         }
 
-        public async Task<IEnumerable<ProductCategory>> GetCategoryOnMainPage()
+        public async Task<IEnumerable<ProductCategory>> GetCategoryOnMainPageAsync()
         {
             return await _unitOfWork.Repository<ProductCategory>().FindAsync(pc => pc.MenuType != Core.Enums.MenuType.CategoryOnly && pc.IsCategoryOnMain==true);
         }

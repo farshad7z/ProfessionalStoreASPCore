@@ -16,6 +16,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,7 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Home\Components\" />
+    <Folder Include="Areas\ProfilePanel\Controllers\" />
+    <Folder Include="Views\Shared\Components\" />
   </ItemGroup>
 
 </Project>
