@@ -24,6 +24,10 @@ namespace EShop.Core.Interfaces.Services
         /// دریافت اطلاعات حساب کاربری بر اساس شماره موبایل.
         /// </summary>
         Task<User?> GetUserByMobileNumberAsync(string MobileNumber);
+        /// <summary>
+        /// دریافت اطلاعات حساب کاربری بر اساس Id.
+        /// </summary>
+        Task<User?> GetUserByIdAsync(int userId);
 
         /// <summary>
         ///ثبت نام کاربر جدید.
@@ -31,8 +35,22 @@ namespace EShop.Core.Interfaces.Services
         Task<int>? RegisterUserAsync(User model);
 
         /// <summary>
-        ///ثبت نام کاربر جدید.
+        ///اپدیت اطلاعات کاربر .
         /// </summary>
         Task UpdateUserAsync(User model);
+
+        /// <summary>
+        ///'دریاقت اطلاعات حساب کارمند'.
+        /// </summary>
+        Task<Employee>? GetDetailsEmployeeByUserIdAsync(int UserId);
+
+        /// <summary>
+        ///'بررسی وجود و صحت اطلاعات حساب کارمند'.
+        /// </summary>
+        Task<bool> IsExistsEmployeeByUserIdAsync(int UserId);
+        /// <summary>
+        ///اپدیت اطلاعات کارمند.
+        /// </summary>
+        Task UpdateEmployeeAsync(Employee model);
     }
 }

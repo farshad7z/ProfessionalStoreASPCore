@@ -26,6 +26,8 @@
                     <span class="text-center d-block my-3">ورود به حساب</span>
                     <div class="form-div">
                         <form asp-controller="Account" asp-action="LoginRegister" method="post">
+                            <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
                             <input asp-for="Login.MobileNumber" placeholder="شماره موبایل خود را وارد کنید" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             <span class="text-danger" asp-validation-for="Login.MobileNumber"></span>
 

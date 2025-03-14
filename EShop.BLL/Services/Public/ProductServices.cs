@@ -30,5 +30,10 @@ namespace EShop.BLL.Services
             await _unitOfWork.SaveAsync();
             return model.Id;
         }
+
+        public async Task<IEnumerable<Product>> GetAllAsync()
+        {
+            return await _unitOfWork.Repository<Product>().GetAllAsync();
+        }
     }
 }

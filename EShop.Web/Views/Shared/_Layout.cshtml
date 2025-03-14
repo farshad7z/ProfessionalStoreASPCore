@@ -16,7 +16,7 @@
 </head>
 
 <body>
-    
+
     <header class="page-header mb-4">
         <!-- Start OFFER Top -->
         <div class="main-top">
@@ -60,7 +60,7 @@
                         <div class="language-selector dropdown">
                             <i class="bi bi-globe"></i> <!-- آیکون کره زمین -->
                             <button class="dropdown-toggle" id="dropdownMenuButton" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
+                            aria-expanded="false">
                                 فارسی
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -69,19 +69,19 @@
                                 </li>
                                 <li>
                                     <button class="dropdown-item" type="button"
-                                            onclick="setLanguage('English')">
+                                    onclick="setLanguage('English')">
                                         English
                                     </button>
                                 </li>
                                 <li>
                                     <button class="dropdown-item" type="button"
-                                            onclick="setLanguage('Français')">
+                                    onclick="setLanguage('Français')">
                                         Français
                                     </button>
                                 </li>
                                 <li>
                                     <button class="dropdown-item" type="button"
-                                            onclick="setLanguage('Español')">
+                                    onclick="setLanguage('Español')">
                                         Español
                                     </button>
                                 </li>
@@ -93,8 +93,48 @@
                         </div>
                         <div class="our-link">
                             <ul>
-                                <li class="d-none d-md-inline-block"><a href="#">حساب کاربری من</a></li>
-                                <li><a href="#">مکان فروشگاه </a></li>
+                                @if (User.Identity.IsAuthenticated && User.HasClaim(c => c.Type == "IsEmployeeShop" && c.Value.ToLower() == "true"))
+                                {
+                                    if (User.Identity.AuthenticationType == "AdminAuth")
+                                    {
+                                        <li class="d-none d-md-inline-block">
+                                            <a asp-area="adminshop" asp-controller="dashboard" asp-action="index">
+                                                <span>حساب فروشگاه من</span>
+                                                <i class="bi bi-shop" aria-label="فروشگاه"></i>
+                                            </a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                                                            <li data-bs-toggle="modal" data-bs-target="#AdminloginShopModal" data-bs-placement="bottom" title="ورود به بخش ادمین" class="d-inline-block">
+                                        <a href="#">
+                                            <span>حساب فروشگاه من</span>
+                                            <i class="bi bi-shop" aria-label="فروشگاه"></i>
+                                        </a>
+                                    </li>
+                                    }
+
+                                }
+                                else
+                                {
+                                    <li data-bs-toggle="modal" data-bs-target="#MessageModal" data-bs-placement="bottom" title="ورود به بخش ادمین" class="d-inline-block">
+                                        <a href="#">
+                                            <span>میخوام فروشنده بشم</span>
+                                            <i class="bi bi-house-add"></i>
+                                        </a>
+                                    </li>
+                                }
+                                @if (User.Identity.IsAuthenticated && User.HasClaim(c => c.Type == "IsEmployeeSite" && c.Value.ToLower() == "true"))
+                                {
+
+                                    <li data-bs-toggle="modal" data-bs-target="#AdminloginSiteModal" data-bs-placement="bottom" title="ورود به بخش ادمین" class="d-inline-block">
+                                        <a href="#">
+                                            <span>ورود به بخش ادمین</span>
+                                            <i class="bi bi-box-arrow-in-right"></i>
+                                        </a>
+                                    </li>
+
+                                }
                                 <li><a href="#">تماس با ما</a></li>
                             </ul>
                         </div>
@@ -161,6 +201,7 @@
                                 <span> خروج </span>
                             </a>
                         }
+
                         <div class="top-access">
                             <ul class="text-center">
                                 @if (User.Identity.IsAuthenticated)
@@ -398,14 +439,12 @@
     <!-- End Services Box -->
     <!-- Start Services Box -->
     <!-- End Services Box -->
-
-
     <!-- Starrt Footer -->
     @await Html.PartialAsync("_Footer")
     <!-- End Footer -->
 
 
-@*     <!-- Start Modal Box Login/Register -->
+    @*     <!-- Start Modal Box Login/Register -->
                                 <div class="modal fade" id="loginRegisterModal" tabindex="-1" aria-labelledby="loginRegisterModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
@@ -473,8 +512,91 @@
                 </div>
             </div>
         </div>
+ *@
 
-        <!-- End Modal Box --> *@
+
+    <!-- Start Modal Box Login/Register -->
+    <div class="modal fade" id="MessageModal" tabindex="-1" aria-labelledby="MessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <i class="bi bi-person"> به زودی...</i>
+                    <div class="mb-3">
+                        <span>کاربر عزیز امکان ثبت فرورشگاه درسایت بازارپال برای عموم به زودی  فراهم خواهد شد ، از شکیبایی شما متشکریم</span>
+                        <span> برای اطلاعات بیشتر با پشتیبانی تماس بگیرید</span>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="AdminLoginSiteModal" tabindex="-1" aria-labelledby="AdminLoginSiteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <i class="bi bi-person">ورود به بخش ادمین سایت</i>
+                    <form asp-controller="account" asp-action="loginadminsite" method="post">
+                        <div class="mb-3">
+                            <input name="Password" type="password" placeholder="رمز عبور ادمین خود را وارد کنید">
+                        </div>
+                        <button type="submit" class="m-3">
+                            ورود
+                        </button>
+                    </form>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#AdminResetPasswordModal" class="m-3">بازیابی رمز عبورادمین</a>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+    <div class="modal fade" id="AdminLoginShopModal" tabindex="-1" aria-labelledby="AdminLoginShopModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <i class="bi bi-person"> ورود به بخش ادمین فروشگاه</i>
+                    <form asp-controller="account" asp-action="loginadmin" method="post">
+                        <input type="hidden" name="Dashboard" value="adminShop" />
+                        <div class="mb-3">
+                            <input name="Password" type="password" placeholder="رمز عبور ادمین خود را وارد کنید">
+                        </div>
+                        <button type="submit" class="m-3">
+                            ورود
+                        </button>
+                    </form>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#AdminResetPasswordModal" class="m-3">بازیابی رمز عبورادمین</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="AdminResetPasswordModal" tabindex="-1" aria-labelledby="AdminResetPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <i class="bi bi-key"> بازیابی رمز عبور</i>
+                    <form asp-controller="Account" asp-action="ResetPassword" method="post">
+                        <div class="mb-3">
+                            <input type="text" name="EmailOrMobile" placeholder="شماره موبایل یا ایمیل خود را وارد کنید" class="form-control" required>
+                        </div>
+                        <button type="submit" class="m-3">
+                            بازیابی رمز عبور
+                        </button>
+                    </form>
+                    @if (User.Identity.IsAuthenticated && User.HasClaim(c => c.Type == "IsEmployeeSite" && c.Value.ToLower() == "true"))
+                    {
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#AdminLoginSiteModal" class="m-3">بازگشت به صفحه ادمین سایت'</a>
+                    }
+                    @if (User.Identity.IsAuthenticated && User.HasClaim(c => c.Type == "IsEmployeeShop" && c.Value.ToLower() == "true"))
+                    {
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#AdminLoginShopModal" class="m-3">بازگشت به صفحه ادمین فروشگاه</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- End Modal Box -->
 
 
 
@@ -487,25 +609,25 @@
 
     <script src="~/Public/js/jquery.simple.timer.js"></script>
 
-        <!-- For Offer -->
+    <!-- For Offer -->
     <script src="~/Public/js/jquery.superslides.min.js"></script>
     <script src="~/Public/js/inewsticker.js"></script>
     <script src="~/Public/js/images-loded.min.js"></script>
     <script src="~/Public/js/baguetteBox.min.js"></script>
-        <!--End For Offer -->
-        <!-- ALL PLUGINS insert 1403.03.23 -->
+    <!--End For Offer -->
+    <!-- ALL PLUGINS insert 1403.03.23 -->
     <script src="~/Public/js/bootstrap-select.js"></script>
     <script src="~/Public/js/isotope.min.js"></script>
-        <!-- END ALL PLUGINS insert 1403.03.23 -->
-        <!-- Discount-->
+    <!-- END ALL PLUGINS insert 1403.03.23 -->
+    <!-- Discount-->
     <script src="~/Public/plugin/swiper/swiper-bundle.min.js"></script>
     <script src="~/Public/plugin/timer/timer.js"></script>
     <script src="~/Public/plugin/hint-css/hint-css.js"></script>
-        <!--END Discount-->
-        <script src="~/Site/js/cart.js"></script>
+    <!--END Discount-->
+    <script src="~/Site/js/cart.js"></script>
 
 
-        <script src="~/Site/js/index.js"></script>
+    <script src="~/Site/js/index.js"></script>
 
 
 </body>

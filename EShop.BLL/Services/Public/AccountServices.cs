@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace EShop.BLL.Services.Public
 {
-   public class AccountServices : IAccountServices
+    public class AccountServices : IAccountServices
     {
         private readonly IUnitOfWork _unitOfWork;
         public AccountServices(IUnitOfWork unitOfWork)
@@ -21,15 +21,30 @@ namespace EShop.BLL.Services.Public
             _unitOfWork = unitOfWork;
         }
 
+        public async Task<Employee> GetDetailsEmployeeByUserIdAsync(int userId)
+        {
+            return await _unitOfWork.Repository<Employee>().FindSingleOrDefaultAsync(e => e.UserId == userId) ?? null;
+        }
+
+        public async Task<User?> GetUserByIdAsync(int userId)
+        {
+            return await _unitOfWork.Repository<User>().GetByIdAsync(userId);
+        }
+
         public async Task<User?> GetUserByMobileNumberAsync(string mobileNumber)
         {
             return await _unitOfWork.Repository<User>().FindSingleOrDefaultAsync(u => u.PhoneNumber == mobileNumber);
-     
+
         }
 
         public Task<bool> IsExistMobileNumberAsync(string mobileNumber)
         {
             return _unitOfWork.Repository<User>().ExistsAsync(p => p.PhoneNumber == mobileNumber);
+        }
+
+        public async Task<bool> IsExistsEmployeeByUserIdAsync(int userId)
+        {
+            return await _unitOfWork.Repository<Employee>().ExistsAsync(e => e.UserId == userId);
         }
 
         public async Task<int>? RegisterUserAsync(User model)
@@ -41,11 +56,17 @@ namespace EShop.BLL.Services.Public
 
         }
 
-
-       public async Task UpdateUserAsync(User model)
+        public async Task UpdateEmployeeAsync(Employee model)
         {
-             _unitOfWork.Repository<User>().Update(model);
-              await _unitOfWork.SaveAsync();
+
+            _unitOfWork.Repository<Employee>().Update(model);
+            await _unitOfWork.SaveAsync();
+        }
+
+        public async Task UpdateUserAsync(User model)
+        {
+            _unitOfWork.Repository<User>().Update(model);
+            await _unitOfWork.SaveAsync();
         }
     }
 }

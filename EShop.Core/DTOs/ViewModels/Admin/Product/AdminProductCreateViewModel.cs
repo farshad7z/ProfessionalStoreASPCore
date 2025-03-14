@@ -25,12 +25,12 @@ namespace EShop.Core.DTOs.ViewModels.Product
         public decimal Price { get; set; }
 
         [Range(0, double.MaxValue, ErrorMessage = "قیمت تخفیف‌خورده باید عددی مثبت باشد.")]
-        [Display(Name = "قیمت تخفیف‌خورده")]
+        [Display(Name = "قیمت تخفیف‌ خورده")]
         public decimal? DiscountedPrice { get; set; }
 
         [Required(ErrorMessage = "تصویر محصول الزامی است.")]
         [Display(Name = "تصویر محصول")]
-        public IFormFile Image { get; set; } = default!;
+        public string ImageProduct { get; set; } = default!;
 
         [Required(ErrorMessage = "انتخاب فروشگاه الزامی است.")]
         [Display(Name = "فروشگاه")]

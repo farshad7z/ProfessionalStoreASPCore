@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using EShop.Core.Entities.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System;
+using System.Security.Claims;
 namespace EShop.Web.Controllers
 {
     public class AccountController : Controller
@@ -25,8 +26,10 @@ namespace EShop.Web.Controllers
 
         //[Route("login")]        
         [HttpGet]
-        public IActionResult LoginRegister()
+        public IActionResult LoginRegister(string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+
             return View(new LoginRegisterViewModel());
         }
 
@@ -71,7 +74,19 @@ namespace EShop.Web.Controllers
                 }
 
                 bool isLogin = await login(user, model.Login.RememberMe);
-                return RedirectToAction("index", "Home");
+                if (isLogin)
+                {
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl); // بازگشت به صفحه‌ی قبلی
+                    }
+
+                    return RedirectToAction("Index", "Home"); // اگر returnUrl نداشت، به صفحه اصلی برمی‌گردد
+                }
+
+                ModelState.AddModelError(string.Empty, "ایمیل یا رمز عبور اشتباه است.");
+                return View(model);
+
             }
             else if (model.Register != null)
             {
@@ -103,69 +118,12 @@ namespace EShop.Web.Controllers
                 await _accountServices.RegisterUserAsync(user);
                 var result = await _accountServices.GetUserByMobileNumberAsync(user.PhoneNumber);
                 bool isLogin= await login(result, false);
-                return RedirectToAction("index", "Home");
+                return Redirect(returnUrl); // بازگشت به صفحه‌ای که کاربر درخواست کرده بود
             }
 
             return View(model);
         }
-        private async Task<bool> login(User user,bool rememberMe)
-        {
-            try
-            {
-                // ورود موفق - ایجاد سشن کاربر
-                await _authenticationService.SignInUser(HttpContext, user, rememberMe);
-                user.LastLoginDate = DateTime.Now;
-                await _accountServices.UpdateUserAsync(user);
-                return true;
-            }
-            catch (InvalidOperationException ex)
-            {
-                ModelState.AddModelError("", ex.Message);
-                return false;
-            }
-        }
 
-        //[HttpPost]
-        //    public async Task<IActionResult> RegisterUser(RegisterViewModel model , string returnUrl=null )
-        //    {
-        //        // بررسی اینکه آیا کاربر قبلاً وارد سیستم شده است
-        //        if (HttpContext.User.Identity.IsAuthenticated)
-        //        {
-        //            // اگر وارد سیستم شده است، به صفحه اصلی یا صفحه پروفایل هدایت می‌کنیم
-        //            return RedirectToAction("Index", "Home");  // یا هر صفحه دیگری که می‌خواهید
-        //        }
-
-        //        if (!ModelState.IsValid)
-        //        {
-        //            return View("LoginRegister", new LoginRegisterViewModel() { Register = model });
-        //        }
-        //        if (!Regex.IsMatch(model.MobileNumber, @"^09\d{9}$"))
-        //        {
-        //            ModelState.AddModelError("Mobile", "شماره موبایل نامعتبر است.");
-        //        }
-        //        var user = await _accountServices.GetUserByMobileNumberAsync(model.MobileNumber);
-
-        //        if (user != null)
-        //        {
-        //            ModelState.AddModelError("Mobile", "کاربری با این شماره قبلا  ثبت نام کرده.");
-        //            return View("LoginRegister", new LoginRegisterViewModel() { Register = model });
-        //        }
-
-        //        if (!user.IsActive)
-        //        {
-        //            ModelState.AddModelError("Mobile", "حساب کاربری شما غیرفعال است.");
-        //            return View("LoginRegister", new LoginRegisterViewModel() { Register = model });
-        //        }
-        //        if (model.Password !=model.Password)
-        //        {
-        //            ModelState.AddModelError("Mobile", "تکرار رمز عبور مطابقت ندارد.");
-        //            return View("LoginRegister", new LoginRegisterViewModel() { Register = model });
-        //        }
-        //        model.Password = PasswordHasher.HashPassword(model.Password);
-        //        _accountServices.RegisterUserAsync(model);
-        //        return RedirectToLocal(returnUrl);
-
-        //    }
 
         [Authorize(AuthenticationSchemes = "UserAuth")]
         public async Task<IActionResult> LogoutUser()
@@ -173,6 +131,80 @@ namespace EShop.Web.Controllers
             await _authenticationService.SignOutUser(HttpContext);
             return RedirectToAction("Index", "Home");
 
+        }
+
+        public async Task<IActionResult> LoginAdmin(string password, string dashboard = null)
+        {
+            if (!HttpContext.User.Identity.IsAuthenticated)
+            {
+                // اگر وارد سیستم شده است، به صفحه اصلی هدایت می‌شود
+                return RedirectToAction("Index", "Home");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            if (password!= null)
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null)
+                {
+                    return RedirectToAction("Index", "Home");
+
+                }
+                int userId =userIdClaim.Value !=null ? int.Parse(userIdClaim.Value) : 0;
+                var user = await _accountServices.GetUserByIdAsync(userId);
+                if (user == null)
+                {
+                    ModelState.AddModelError("PublicError","  کاربری با این اطلاعات یافت نشد.");
+                    return RedirectToAction("Index", "Home");
+                }
+                bool isExistsEmployee = await _accountServices.IsExistsEmployeeByUserIdAsync(userId);
+
+                if (isExistsEmployee==false)
+                {
+                    if (dashboard.ToLower()=="adminshop")
+                    user.IsEmployeeShop = false;
+                    else
+                    {
+                        user.IsEmployeeSite = false;
+                    }
+                    await _accountServices.UpdateUserAsync(user);
+                    ModelState.AddModelError("PublicError","کارمندی با این اطلاعات یافت نشد.");
+                    return RedirectToAction("Index", "Home");
+                }
+
+                var employee = await _accountServices.GetDetailsEmployeeByUserIdAsync(userId);
+                if (!employee.IsActive)
+                {
+                    ModelState.AddModelError("PublicError", "حساب کارمندی شما غیرفعال است.");
+                    return RedirectToAction("Index", "Home");
+                }
+
+                bool isLogin = await loginAdmin( user, employee, true);
+                if (isLogin)
+                {
+                    if (!string.IsNullOrEmpty(dashboard))
+                    {
+                        if(dashboard.ToLower()== "adminshop")
+                        {
+                            return Redirect("/AdminShop/Dashboard/Index");
+
+                        }
+                        else if (dashboard.ToLower() == "adminsite")
+                        {
+
+                        }
+
+                    }
+                    return RedirectToAction("Index", "Home"); // اگر returnUrl نداشت، به صفحه اصلی برمی‌گردد
+
+                }
+            }
+            ModelState.AddModelError(string.Empty, " رمز عبور اشتباه است.");
+            return RedirectToAction("Index", "Home"); // اگر returnUrl نداشت، به صفحه اصلی برمی‌گردد
         }
         // GET: AccountController1
         public ActionResult Index()
@@ -195,5 +227,45 @@ namespace EShop.Web.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
+
+
+        #region Functions
+
+        private async Task<bool> login(User user, bool rememberMe)
+        {
+            try
+            {
+                // ورود موفق - ایجاد سشن کاربر
+                await _authenticationService.SignInUser(HttpContext, user, rememberMe);
+                user.LastLoginDate = DateTime.Now;
+                await _accountServices.UpdateUserAsync(user);
+                return true;
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return false;
+            }
+        }
+
+
+        private async Task<bool> loginAdmin(User user, Employee employee, bool rememberMe)
+        {
+            try
+            {
+                // ورود موفق - ایجاد سشن کاربر
+                await _authenticationService.SignInAdmin(HttpContext, user,employee, rememberMe);
+                employee.UpdatedAt = DateTime.Now;
+                await _accountServices.UpdateEmployeeAsync(employee);
+                return true;
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return false;
+            }
+        }
+        #endregion
+
     }
 }

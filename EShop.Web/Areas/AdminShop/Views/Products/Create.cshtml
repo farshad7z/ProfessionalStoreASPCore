@@ -1,43 +1,130 @@
 ﻿@using EShop.Core.DTOs.ViewModels.Product
 @model AdminProductCreateViewModel
 @{
-    ViewData["Title"] = "افزودن محصول";
+    ViewBag.Title = "ایجاد محصول جدید";
 }
+
 
 <h2>@ViewData["Title"]</h2>
 
 <form asp-action="Create" method="post" enctype="multipart/form-data">
-    <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
 
-    <div class="form-group">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
 
-    <div class="form-group">
-        <label asp-for="FullDescription"></label>
-        <textarea asp-for="FullDescription" class="form-control"></textarea>
-        <span asp-validation-for="FullDescription" class="text-danger"></span>
-    </div>
+    <div class="row">
+        
+        <div class="col-8">
+            @Html.AntiForgeryToken()
+            @if (ViewBag.ErrorSelectedGroups == true)
+            {
+                <div class="alert alert-danger">
+                    لطفا گروه محصول را انتخاب کنید
+                </div>
+            }
 
-    <div class="form-group">
-        <label asp-for="Price"></label>
-        <input asp-for="Price" class="form-control" type="number" step="0.01" />
-        <span asp-validation-for="Price" class="text-danger"></span>
-    </div>
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    <label asp-for="Name"></label>
+                    <div class="col-md-10">
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
 
-    <div class="form-group">
-        <label asp-for="DiscountedPrice"></label>
-        <input asp-for="DiscountedPrice" class="form-control" type="number" step="0.01" />
-        <span asp-validation-for="DiscountedPrice" class="text-danger"></span>
-    </div>
+                <div class="form-group">
+                    <label asp-for="Description"></label>
+                    <div class="col-md-10">
+                        <textarea asp-for="Description" class="form-control"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
 
-    <div class="form-group">
+                <div class="form-group">
+                    <label asp-for="FullDescription"></label>
+                    <div class="col-md-10">
+                        <textarea asp-for="FullDescription" class="form-control"></textarea>
+                        <span asp-validation-for="FullDescription" class="text-danger"></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Price"></label>
+                <div class="col-md-10">
+                    <input asp-for="Price" class="form-control" type="number" step="0.01" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DiscountedPrice"></label>
+                <div class="col-md-10">
+                    <input asp-for="DiscountedPrice" class="form-control" type="number" step="0.01" />
+                    <span asp-validation-for="DiscountedPrice" class="text-danger"></span>
+                </div>
+            </div>
+
+        </div>
+
+
+
+
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header bg-primary my-3">
+                    تصویر محصول
+                </div>
+                <div class="card-body">
+                    <img id="imgPreviewProduct" src="~/Images/ProductImages/images.png" class="card-img-top img-thumbnail" style="height:250px; width:350px" alt="...">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ImageProduct, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10 my-3">
+                            <input type="file" name="imageProduct" id="imageProduct" />
+                            @Html.ValidationMessageFor(model => model.ImageProduct, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-primary">
+                    انتخاب گروه
+                </div>
+                <div class="card-body">
+                    @{
+                        // دریافت لیست دسته‌بندی‌ها از ViewBag
+                        List<ProductCategory> categories = ViewBag.Product_Category;
+                    }
+                    <ul>
+                        @foreach (var category in categories.Where(c => c.ParentId == null))
+                        {
+                            <li>
+                                <input type="checkbox" name="SelectedCategoryIds" value="@category.CategoryId" />
+                                <span>@category.Name</span>
+
+                                @if (categories.Any(c => c.ParentId == category.CategoryId))
+                                {
+                                    <ul>
+                                        @foreach (var subcategory in categories.Where(g => g.ParentId == category.CategoryId))
+                                        {
+                                            <li>
+                                                <input type="checkbox" name="SelectedCategoryIds" value="@subcategory.CategoryId" />
+                                                <span>@subcategory.Name</span>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+
+
+        </div>
+
+        @*     <div class="form-group">
         <label asp-for="Image"></label>
         <input asp-for="Image" class="form-control" type="file" />
         <span asp-validation-for="Image" class="text-danger"></span>
@@ -54,19 +141,39 @@
         <!-- فرض کنید لیست دسته‌ها از کنترلر به View ارسال شده باشد -->
         <select asp-for="SelectedCategoryIds" asp-items="ViewBag.CategoryList" class="form-control" multiple="multiple"></select>
         <span asp-validation-for="SelectedCategoryIds" class="text-danger"></span>
-    </div>
+    </div> *@
 
-    <div class="form-group">
-        <label asp-for="IsAvailable"></label>
-        <input asp-for="IsAvailable" type="checkbox" />
-        <span asp-validation-for="IsAvailable" class="text-danger"></span>
+        <div class="form-group">
+            <label asp-for="IsAvailable"></label>
+            <input asp-for="IsAvailable" type="checkbox" />
+            <span asp-validation-for="IsAvailable" class="text-danger"></span>
+        </div>
     </div>
-
     <button type="submit" class="btn btn-primary">ثبت محصول</button>
 </form>
+<div>
+    @Html.ActionLink("بازگشت به لیست محصولات", "Index")
+</div>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        imageProduct.onchange = evt => {
+            const [file] = imageProduct.files
+            if (file) {
+                imgPreviewProduct.src = URL.createObjectURL(file)
+            }
+        }
+    </script>
+    <script src="/ckeditor/ckeditor.js"></script>
+    <script src="/ckeditor/adapters/jquery.js"></script>
+
+    <script>
+        $(function () {
+            $('#Text').ckeditor();
+        });
+    </script>
 }

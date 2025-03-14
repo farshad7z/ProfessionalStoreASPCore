@@ -37,9 +37,10 @@ namespace EShop.Web.Areas.AdminShop.Controllers
         }
 
         // GET: ProductsController
-        public ActionResult Index()
+        public  async Task<ActionResult> Index()
         {
-            return View();
+            var allProducts =await _productServices.GetAllAsync();
+            return View(allProducts);
         }
 
         // GET: ProductsController/Details/5
@@ -51,7 +52,12 @@ namespace EShop.Web.Areas.AdminShop.Controllers
         // GET: ProductsController/Create
         public async Task<ActionResult> Create()
         {
-            ViewBag.CategoryList = new MultiSelectList(await _productCategoryServices.GetAllAsync(), "CategoryId", "Name");
+            // دریافت لیست دسته‌بندی‌ها از سرویس
+            var categories = await _productCategoryServices.GetAllAsync();
+
+            // ارسال لیست دسته‌بندی‌ها به View
+            ViewBag.Product_Category = categories;
+
             return View();
         }
 
@@ -69,12 +75,12 @@ namespace EShop.Web.Areas.AdminShop.Controllers
                 }
 
                 // اعتبارسنجی فایل آپلود شده جهت جلوگیری از آپلود فایل‌های مخرب
-                if (!IsValidImage(model.Image))
-                {
-                    ModelState.AddModelError("Image", "فایل آپلود شده معتبر نیست یا ممکن است مخرب باشد.");
-                    ViewBag.CategoryList = new MultiSelectList(await _productCategoryServices.GetAllAsync(), "CategoryId", "Name");
-                    return View(model);
-                }
+                //if (!IsValidImage(model.ImageProduct))
+                //{
+                //    ModelState.AddModelError("Image", "فایل آپلود شده معتبر نیست یا ممکن است مخرب باشد.");
+                //    ViewBag.CategoryList = new MultiSelectList(await _productCategoryServices.GetAllAsync(), "CategoryId", "Name");
+                //    return View(model);
+                //}
 
                 // مسیر پوشه آپلودها
                 string uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "products");
@@ -82,13 +88,13 @@ namespace EShop.Web.Areas.AdminShop.Controllers
                     Directory.CreateDirectory(uploadsFolder);
 
                 // تولید نام یکتا برای فایل تصویر
-                string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(model.Image.FileName);
+                string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(model.ImageProduct);
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
                 // ذخیره فایل اصلی
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
-                    await model.Image.CopyToAsync(fileStream);
+                    //await model.ImageProduct.CopyToAsync(fileStream);
                 }
 
                 // تولید Thumbnail (مثلاً ابعاد 200x200 پیکسل)

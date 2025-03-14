@@ -69,7 +69,7 @@ namespace EShop.Infrastructure.Security
         /// <summary>
         /// Sign in an admin user.
         /// </summary>
-        public async Task SignInAdmin(HttpContext httpContext, User user)
+        public async Task SignInAdmin(HttpContext httpContext,User user  , Employee employee , bool rememberMe)
         {
             if (!user.IsActive)
                 throw new InvalidOperationException("حساب کاربری فعال نیست.");
@@ -114,6 +114,17 @@ namespace EShop.Infrastructure.Security
         public async Task SignOutUser(HttpContext httpContext)
         {
             await httpContext.SignOutAsync("UserAuth");
+            await httpContext.SignOutAsync("AdminAuth");
+
+            // Redirect to login page after sign-out
+            httpContext.Response.Redirect("/Account/Login");
+        }
+
+        /// <summary>
+        /// Sign out the user.
+        /// </summary>
+        public async Task SignOutAdminUser(HttpContext httpContext)
+        {
             await httpContext.SignOutAsync("AdminAuth");
 
             // Redirect to login page after sign-out

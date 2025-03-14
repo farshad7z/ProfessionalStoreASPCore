@@ -18,5 +18,10 @@ namespace EShop.Core.Interfaces.Services.Public
         ///افزودن دسته بندی به محصولات .
         /// </summary>
         Task<int>? AddProductCategoryAsync(ProductSelectCategory model);
+
+        /// <summary>
+        ///دریاقت لیست همه محصولات.
+        /// </summary>
+        Task<IEnumerable<Product>> GetAllAsync();
     }
 }
