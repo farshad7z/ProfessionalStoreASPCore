@@ -1,35 +1,48 @@
 ﻿using EShop.BLL.Services;
+using EShop.BLL.Services.Public;
 using EShop.Core.DTOs.ViewModels.Admin.Product;
 using EShop.Core.DTOs.ViewModels.Product;
 using EShop.Core.Entities.Models;
+using EShop.Core.Interfaces.Services;
 using EShop.Core.Interfaces.Services.Public;
+using EShop.Infrastructure.Convertors;
+using EShop.Infrastructure.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
+using Newtonsoft.Json;
+using NuGet.Packaging.Signing;
+using SixLabors.ImageSharp;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace EShop.Web.Areas.AdminShop.Controllers
 {
     [Area("AdminShop")]
-    [Authorize(AuthenticationSchemes ="UserAuth")]
+    [Authorize, Authorize(AuthenticationSchemes = "AdminAuth")]
     public class ProductsController : Controller
     {
         private readonly IProductServices _productServices;
         private readonly IProductCategoryServices _productCategoryServices; // برای کار با دسته‌ها
+        private readonly IAccountServices _AccountServices;
         private readonly IWebHostEnvironment _env;
 
         // مجوزهای فایل مجاز و محدودیت حجم (مثلاً 10 مگابایت)
         private readonly string[] _permittedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
         private readonly long _fileSizeLimit = 10 * 1024 * 1024; // 10MB
 
-        public ProductsController(IProductServices productServices , IProductCategoryServices productCategoryServices, IWebHostEnvironment env)
+        public string PersianToLatinMap { get; private set; }
+
+        public ProductsController(IProductServices productServices, IProductCategoryServices productCategoryServices, IAccountServices AccountServices, IWebHostEnvironment env)
         {
+            _AccountServices = AccountServices;
             _productServices = productServices;
             _productCategoryServices = productCategoryServices;
             _env = env;
@@ -37,9 +50,12 @@ namespace EShop.Web.Areas.AdminShop.Controllers
         }
 
         // GET: ProductsController
-        public  async Task<ActionResult> Index()
+        public async Task<ActionResult> Index()
         {
-            var allProducts =await _productServices.GetAllAsync();
+            var allProducts  = await _productServices.GetAllProductsWithCategoriesAsync();
+
+            
+            ViewBag.ImagePath = "~/uploads/products/thumbnail";
             return View(allProducts);
         }
 
@@ -49,23 +65,57 @@ namespace EShop.Web.Areas.AdminShop.Controllers
             return View();
         }
 
+
+
+
+
         // GET: ProductsController/Create
-        public async Task<ActionResult> Create()
+        public async Task<IActionResult> Create()
         {
-            // دریافت لیست دسته‌بندی‌ها از سرویس
+            AdminProductCreateViewModel model = new AdminProductCreateViewModel();
             var categories = await _productCategoryServices.GetAllAsync();
 
-            // ارسال لیست دسته‌بندی‌ها به View
-            ViewBag.Product_Category = categories;
+            // تبدیل دسته‌بندی‌ها به ساختار درختی
+            var categoryTree = BuildCategoryTree(categories, null);            
+            model.Categories = categoryTree;
+            TempData["Categories"] = JsonConvert.SerializeObject(categoryTree);
 
-            return View();
+            return View(model);
         }
 
-        // POST: ProductsController/Create
+        // متد بازگشتی برای ساخت درخت دسته‌بندی‌ها
+        private List<CategoryViewModel> BuildCategoryTree(IEnumerable<ProductCategory> categories, int? parentId)
+        {
+            return categories
+                .Where(c => c.ParentId == parentId)
+                .Select(c => new CategoryViewModel
+                {
+                    CategoryId = c.CategoryId,
+                    Name = c.Name,
+                    SubCategories = BuildCategoryTree(categories, c.CategoryId) // بازگشتی
+                }).ToList();
+        }
+
+
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateAsync(AdminProductCreateViewModel model)
         {
+            var categories = JsonConvert.DeserializeObject<List<CategoryViewModel>>(TempData["Categories"].ToString());
+            model.Categories = categories;
+            TempData.Keep("Categories");
+
+            // اعتبارسنجی تصویر ارسالی
+            if (!ImageValidator.IsValidImage(model.ImageProduct))
+            {
+                ModelState.AddModelError("ImageProduct", "فرمت فایل معتبر نیست یا فایل مخرب است.");
+                return View(model);
+            }
+
+
+
             try
             {
                 if (!ModelState.IsValid)
@@ -74,45 +124,71 @@ namespace EShop.Web.Areas.AdminShop.Controllers
                     return View(model);
                 }
 
-                // اعتبارسنجی فایل آپلود شده جهت جلوگیری از آپلود فایل‌های مخرب
-                //if (!IsValidImage(model.ImageProduct))
-                //{
-                //    ModelState.AddModelError("Image", "فایل آپلود شده معتبر نیست یا ممکن است مخرب باشد.");
-                //    ViewBag.CategoryList = new MultiSelectList(await _productCategoryServices.GetAllAsync(), "CategoryId", "Name");
-                //    return View(model);
-                //}
-
-                // مسیر پوشه آپلودها
-                string uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "products");
-                if (!Directory.Exists(uploadsFolder))
-                    Directory.CreateDirectory(uploadsFolder);
-
-                // تولید نام یکتا برای فایل تصویر
-                string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(model.ImageProduct);
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                // ذخیره فایل اصلی
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                // استخراج فرمت تصویر از فایل ورودی
+                var extension = Path.GetExtension(model.ImageProduct.FileName);
+                if (string.IsNullOrEmpty(extension))
                 {
-                    //await model.ImageProduct.CopyToAsync(fileStream);
+                    ModelState.AddModelError("ImageProduct", "فرمت تصویر شناخته نشده است.");
+                    ViewBag.CategoryList = new MultiSelectList(await _productCategoryServices.GetAllAsync(), "CategoryId", "Name");
+                    return View(model);
                 }
 
-                // تولید Thumbnail (مثلاً ابعاد 200x200 پیکسل)
-                string thumbFileName = "thumb_" + uniqueFileName;
-                string thumbPath = Path.Combine(uploadsFolder, thumbFileName);
-                await CreateThumbnailAsync(filePath, thumbPath, 200, 200);
 
+
+                // تولید نام یکتا برای تصویر
+                string? imageName = model.Name != null
+                    ? $"{"عکس-تصویر"}-{model.Name.Replace(" ", "-").ToLower()}-{StringConvertor.PersianToLatinMap(model.Name).Replace(" ", "-").ToLower()}-{Guid.NewGuid().ToString()}{extension}"
+                    : $"{Guid.NewGuid().ToString()}{extension}";
+                imageName = System.Text.RegularExpressions.Regex.Replace(imageName, "-{2,}", "-");
+
+
+                string thumbImageName = "thumbnail_" + imageName;
+
+                // مسیر پوشه آپلودها
+                string mainImagePath = Path.Combine(_env.WebRootPath, "uploads", "products");
+                string thumbnailPath = Path.Combine(_env.WebRootPath, "uploads", "products", "thumbnail");
+
+                Directory.CreateDirectory(mainImagePath);
+                Directory.CreateDirectory(thumbnailPath);
+
+                mainImagePath = Path.Combine(mainImagePath, imageName);
+                thumbnailPath = Path.Combine(thumbnailPath, thumbImageName);
+
+                // دریافت شناسه کاربری از User.Identity
+                var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (userId == null || !int.TryParse(userId, out int userIdInt))
+                {
+                    ModelState.AddModelError("PublicError", "کاربر وارد شده غیر مجاز است.");
+                    return View(model);
+                }
+
+                bool exists = await _AccountServices.IsExistsEmployeeAndHasShopByUserIdAsync(userIdInt);
+                if (!exists)
+                {
+                    ModelState.AddModelError("PublicError", "شما در هیچ فروشگاهی کارمند نیستید.");
+                    return View(model);
+                }
+
+                var employeeDetails = await _AccountServices.GetDetailsEmployeeByUserIdAsync(userIdInt);
+                int shopId = employeeDetails.ShopId ?? 0;
+                if (model.DiscountedPrice > model.Price)
+                {
+                    ViewBag.CategoryList = new MultiSelectList(await _productCategoryServices.GetAllAsync(), "CategoryId", "Name");
+                    ModelState.AddModelError("DiscountedPrice", "قیمت تخفیف نباید بیشتر از قیمت اصلی کالا باشد.");
+                    return View(model);
+                }
                 // ایجاد شیء محصول
                 var product = new Product
                 {
-                    Name = model.Name,
+                    Name = System.Text.RegularExpressions.Regex.Replace(model.Name, "' '{2,}", " "),
                     Description = model.Description,
                     FullDescription = model.FullDescription,
                     Price = model.Price,
                     DiscountedPrice = model.DiscountedPrice,
-                    ImageName = uniqueFileName, // ذخیره نام تصویر اصلی
-                    ShopId = model.ShopId,
+                    ProductImageName = imageName, // ذخیره نام تصویر اصلی
+                    ShopId = shopId,
                     IsAvailable = model.IsAvailable,
+                    IsPublished=model.IsPublished,
                     IsDeleted = false,
                     CreatedAt = DateTime.UtcNow
                 };
@@ -120,7 +196,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
                 // افزودن محصول به دیتابیس
                 await _productServices.AddAsync(product);
 
-                // ذخیره ارتباط محصول با دسته‌ها (فرض کنید رابطه چند به چند یا جدول واسط وجود دارد)
+                // ذخیره ارتباط محصول با دسته‌ها
                 if (model.SelectedCategoryIds != null && model.SelectedCategoryIds.Any())
                 {
                     foreach (var catId in model.SelectedCategoryIds)
@@ -129,35 +205,185 @@ namespace EShop.Web.Areas.AdminShop.Controllers
                     }
                 }
 
+                // ذخیره و بهینه‌سازی تصویر اصلی
+                ImageProcessor.OptimizeImage(model.ImageProduct, mainImagePath);
+
+                // ایجاد و ذخیره تصویر بندانگشتی
+                ImageProcessor.CreateThumbnail(model.ImageProduct, thumbnailPath);
+
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
+                // در صورت بروز خطا، پیام خطا را لاگ کنید
+                //_logger.LogError(ex, "Error in creating product.");
                 return View(model);
             }
         }
 
-
         // GET: ProductsController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            return View();
+            var product = await _productServices.GetByIdAsync(id);
+            if (product == null) return NotFound();
+
+
+            var selectedCategories = await _productServices.GetProductSelectCategoriesByIdAsync(id);
+            List<int> selectedCategoryIds = selectedCategories?.ToList() ?? new List<int>();
+          
+            var model = new AdminProductEditViewModel
+            {
+                ProductId = product.Id,
+                Name = System.Text.RegularExpressions.Regex.Replace(product.Name, "' '{2,}", " "),
+                Description = product.Description,
+                Price = product.Price,
+                DiscountedPrice = product.DiscountedPrice,
+                FullDescription = product.FullDescription,
+                IsAvailable = product.IsAvailable,
+                IsPublished = product.IsPublished,
+                ImageUrl = "~/uploads/products/thumbnail/thumbnail_" + product.ProductImageName,
+                SelectedCategoryIds = selectedCategoryIds,
+
+            };
+
+
+            var categories = await _productCategoryServices.GetAllAsync();
+
+            // تبدیل دسته‌بندی‌ها به ساختار درختی
+            var categoryTree = BuildCategoryTree(categories, null);
+            // ذخیره دستهبندیها در TempData
+            TempData["Categories"] = JsonConvert.SerializeObject(categoryTree);
+
+            model.Categories = categoryTree;
+
+
+
+            return View(model);
         }
+
+
 
         // POST: ProductsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Edit(AdminProductEditViewModel model)
         {
+            var categories = JsonConvert.DeserializeObject<List<CategoryViewModel>>(TempData["Categories"].ToString());
+            model.Categories = categories;
+            TempData.Keep("Categories");
+
+            // اعتبارسنجی تصویر ارسالی
+            if (model.ImageProduct!=null && !ImageValidator.IsValidImage(model.ImageProduct))
+            {
+                ModelState.AddModelError("ImageProduct", "فرمت فایل معتبر نیست یا فایل مخرب است.");
+                return View(model);
+            }
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                if (model.DiscountedPrice > model.Price)
+                {
+                    ModelState.AddModelError("DiscountedPrice", "قیمت تخفیف نباید بیشتر از قیمت اصلی کالا باشد.");
+                    return View(model);
+                }
+
+                var product = await _productServices.GetByIdAsync(model.ProductId);
+                if (product == null) return NotFound();
+
+                product.Name = model.Name;
+                product.Description = model.Description;
+                product.FullDescription = model.FullDescription;
+                product.Price = model.Price;
+                product.DiscountedPrice = model.DiscountedPrice;
+                product.IsAvailable = model.IsAvailable;
+                product.IsPublished = model.IsPublished;
+                product.UpdatedAt = DateTime.Now;
+
+                // حذف دسته‌بندی‌های قبلی و افزودن دسته‌های جدید
+                await _productServices.UpdateProductSelectCategoriesAsync(model.ProductId, model.SelectedCategoryIds);
+
+                // اگر تصویر جدیدی آپلود شده باشد
+                if (model.ImageProduct != null && model.ImageProduct.FileName != product.ProductImageName)
+                {
+                    if (model.ImageProduct.FileName != "default_product.png")
+                    {
+
+                        // استخراج فرمت تصویر از فایل ورودی
+                        var extension = Path.GetExtension(model.ImageProduct.FileName);
+                        if (string.IsNullOrEmpty(extension))
+                        {
+                            ModelState.AddModelError("ImageProduct", "فرمت تصویر شناخته نشده است.");
+                            return View(model);
+                        }
+
+
+                        // تولید نام یکتا برای تصویر
+                        string imageName = model.Name != null
+                            ? $"{"عکس-تصویر"}-{model.Name.Replace(" ", "-").ToLower()}-{StringConvertor.PersianToLatinMap(model.Name).Replace(" ", "-").ToLower()}-{Guid.NewGuid().ToString()}{extension}"
+                            : $"{Guid.NewGuid().ToString()}{extension}";
+                        imageName = System.Text.RegularExpressions.Regex.Replace(imageName, "-{2,}", "-");
+
+                        string thumbImageName = "thumbnail_" + imageName;
+
+                        // مسیر پوشه آپلودها
+                        string mainImagePath = Path.Combine(_env.WebRootPath, "uploads", "products");
+                        string thumbnailPath = Path.Combine(_env.WebRootPath, "uploads", "products", "thumbnail");
+
+                        //عکس های قبلی
+
+                        if (!string.IsNullOrEmpty(product.ProductImageName))
+                        {
+                            string previousMainImagePath = Path.Combine(mainImagePath, product.ProductImageName);
+                            string previousthumbnailPath = Path.Combine(thumbnailPath, "thumbnail_" + product.ProductImageName);
+
+                            if (System.IO.File.Exists(previousMainImagePath)) System.IO.File.Delete(previousMainImagePath);
+                            if (System.IO.File.Exists(previousthumbnailPath)) System.IO.File.Delete(previousthumbnailPath);
+                        }
+
+                        Directory.CreateDirectory(mainImagePath);
+                        Directory.CreateDirectory(thumbnailPath);
+
+                        mainImagePath = Path.Combine(mainImagePath, imageName);
+                        thumbnailPath = Path.Combine(thumbnailPath, thumbImageName);
+
+
+
+                        // ذخیره و بهینه‌سازی تصویر اصلی
+                        ImageProcessor.OptimizeImage(model.ImageProduct, mainImagePath);
+
+                        // ایجاد و ذخیره تصویر بندانگشتی
+                        ImageProcessor.CreateThumbnail(model.ImageProduct, thumbnailPath);
+
+
+
+
+                        product.ProductImageName = imageName;
+
+                    }
+
+
+                }
+
+                await _productServices.UpdateAsync(product);
+                return RedirectToAction("Index");
             }
-            catch
+            catch (IOException ex)
             {
-                return View();
+                ModelState.AddModelError("", "خطا در آپلود یا حذف تصویر.");
+                return View(model);
             }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "خطایی رخ داده است. لطفاً دوباره تلاش کنید.");
+                return View(model);
+            }
+
         }
+
 
         // GET: ProductsController/Delete/5
         public ActionResult Delete(int id)
@@ -221,18 +447,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
             return signatures;
         }
 
-        // متد غیرهمزمان برای ساخت Thumbnail
-        private Task CreateThumbnailAsync(string sourcePath, string targetPath, int width, int height)
-        {
-            return Task.Run(() =>
-            {
-                using (var image = Image.FromFile(sourcePath))
-                {
-                    var thumb = image.GetThumbnailImage(width, height, () => false, IntPtr.Zero);
-                    thumb.Save(targetPath, ImageFormat.Jpeg);
-                }
-            });
-        }
+
 
 
         #endregion

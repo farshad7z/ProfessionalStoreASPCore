@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using EShop.Core.DTOs.ViewModels.Admin.Product;
 using Microsoft.AspNetCore.Http;
 
 namespace EShop.Core.DTOs.ViewModels.Product
@@ -30,7 +31,7 @@ namespace EShop.Core.DTOs.ViewModels.Product
 
         [Required(ErrorMessage = "تصویر محصول الزامی است.")]
         [Display(Name = "تصویر محصول")]
-        public string ImageProduct { get; set; } = default!;
+        public IFormFile ImageProduct { get; set; } 
 
         [Required(ErrorMessage = "انتخاب فروشگاه الزامی است.")]
         [Display(Name = "فروشگاه")]
@@ -38,9 +39,17 @@ namespace EShop.Core.DTOs.ViewModels.Product
 
         [Display(Name = "دسته‌های محصول")]
         [Required(ErrorMessage = "حداقل یک دسته باید انتخاب شود.")]
-        public int[] SelectedCategoryIds { get; set; } = Array.Empty<int>();
+        public List<int> SelectedCategoryIds { get; set; } = new();
+
+        public List<CategoryViewModel>? Categories { get; set; }
+
 
         [Display(Name = "وضعیت موجودی")]
         public bool IsAvailable { get; set; } = true;
+
+        [Display(Name = "وضعیت انتشار")]
+        public bool IsPublished { get; set; } = true;
+
     }
 }
+

@@ -44,12 +44,15 @@
     <!-- Nucleo Icons -->
     <link href="~/admin/assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="~/admin/assets/css/nucleo-svg.css" rel="stylesheet" />
+
     <!-- Font Awesome Icons -->
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <!-- CSS Files -->
     <link id="pagestyle" href="~/admin/assets/css/material-dashboard.css?v=3.0.0" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Public/css/bootstrap.rtl.css">
+    <link rel="stylesheet" href="~/Public/css/bootstrap-icons.css">
 </head>
 
 <body class="g-sidenav-show rtl bg-gray-200">
@@ -73,7 +76,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" asp-area="adminshop" asp-controller="product" asp-action="index">
+                    <a class="nav-link text-white" asp-area="adminshop" asp-controller="products" asp-action="index">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons-round opacity-10">inventory</i>
                         </div>
@@ -89,7 +92,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" asp-area="AdminSite" asp-controller="User" asp-action="Index">
+                    <a class="nav-link text-white" asp-area="adminsite" asp-controller="User" asp-action="Index">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons-round opacity-10">group</i>
                         </div>
@@ -235,11 +238,15 @@
     </div>
     <!--   Core JS Files   -->
     <script src="~/admin/assets/js/core/popper.min.js"></script>
-    <script src="~/admin/assets/js/core/bootstrap.min.js"></script>
+@*     <script src="~/admin/assets/js/core/bootstrap.min.js"></script>
+ *@    
+     <script src="~/Public/js/jQuery.js"></script>
+    <script src="~/Public/js/bootstrap.min.js"></script>
     <script src="~/admin/assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="~/admin/assets/js/plugins/smooth-scrollbar.min.js"></script>
     <script src="~/admin/assets/js/plugins/chartjs.min.js"></script>
-    <script>
+   <script>
+       @*  
         var ctx = document.getElementById("chart-bars").getContext("2d");
 
         new Chart(ctx, {
@@ -486,7 +493,7 @@
           },
         });
     </script>
-    <script>
+    <script> *@
         var win = navigator.platform.indexOf('Win') > -1;
         if (win && document.querySelector('#sidenav-scrollbar')) {
           var options = {
@@ -499,6 +506,7 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
     <script src="~/admin/assets/js/material-dashboard.min.js?v=3.0.0"></script>
+
     @RenderSection("Scripts", required: false)
 
 </body>

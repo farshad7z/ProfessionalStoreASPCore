@@ -1,0 +1,236 @@
+﻿@using EShop.Core.DTOs.ViewModels.Admin.Product
+@model AdminProductEditViewModel
+
+@{
+    ViewData["Title"] = "ویرایش محصول";
+}
+
+
+<form asp-action="Edit" enctype="multipart/form-data" method="post" class="container mt-4">
+    <input type="hidden" asp-for="ProductId" />
+    <input type="hidden" asp-for="ImageUrl" /> <!-- حفظ تصویر قبلی -->
+    <!-- نمایش خطاهای ModelState به صورت دستی -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" role="alert">
+            <ul>
+                @foreach (var key in ViewData.ModelState.Keys)
+                {
+                    foreach (var error in ViewData.ModelState[key].Errors)
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                }
+            </ul>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="2"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Price" class="form-label"></label>
+                <input asp-for="Price" type="number" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="DiscountedPrice" class="form-label"></label>
+                <input asp-for="DiscountedPrice" type="number" class="form-control" />
+                <span asp-validation-for="DiscountedPrice" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="FullDescription" class="form-label"></label>
+        <textarea asp-for="FullDescription" id="fullDescriptionEditor" class="form-control"></textarea>
+        <span asp-validation-for="FullDescription" class="text-danger"></span>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="ImageProduct" class="form-label">تصویر محصول</label>
+                <input asp-for="ImageProduct" type="file" class="form-control" />
+                <span asp-validation-for="ImageProduct" class="text-danger"></span>
+                <img id="previewImage" src="@Url.Content(Model.ImageUrl ?? "/uploads/products/default-product.png")"
+                     class="img-thumbnail mt-2" style="max-width: 200px;" />
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label">دسته‌بندی‌ها</label>
+                <ul id="categoryTree" class="list-group">
+
+                    @if (Model.Categories != null)
+                    {
+                        @foreach (var category in Model.Categories)
+                        {
+                            @Html.Raw(RenderCategoryTree(category, Model.SelectedCategoryIds))
+                        }
+                    }
+                    else
+                    {
+                        <li>خطایی رخ داد لطفا صفحه را دوباره رفرش کنید</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsAvailable" checked type="checkbox" class="form-check-input" />
+        <label asp-for="IsAvailable" class="form-check-label"></label>
+        <span asp-validation-for="IsAvailable" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsPublished" checked type="checkbox" class="form-check-input" />
+        <label asp-for="IsPublished" class="form-check-label"></label>
+        <span asp-validation-for="IsPublished" class="text-danger"></span>
+    </div>
+
+
+    @functions {
+        public string RenderCategoryTree(EShop.Core.DTOs.ViewModels.Admin.Product.CategoryViewModel category, List<int> selectedCategoryIds)
+        {
+            bool isChecked = selectedCategoryIds.Contains(category.CategoryId);
+            string html = $"<li class='list-group-item'>" +
+            $"<input type='checkbox' name='SelectedCategoryIds' value='{category.CategoryId}' class='category-checkbox' " +
+            $"{(isChecked ? "checked" : "")} />" +
+            $"{category.Name}";
+
+            if (category.SubCategories.Any())
+            {
+                html += "<ul class='list-group ms-3 mt-2' style='display: none;'>";
+                foreach (var sub in category.SubCategories)
+                {
+                    html += RenderCategoryTree(sub, selectedCategoryIds); // بازگشتی
+                }
+                html += "</ul>";
+            }
+
+            html += "</li>";
+
+            // اگر این دسته‌بندی یا زیرمجموعه‌اش انتخاب شده باشد، درخت را باز کن
+            if (isChecked || category.SubCategories.Any(sc => selectedCategoryIds.Contains(sc.CategoryId)))
+            {
+                html = html.Replace("style='display: none;'", "style='display: block;'");
+            }
+
+            return html;
+        }
+    }
+
+    <button type="submit" class="btn btn-primary w-100">ویرایش محصول</button>
+</form>
+
+@section Scripts {
+
+
+    <script src="~/public/lib/ckeditor5-35.4.0/build/ckeditor.js"></script>
+
+    <script>
+        // فارسی‌سازی و تنظیمات ادیتور
+        ClassicEditor
+            .create(document.querySelector('#fullDescriptionEditor'), {
+                language: {
+                    ui: 'fa',
+                    content: 'fa'
+                },
+
+                licenseKey: '',
+
+                // toolbar: {
+                //     items: [
+                //         'heading', '|',
+                //         'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|',
+                //         'blockQuote', 'insertTable', 'undo', 'redo', '|',
+                //         'imageUpload'
+                //     ]
+                // },
+                simpleUpload: {
+                    uploadUrl: '~/upload/contentImages' // آدرس آپلود تصویر
+                }
+            })
+            .then(editor => {
+                window.editor = editor;
+            })
+            .catch(error => {
+                console.error('خطا در بارگذاری ویرایشگر:', error);
+            });
+
+        // اعتبارسنجی لحظه‌ای هنگام کلیک روی دکمه ثبت
+        $('form').on('submit', function (e) {
+            // بروزرسانی مقدار textarea با محتوای CKEditor
+            $('#fullDescriptionEditor').val(editor.getData());
+
+            // اعتبارسنجی فرم
+            if (!$('form').valid()) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطا!',
+                    text: 'لطفا تمام فیلدهای الزامی را پر کنید'
+                });
+            }
+        });
+    </script>
+
+    <script>
+        document.querySelector('input[name="ImageProduct"]').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('previewImage').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $(".category-checkbox").change(function () {
+                var subCategories = $(this).closest("li").children("ul");
+                if ($(this).is(":checked")) {
+                    subCategories.slideDown();
+                } else {
+                    subCategories.slideUp();
+                    subCategories.find("input[type='checkbox']")
+                        .prop("checked", false)
+                        .trigger("change"); // اعمال تغییر به زیرمجموعه‌ها
+                }
+            });
+
+            // نمایش پیش‌فرض زیرگروه‌های انتخاب‌شده
+            $(".category-checkbox:checked").each(function () {
+                $(this).closest("li").children("ul").show();
+            });
+        });
+    </script>
+}
+
+

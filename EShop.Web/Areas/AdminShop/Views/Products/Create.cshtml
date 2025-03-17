@@ -1,179 +1,242 @@
-﻿@using EShop.Core.DTOs.ViewModels.Product
-@model AdminProductCreateViewModel
-@{
-    ViewBag.Title = "ایجاد محصول جدید";
-}
+﻿@model EShop.Core.DTOs.ViewModels.Product.AdminProductCreateViewModel
 
+<form asp-action="Create" enctype="multipart/form-data" method="post" class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
 
-<h2>@ViewData["Title"]</h2>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="2"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
 
-<form asp-action="Create" method="post" enctype="multipart/form-data">
-
+    </div>
 
     <div class="row">
-        
-        <div class="col-8">
-            @Html.AntiForgeryToken()
-            @if (ViewBag.ErrorSelectedGroups == true)
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Price" class="form-label"></label>
+                <input asp-for="Price" type="number" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="DiscountedPrice" class="form-label"></label>
+                <input asp-for="DiscountedPrice" type="number" class="form-control" />
+                <span asp-validation-for="DiscountedPrice" class="text-danger"></span>
+            </div>
+        </div>
+
+
+
+
+        <div class="mb-3">
+            <label asp-for="FullDescription" class="form-label"></label>
+            <textarea asp-for="FullDescription" id="fullDescriptionEditor" class="form-control"></textarea>
+            <span asp-validation-for="FullDescription" class="text-danger"></span>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="ImageProduct" class="form-label">تصویر محصول</label>
+                <input asp-for="ImageProduct" type="file" class="form-control" />
+                <span asp-validation-for="ImageProduct" class="text-danger"></span>
+                <img id="previewImage" src="" class="img-thumbnail mt-2" style="max-width: 200px; display: none;" />
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label">دسته‌بندی‌ها</label>
+                <ul id="categoryTree" class="list-group">
+                    @if (Model.Categories != null)
+                    {
+                        @foreach (var category in Model.Categories)
+                        {
+                            @Html.Raw(RenderCategoryTree(category, Model.SelectedCategoryIds))
+                        }
+                    }
+                    else
+                    {
+                        <li>خطایی رخ داد لطفا صفحه را دوباره رفرش کنید</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    @functions {
+        public string RenderCategoryTree(EShop.Core.DTOs.ViewModels.Admin.Product.CategoryViewModel category, List<int> selectedCategoryIds)
+        {
+            bool isChecked = selectedCategoryIds.Contains(category.CategoryId);
+            string html = $"<li class='list-group-item'>" +
+            $"<input type='checkbox' name='SelectedCategoryIds' value='{category.CategoryId}' class='category-checkbox' " +
+            $"{(isChecked ? "checked" : "")} />" +
+            $"{category.Name}";
+
+            if (category.SubCategories.Any())
             {
-                <div class="alert alert-danger">
-                    لطفا گروه محصول را انتخاب کنید
-                </div>
+                html += "<ul class='list-group ms-3 mt-2' style='display: none;'>";
+                foreach (var sub in category.SubCategories)
+                {
+                    html += RenderCategoryTree(sub, selectedCategoryIds); // بازگشتی
+                }
+                html += "</ul>";
             }
 
-            <div class="form-horizontal">
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                <div class="form-group">
-                    <label asp-for="Name"></label>
-                    <div class="col-md-10">
-                        <input asp-for="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
-                    </div>
-                </div>
+            html += "</li>";
 
-                <div class="form-group">
-                    <label asp-for="Description"></label>
-                    <div class="col-md-10">
-                        <textarea asp-for="Description" class="form-control"></textarea>
-                        <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
-                </div>
+            // اگر این دسته‌بندی یا زیرمجموعه‌اش انتخاب شده باشد، درخت را باز کن
+            if (isChecked || category.SubCategories.Any(sc => selectedCategoryIds.Contains(sc.CategoryId)))
+            {
+                html = html.Replace("style='display: none;'", "style='display: block;'");
+            }
 
-                <div class="form-group">
-                    <label asp-for="FullDescription"></label>
-                    <div class="col-md-10">
-                        <textarea asp-for="FullDescription" class="form-control"></textarea>
-                        <span asp-validation-for="FullDescription" class="text-danger"></span>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Price"></label>
-                <div class="col-md-10">
-                    <input asp-for="Price" class="form-control" type="number" step="0.01" />
-                    <span asp-validation-for="Price" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="DiscountedPrice"></label>
-                <div class="col-md-10">
-                    <input asp-for="DiscountedPrice" class="form-control" type="number" step="0.01" />
-                    <span asp-validation-for="DiscountedPrice" class="text-danger"></span>
-                </div>
-            </div>
-
-        </div>
-
-
-
-
-        <div class="col-4">
-            <div class="card">
-                <div class="card-header bg-primary my-3">
-                    تصویر محصول
-                </div>
-                <div class="card-body">
-                    <img id="imgPreviewProduct" src="~/Images/ProductImages/images.png" class="card-img-top img-thumbnail" style="height:250px; width:350px" alt="...">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.ImageProduct, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10 my-3">
-                            <input type="file" name="imageProduct" id="imageProduct" />
-                            @Html.ValidationMessageFor(model => model.ImageProduct, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header bg-primary">
-                    انتخاب گروه
-                </div>
-                <div class="card-body">
-                    @{
-                        // دریافت لیست دسته‌بندی‌ها از ViewBag
-                        List<ProductCategory> categories = ViewBag.Product_Category;
-                    }
-                    <ul>
-                        @foreach (var category in categories.Where(c => c.ParentId == null))
-                        {
-                            <li>
-                                <input type="checkbox" name="SelectedCategoryIds" value="@category.CategoryId" />
-                                <span>@category.Name</span>
-
-                                @if (categories.Any(c => c.ParentId == category.CategoryId))
-                                {
-                                    <ul>
-                                        @foreach (var subcategory in categories.Where(g => g.ParentId == category.CategoryId))
-                                        {
-                                            <li>
-                                                <input type="checkbox" name="SelectedCategoryIds" value="@subcategory.CategoryId" />
-                                                <span>@subcategory.Name</span>
-                                            </li>
-                                        }
-                                    </ul>
-                                }
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-
-
-        </div>
-
-        @*     <div class="form-group">
-        <label asp-for="Image"></label>
-        <input asp-for="Image" class="form-control" type="file" />
-        <span asp-validation-for="Image" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="ShopId"></label>
-        <input asp-for="ShopId" class="form-control" type="number" />
-        <span asp-validation-for="ShopId" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="SelectedCategoryIds"></label>
-        <!-- فرض کنید لیست دسته‌ها از کنترلر به View ارسال شده باشد -->
-        <select asp-for="SelectedCategoryIds" asp-items="ViewBag.CategoryList" class="form-control" multiple="multiple"></select>
-        <span asp-validation-for="SelectedCategoryIds" class="text-danger"></span>
-    </div> *@
-
-        <div class="form-group">
-            <label asp-for="IsAvailable"></label>
-            <input asp-for="IsAvailable" type="checkbox" />
-            <span asp-validation-for="IsAvailable" class="text-danger"></span>
-        </div>
-    </div>
-    <button type="submit" class="btn btn-primary">ثبت محصول</button>
-</form>
-<div>
-    @Html.ActionLink("بازگشت به لیست محصولات", "Index")
-</div>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+            return html;
+        }
     }
 
-    <script>
-        imageProduct.onchange = evt => {
-            const [file] = imageProduct.files
-            if (file) {
-                imgPreviewProduct.src = URL.createObjectURL(file)
-            }
-        }
-    </script>
-    <script src="/ckeditor/ckeditor.js"></script>
-    <script src="/ckeditor/adapters/jquery.js"></script>
+
+
+    <div class="form-check mb-3">
+        <input asp-for="IsAvailable" checked type="checkbox" class="form-check-input" />
+        <label asp-for="IsAvailable" class="form-check-label"></label>
+        <span asp-validation-for="IsAvailable" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsPublished" type="checkbox" class="form-check-input" />
+        <label asp-for="IsPublished" class="form-check-label"></label>
+        <span asp-validation-for="IsPublished" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">ایجاد محصول</button>
+</form>
+
+
+@section Scripts {
+
+    <script src="~/public/lib/ckeditor5-35.4.0/build/ckeditor.js"></script>
 
     <script>
-        $(function () {
-            $('#Text').ckeditor();
+        // فارسی‌سازی و تنظیمات ادیتور
+        ClassicEditor
+            .create(document.querySelector('#fullDescriptionEditor'), {
+                language: {
+                    ui: 'fa',
+                    content: 'fa'
+                },
+
+                licenseKey: '',
+
+                // toolbar: {
+                //     items: [
+                //         'heading', '|',
+                //         'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|',
+                //         'blockQuote', 'insertTable', 'undo', 'redo', '|',
+                //         'imageUpload'
+                //     ]
+                // },
+                simpleUpload: {
+                    uploadUrl: '~/upload/contentImages', // آدرس آپلود تصویر                   
+                    headers: { 'X-CSRF-TOKEN': $('input[name="__RequestVerificationToken"]').val() }
+
+                }
+
+            })
+            .then(editor => {
+                window.editor = editor;
+            })
+            .catch(error => {
+                console.error('خطا در بارگذاری ویرایشگر:', error);
+            });
+
+        // اعتبارسنجی لحظه‌ای هنگام کلیک روی دکمه ثبت
+        $('form').on('submit', function (e) {
+            // بروزرسانی مقدار textarea با محتوای CKEditor
+            $('#fullDescriptionEditor').val(editor.getData());
+
+            // اعتبارسنجی فرم
+            if (!$('form').valid()) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطا!',
+                    text: 'لطفا تمام فیلدهای الزامی را پر کنید'
+                });
+            }
         });
     </script>
+    <script>
+        CKEDITOR.replace('editor', {
+            filebrowserUploadUrl: '/api/upload/image',
+            filebrowserUploadMethod: 'form'
+        });
+
+        // حذف تصویر از سرور هنگام حذف از CKEditor
+        CKEDITOR.instances.editor.on('change', function () {
+            let images = document.querySelectorAll('.cke_wysiwyg_frame img');
+            images.forEach(img => {
+                img.addEventListener('dblclick', function () {
+                    let imageUrl = img.src;
+                    fetch('/api/upload/delete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(imageUrl)
+                    }).then(response => response.json())
+                      .then(data => console.log(data))
+                      .catch(error => console.error(error));
+                });
+            });
+        });
+    </script>
+    <script>
+        document.querySelector('input[name="ImageProduct"]').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const previewImage = document.getElementById('previewImage');
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $(".category-checkbox").change(function () {
+                var subCategories = $(this).closest("li").children("ul");
+                if ($(this).is(":checked")) {
+                    subCategories.slideDown();
+                } else {
+                    subCategories.slideUp();
+                    subCategories.find("input[type='checkbox']")
+                        .prop("checked", false)
+                        .trigger("change"); // اعمال تغییر به زیرمجموعه‌ها
+                }
+            });
+
+            // نمایش پیش‌فرض زیرگروه‌های انتخاب‌شده
+            $(".category-checkbox:checked").each(function () {
+                $(this).closest("li").children("ul").show();
+            });
+        });
+    </script>
+
+
+
+
+
 }

@@ -23,5 +23,25 @@ namespace EShop.Core.Interfaces.Services.Public
         ///دریاقت لیست همه محصولات.
         /// </summary>
         Task<IEnumerable<Product>> GetAllAsync();
+        /// <summary>
+        ///دریاقت لیست همه محصولات به همراه دسته بندی های آن.
+        /// </summary>
+        Task<IEnumerable<Product>> GetAllProductsWithCategoriesAsync();
+        /// <summary>
+        /// براساس Id دریاقت  اطلاعات محصولات.
+        /// </summary>
+        Task<Product> GetByIdAsync(int productId);
+        /// <summary>
+        /// اپدیت اطلاعات محصولات.
+        /// </summary>
+        Task UpdateAsync(Product product);
+        /// <summary>
+        /// حذف دسته بندی های قبلی مربوط به محصول و افرودن دسته بندی جدید به محصول
+        /// </summary>
+        Task UpdateProductSelectCategoriesAsync(int productId, List<int> newCategoryIds);
+        /// <summary>
+        /// دریافت لیست دسته بندی های یک محصول با Id
+        /// /// </summary>
+        Task<IEnumerable<int>> GetProductSelectCategoriesByIdAsync(int productId);
     }
 }

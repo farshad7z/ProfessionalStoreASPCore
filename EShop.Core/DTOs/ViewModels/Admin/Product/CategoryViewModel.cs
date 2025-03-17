@@ -1,6 +1,10 @@
 ﻿namespace EShop.Core.DTOs.ViewModels.Admin.Product
 {
-    class CategoryDTO
+    public class CategoryViewModel
     {
+        public int CategoryId { get; set; }
+        public string Name { get; set; }
+        public List<CategoryViewModel> SubCategories { get; set; } = new();
     }
+
 }

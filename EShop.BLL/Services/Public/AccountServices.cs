@@ -26,6 +26,11 @@ namespace EShop.BLL.Services.Public
             return await _unitOfWork.Repository<Employee>().FindSingleOrDefaultAsync(e => e.UserId == userId) ?? null;
         }
 
+        public Task GetEmployeeAsync(Employee model)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<User?> GetUserByIdAsync(int userId)
         {
             return await _unitOfWork.Repository<User>().GetByIdAsync(userId);
@@ -40,6 +45,11 @@ namespace EShop.BLL.Services.Public
         public Task<bool> IsExistMobileNumberAsync(string mobileNumber)
         {
             return _unitOfWork.Repository<User>().ExistsAsync(p => p.PhoneNumber == mobileNumber);
+        }
+
+        public async Task<bool> IsExistsEmployeeAndHasShopByUserIdAsync(int userId)
+        {
+            return await _unitOfWork.Repository<Employee>().ExistsAsync(e => e.UserId == userId && (e.ShopId != null || e.ShopId != 0) );
         }
 
         public async Task<bool> IsExistsEmployeeByUserIdAsync(int userId)

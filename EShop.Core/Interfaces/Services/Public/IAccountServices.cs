@@ -42,15 +42,24 @@ namespace EShop.Core.Interfaces.Services
         /// <summary>
         ///'دریاقت اطلاعات حساب کارمند'.
         /// </summary>
-        Task<Employee>? GetDetailsEmployeeByUserIdAsync(int UserId);
+        Task<Employee>? GetDetailsEmployeeByUserIdAsync(int userId);
 
         /// <summary>
         ///'بررسی وجود و صحت اطلاعات حساب کارمند'.
         /// </summary>
-        Task<bool> IsExistsEmployeeByUserIdAsync(int UserId);
+        Task<bool> IsExistsEmployeeByUserIdAsync(int userId);
         /// <summary>
         ///اپدیت اطلاعات کارمند.
         /// </summary>
         Task UpdateEmployeeAsync(Employee model);
+        /// <summary>
+        ///دریافت اطلاعات کارمند.
+        /// </summary>
+        Task GetEmployeeAsync(Employee model);
+        /// <summary>
+        ///' بررسی وجود فروشگاه به اسم کارمند فعلی و صحت اطلاعات حساب کارمند'.
+        /// </summary>
+        Task<bool> IsExistsEmployeeAndHasShopByUserIdAsync(int userId);
+
     }
 }

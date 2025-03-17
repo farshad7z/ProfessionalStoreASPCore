@@ -1,6 +1,7 @@
 ﻿using EShop.Core.Entities.Models;
 using EShop.Core.Interfaces.Services.Public;
 using EShop.Core.Interfaces.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,5 +36,52 @@ namespace EShop.BLL.Services
         {
             return await _unitOfWork.Repository<Product>().GetAllAsync();
         }
+
+        public async Task<IEnumerable<Product>> GetAllProductsWithCategoriesAsync()
+        {
+            return await _unitOfWork.Repository<Product>()
+        .GetAllAsync(includeProperties: "ProductSelectCategory.ProductCategory");
+        }
+
+        public async Task<Product?> GetByIdAsync(int productId)
+        {
+            return await _unitOfWork.Repository<Product>().GetByIdAsync(productId);
+        }
+
+        public async Task<IEnumerable<int>> GetProductSelectCategoriesByIdAsync(int productId)
+        {
+            var productCategories = await _unitOfWork.Repository<ProductSelectCategory>()
+                .FindAsync(pc => pc.ProductId == productId); 
+
+            return productCategories.Select(pc => pc.ProductCategoryId);
+        }
+
+
+
+        public async Task UpdateAsync(Product product)
+        {
+            _unitOfWork.Repository<Product>().Update(product);
+            await _unitOfWork.SaveAsync(); 
+        }
+
+        public async Task UpdateProductSelectCategoriesAsync(int productId, List<int> newCategoryIds)
+        {
+            var productSelectCategory = await _unitOfWork.Repository<ProductSelectCategory>().FindAsync(pc=>pc.ProductId==productId);
+            // حذف دسته‌بندی‌های فعلی محصول
+
+            await _unitOfWork.Repository<ProductSelectCategory>().DeleteRangeAsync(productSelectCategory);
+
+            // افزودن دسته‌بندی‌های جدید
+            var newCategories = newCategoryIds.Select(categoryId => new ProductSelectCategory
+            {
+                ProductId = productId,
+                ProductCategoryId = categoryId
+            }).ToList();
+
+            await _unitOfWork.Repository<ProductSelectCategory>().AddRangeAsync(newCategories);
+
+            await _unitOfWork.SaveAsync();
+        }
+
     }
 }

@@ -52,11 +52,32 @@ namespace EShop.DAL.Repositories
             return await _dbSet.AnyAsync(predicate);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, string includeProperties = null)
         {
-            return await _dbSet.ToListAsync();
-        }
+            //return filter == null ? await _dbSet.ToListAsync() : await _dbSet.Where(filter).ToListAsync();
 
+            IQueryable<T> query = _dbSet;
+
+            // Apply filter if provided
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            // Include related entities if specified
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProperty.Trim());
+                }
+            }
+
+            // Execute the query and return the results
+            return await query.ToListAsync();
+
+
+        }
         public async Task<T?> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
@@ -67,5 +88,24 @@ namespace EShop.DAL.Repositories
             _dbSet.Update(entity);
         }
 
+        public async Task AddRangeAsync(IEnumerable<T> entities)
+        {
+            await _dbSet.AddRangeAsync(entities);
+        }
+
+        public async Task<bool> DeleteAsync(T entity)
+        {
+            if (entity != null)
+            {
+                _dbSet.Remove(entity);
+                return true; // حذف شد
+            }
+            return false; // چیزی برای حذف نبود
+        }
+
+        public async Task DeleteRangeAsync(IEnumerable<T> entities)
+    {
+        _dbSet.RemoveRange(entities);
+    }
     }
 }
