@@ -41,15 +41,14 @@ namespace EShop.Web.Areas.AdminShop.Controllers
             if (!Directory.Exists(uploadPath))
                 Directory.CreateDirectory(uploadPath);
 
-            var extension = Path.GetExtension(upload.FileName);
+            var extension = Path.GetExtension(file.FileName);
 
             // تولید نام یکتا برای تصویر
-            string? fileName = productName != null
+            string? safeFileName = productName != null
                 ? $"{"عکس-تصویر"}-{productName.Replace(" ", "-").ToLower()}-{StringConvertor.PersianToLatinMap(productName).Replace(" ", "-").ToLower()}-{Guid.NewGuid().ToString("N")}{extension}"
                 : $"{Guid.NewGuid().ToString()}{extension}";
-            fileName = System.Text.RegularExpressions.Regex.Replace(fileName, "-{2,}", "-");
+            safeFileName = System.Text.RegularExpressions.Regex.Replace(safeFileName, "-{2,}", "-");
             // تغییر نام فایل (جلوگیری از حملات)
-            var safeFileName = Guid.NewGuid().ToString("N") + Path.GetExtension(file.FileName);
             var filePath = Path.Combine(uploadPath, safeFileName);
 
             using (var stream = new FileStream(filePath, FileMode.Create))
@@ -76,4 +75,5 @@ namespace EShop.Web.Areas.AdminShop.Controllers
             return allowedMimeTypes.Contains(file.ContentType.ToLower());
         }
     }
-}}
+}
+

@@ -7,7 +7,7 @@
     <a class="btn btn-primary" asp-area="adminshop" asp-controller="products" asp-action="create">افزودن محصول جدید</a>
 </p>
 
-
+@* 
 <div class="table-responsive">
     <div id="dataTables-product_wrapper" class="dataTables_wrapper form-inline" role="grid">
         <div class="row">
@@ -100,7 +100,7 @@
             </tbody>
         </table><div class="row"><div class="col-sm-6"><div class="dataTables_info" id="dataTables-example_info" role="alert" aria-live="polite" aria-relevant="all">Showing 1 to 10 of 57 entries</div></div><div class="col-sm-6"><div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate"><ul class="pagination"><li class="paginate_button previous disabled" aria-controls="dataTables-example" tabindex="0" id="dataTables-example_previous"><a href="#">Previous</a></li><li class="paginate_button active" aria-controls="dataTables-example" tabindex="0"><a href="#">1</a></li><li class="paginate_button " aria-controls="dataTables-example" tabindex="0"><a href="#">2</a></li><li class="paginate_button " aria-controls="dataTables-example" tabindex="0"><a href="#">3</a></li><li class="paginate_button " aria-controls="dataTables-example" tabindex="0"><a href="#">4</a></li><li class="paginate_button " aria-controls="dataTables-example" tabindex="0"><a href="#">5</a></li><li class="paginate_button " aria-controls="dataTables-example" tabindex="0"><a href="#">6</a></li><li class="paginate_button next" aria-controls="dataTables-example" tabindex="0" id="dataTables-example_next"><a href="#">Next</a></li></ul></div></div></div>
     </div>
-</div>
+</div> *@
 
 
 <div class="row">
@@ -181,18 +181,22 @@
                                         <a href="/adminshop/products/edit/@product.Id" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="ویرایش">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <a href="/Admin/Products/Delete/@product.Id" class="text-danger font-weight-bold text-xs ms-2" data-toggle="tooltip" title="حذف" onclick="return confirm('آیا مطمئن هستید؟');">
+                                        <a href="#" class="text-danger font-weight-bold text-xs ms-2" data-toggle="tooltip" title="حذف" onclick="return confirm('آیا مطمئن هستید؟');">
                                             <i class="bi bi-trash"></i>
                                         </a>
-                                        <a href="/Admin/Products/Gallery/@product.Id" class="text-info font-weight-bold text-xs ms-2" data-toggle="tooltip" title="گالری">
+                                        <a href="/adminshop/products/galleries/@product.Id" class="text-info font-weight-bold text-xs ms-2" data-toggle="tooltip" title="گالری">
                                             <i class="bi bi-image"></i>
                                         </a>
-                                        <a href="/Admin/Products/Variants/@product.Id" class="text-warning font-weight-bold text-xs ms-2" data-toggle="tooltip" title="واریانت‌ها">
+                                        <a href="#"@* /Admin/Products/Variants/@product.Id *@ class="text-warning font-weight-bold text-xs ms-2" data-toggle="tooltip" title="واریانت‌ها">
                                             <i class="bi bi-box"></i>
                                         </a>
-                                        <a href="/Admin/Product/SEO/@product.Id" class="text-primary font-weight-bold text-xs ms-2" data-toggle="tooltip" title="سئو">
+                                        <a href="@Url.Action("SEO", "Products", new { productId = product.Id, productName = product.Name })"
+                                           class="text-primary font-weight-bold text-xs ms-2"
+                                           data-toggle="tooltip"
+                                           title="سئو">
                                             <i class="bi bi-search"></i>
                                         </a>
+
                                     </td>
                                 </tr>
                             }

@@ -22,6 +22,7 @@ namespace EShop.DAL.Context
         #endregion
 
         #region Product
+        public DbSet<ProductGallery> ProductGalleries { set; get; }
         public DbSet<ProductSEO> ProductSEOs { get; set; }
         public DbSet<ProductSelectCategory> ProductSelectCategories { get; set; }
         public DbSet<Product> Products { get; set; }
@@ -44,6 +45,8 @@ namespace EShop.DAL.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             #region Table attribute definition
+            modelBuilder.Entity<ProductGallery>(entity =>
+            entity.HasKey(pg => pg.GalleryId));
 
             modelBuilder.Entity<ProductSEO>(entity =>
             entity.HasKey(pc => pc.Id));
@@ -98,6 +101,12 @@ namespace EShop.DAL.Context
             #endregion
 
             #region Relations
+
+            modelBuilder.Entity<ProductGallery>(entity =>
+            entity.HasOne(pg => pg.Product)
+           .WithMany(p => p.Galleries)
+           .HasForeignKey(pg => pg.ProductId)
+           .OnDelete(DeleteBehavior.Cascade));
 
             modelBuilder.Entity<ProductSEO>(entity =>
             entity.HasOne(ps => ps.Product)

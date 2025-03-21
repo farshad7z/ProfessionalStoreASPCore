@@ -15,7 +15,6 @@
   <ItemGroup>
     <Folder Include="DTOs\ViewModels\Admin\OtherAdminViewModels\" />
     <Folder Include="DTOs\ViewModels\Admin\SuperAdminViewModels\" />
-    <Folder Include="DTOs\ViewModels\Product\" />
   </ItemGroup>
 
   <ItemGroup>

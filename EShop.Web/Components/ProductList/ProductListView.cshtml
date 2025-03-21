@@ -1,0 +1,42 @@
+﻿@using EShop.Core.DTOs.ViewModels.Product
+@model List<ProductViewModel>
+
+@foreach (var product in Model)
+{
+    <div class="col-lg-3 col-md-6 special-grid @(product.IsBestSeller ? "best-seller" : "") @(product.IsTopFeatured ? "top-featured" : "")">
+        <div class="products-single fix">
+            <div class="box-img-hover">
+                <div class="type-lb">
+                    <p class="@(product.IsNew ? "new" : "sale")">@(product.IsNew ? "جدید" : "فروش")</p>
+                </div>
+                <!-- تصویر محصول با مقدار پیش‌فرض -->
+                <img src="@Url.Content(product.ImageUrl ?? "/uploads/products/default-product.png")" class="img-fluid" alt="Image">
+                <div class="mask-icon">
+                    <ul class="p-0">
+                        <li>
+                            <a href="@Url.Action("Details", "SiteProducts", new { id = product.Id })" data-bs-toggle="tooltip" data-bs-placement="right" title="مشاهده">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="مقایسه کنید">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="افزودن به علاقه‌مندی‌ها">
+                                <i class="bi bi-heart"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <a class="cart" href="#">افزودن به سبد خرید</a>
+                </div>
+            </div>
+            <div class="why-text">
+                <h4>@product.Name</h4>
+                <h5>@product.Price تومان</h5>
+            </div>
+        </div>
+    </div>
+}
+

@@ -30,6 +30,8 @@
     <Folder Include="Areas\ProfilePanel\Controllers\" />
     <Folder Include="Views\Shared\Components\" />
     <Folder Include="wwwroot\uploads\contentImages\" />
+    <Folder Include="wwwroot\uploads\ckeditor\" />
+    <Folder Include="wwwroot\uploads\ProductGalleries\thumbnail\" />
   </ItemGroup>
 
 </Project>

@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using EShop.BLL.Services.Public;
 using EShop.Core.Interfaces.Services.Public;
 using EShop.BLL.Services;
+using EShop.Core.Interfaces.Services.Site;
+using EShop.BLL.Services.Site;
 
 namespace EShop.Infrastructure.DependencyInjection
 {
@@ -15,13 +17,6 @@ namespace EShop.Infrastructure.DependencyInjection
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
 
-            #region Submit Bll Services
-            services.AddScoped<IAccountServices, AccountServices>();
-            services.AddScoped<IProductCategoryServices, ProductCategoryServices>();
-            services.AddScoped<IProductServices, ProductServices>();
-
-            //services.AddScoped<ICategoryService, CategoryService>();
-            #endregion
 
             #region Submit Repository Services
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -32,6 +27,25 @@ namespace EShop.Infrastructure.DependencyInjection
             #region Submit Repository Services
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             #endregion
+
+
+
+            #region Submit Bll Services
+            //Site
+            services.AddScoped<ISiteProductServices, SiteProductServices>();
+
+
+
+            //Public
+            services.AddScoped<IProductSEOService, ProductSEOService>();
+            services.AddScoped<IProductGalleryServices, ProductGalleryServices>();
+            services.AddScoped<IAccountServices, AccountServices>();
+            services.AddScoped<IProductCategoryServices, ProductCategoryServices>();
+            services.AddScoped<IProductServices, ProductServices>();
+
+            //services.AddScoped<ICategoryService, CategoryService>();
+            #endregion
+
 
             return services;
         }

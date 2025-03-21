@@ -37,9 +37,9 @@ namespace EShop.Core.Entities.Models
         public Shop? Shop { get; set; } // فروشگاه مرتبط
         public ProductSEO? ProductSEO { get; set; }
         public ICollection<ProductVariant> ProductVariants { get; set; } = new HashSet<ProductVariant>(); // لیست ترکیب‌ها
+        public ICollection<ProductGallery>? Galleries { get; set; } // تصاویر محصول
 
         // Other Relationships
-        //public ICollection<ProductGallery> Galleries { get; set; } // تصاویر محصول
         //public ICollection<ProductFeature> Features { get; set; } // ویژگی‌ها
         //public ICollection<ProductComment> Comments { get; set; } // نظرات
 

@@ -21,7 +21,7 @@ namespace EShop.Core.Entities.Models
         [MaxLength(300)]
         public string? MetaDescription { get; set; } // توضیحات متا
 
-        [MaxLength(150)]
+        [MaxLength(250)]
         public string? MetaKeywords { get; set; } // کلمات کلیدی متا
 
         #region Relations

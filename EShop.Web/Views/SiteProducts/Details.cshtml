@@ -1,0 +1,879 @@
+﻿@using EShop.Core.DTOs.ViewModels.Product
+@model ProductDetailViewModel
+@{
+    ViewData["Title"] = "جزییات محصول";
+}
+
+<!-- Start All Title Box -->
+<div class="all-title-box">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2>جزئیات محصول</h2>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">فروشگاه</a></li>
+                    <li class="breadcrumb-item active">@Model.Name </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End All Title Box -->
+<!-- Start Product Detail -->
+<section>
+    <div class="shop-detail-box-main">
+        <div class="container-fluid">
+            <div class="page-content">
+                <div class="row">
+                    <div class="pdp-container flex flex-row flex-wrap items-center text-text-mediumGray">
+                        <span class="flex items-center gap-0.5">
+                            <a class="text-text-mediumGray ">فروشگاه</a>
+
+                        </span>
+                        <span class="flex items-center gap-0.5">
+
+                            <i class="bi bi-chevron-left h-5 w-5 text-text-mediumGray"></i>
+                            <a class="text-text-mediumGray">@Model.CategoryName</a>
+                        </span>
+                        <span class="flex items-center gap-0.5">
+
+                            <i class="bi bi-chevron-left"></i>
+                            <a class="text-text-mediumGray">@Model.Name</a>
+                        </span>
+                    </div>
+
+                    <div class="col-xl-5 col-lg-4 col-md-12">
+                        <div class="product-img bg-white p-3 rounded mb-4 mb-md-0">
+                            <figure class="border-bottom mb-0">
+                                <img id="zoom-img"
+                                src="@Url.Content($"{ViewBag.ImagePath}/{Model.ImageUrl ?? "default-product.jpg"}")"
+                                data-zoom-image="@Url.Content($"{ViewBag.ImagePath}/{Model.ImageUrl ?? "default-product.jpg"}")"
+                                class="d-table mx-auto"
+                                style="max-height: 350px;"
+                                alt="@Model.Name"
+                                loading="lazy" />
+                            </figure>
+
+                            @if (Model.GalleryImages != null && Model.GalleryImages.Any())
+                            {
+                                <div class="product-gallery owl-carousel owl-theme mt-2">
+                                    @foreach (var gallery in Model.GalleryImages)
+                                    {
+                                        <div class="item">
+                                            <a href="@Url.Content($"~/uploads/productgalleries/{gallery.ImageName}")" data-fancybox="gallery">
+                                                <figure class="position-relative p-1">
+                                                    <img src="@Url.Content($"~/uploads/productgalleries/thumbnail/thumbnail_{gallery.ImageName}")"
+                                                    alt="@gallery.Title"
+                                                    loading="lazy">
+
+                                                    <figcaption class="position-absolute rounded w-100 h-100 text-center">
+                                                        <i class="bi bi-zoom-in"></i>
+                                                    </figcaption>
+                                                </figure>
+                                            </a>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="col-xl-7 col-lg-8 col-md-12">
+                        <div class="product-detail p-3">
+                            <div class="row">
+                                <h4 class="border-bottom text-h4  text-neutral mb-3 p-3"> تیشرت</h4>
+                                <div class="product-rating mb-3">
+                                    <i class="bi bi-star text-warning"></i>
+                                    <i class="bi bi-star text-warning"></i>
+                                    <i class="bi bi-star text-warning"></i>
+                                    <i class="bi bi-star text-warning"></i>
+                                    <i class="bi bi-star text-dark"></i>
+                                    <span>13 دیدگاه ثبت شده است</span>
+                                </div>
+
+
+                                <!--********************r -->
+                                <!--****************** -->
+                                <!--Select Size and Color -->
+                                <div class="col-12 col-lg-6 col-md-12 col-sm-12">
+                                    <div class="color-picker-product mt-2 w-100">
+                                        <div class="text-center">
+                                            <p class="text-h5 text-neutral">
+                                                <span></span>
+                                                انتخاب رنگ محصول:
+                                                </span>
+                                            </p>
+                                            <div class="d-flex justify-content-center">
+                                                <div class="color-option color-red" data-color="red"></div>
+                                                <div class="color-option color-blue" data-color="blue"></div>
+                                                <div class="color-option color-green" data-color="green"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="text-center mt-4">
+                                            <p class="text-h5 text-neutral">
+                                                <span>
+                                                    انتخاب سایز:
+                                                </span>
+                                            </p>
+                                            <div class="d-flex justify-content-center">
+                                                <!-- سایزهای مربوط به رنگ‌ها -->
+                                                <div class="size-option size-red">S</div>
+                                                <div class="size-option size-red">M</div>
+                                                <div class="size-option size-red">L</div>
+                                                <div class="size-option size-blue">M</div>
+                                                <div class="size-option size-blue">L</div>
+                                                <div class="size-option size-blue">XL</div>
+                                                <div class="size-option size-green">S</div>
+                                                <div class="size-option size-green">L</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="add-comp">
+                                        <a class="btn hvr-hover" href="#">
+                                            افزودن به علاقه مندی
+                                            ها<i class="bi bi-clipboard-heart-fill bi-detail-product "></i>
+                                        </a>
+                                        <a class="btn hvr-hover" href="#">
+                                            افزودن به
+                                            مقایسه <i class="bi bi-arrow-repeat bi-detail-product "></i>
+                                        </a>
+                                    </div>
+
+
+
+                                    <div class="col-xl-12 col-lg-12 col-md-12">
+                                        <div class="cat-sku border stayle-border-bottom px-3 py-2">
+                                            <span class="product-tag">
+                                                <div class="row justify-content-center mt-4">
+                                                    <h6>کلمات کلیدی:</h6>
+                                                    <div class="keywords">
+                                                        @if (!string.IsNullOrEmpty(Model.MetaKeywords))
+                                                        {
+                                                            @foreach (var keyword in Model.MetaKeywords.Split('-'))
+                                                            {
+                                                                <span>@keyword.Trim()</span>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>مد</span>
+                                                            <span>تابستان</span>
+                                                            <span>لباس</span>
+                                                            <span>رنگارنگ</span>
+                                                            <span>طراحی</span>
+                                                            <span>فانتزی</span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--End Select Size and Color -->
+
+                                <div class="col-12 col-lg-6 col-md-12 col-sm-12">
+                                    <div class="info-price">
+
+                                        <div class="store-info pt-3">
+                                            <h3 class=" text-h5 text-neutral">
+                                                <i class="bi bi-shop "></i>
+                                                فروشنده
+                                            </h3>
+                                            <p>موجودی انبار بازار پاال</p>
+                                            <div class="product-rating mb-3 p-2">
+                                                <span class="d-block">
+                                                    <i class="bi bi-heart-fill"></i>
+                                                    رضایت مشتریان از این فروشگاه
+                                                </span>
+                                                <i class="bi bi-star text-warning"></i>
+                                                <i class="bi bi-star text-warning"></i>
+                                                <i class="bi bi-star text-warning"></i>
+                                                <i class="bi bi-star text-warning"></i>
+                                                <i class="bi bi-star text-dark"></i>
+                                            </div>
+                                        </div>
+                                        <div class="product-price ">
+                                            <div class="original-price text-neutral-300 .text-body-2">
+                                                <del>
+                                                    @Model.Price
+                                                    تومان
+                                                </del>
+                                            </div>
+                                            <div>
+                                                <span class="discount-badge">٪۵۰</span>
+                                            </div>
+                                            <div class="final-price price-2">۱۰۰,۰۰۰ تومان</div>
+                                        </div>
+
+                                        <div class="stock">
+                                            <span class="color-danger"> تنها 2 عدد باقی مانده</span>
+                                        </div>
+
+                                        <div class="col-12 add-to-card bg-white p-4 my-3 mb-3 d-inline-block border">
+                                            <div class="quantity-control">
+                                                <div class="quantity-buttons d-flex">
+                                                    <button type="button" onclick="increaseQuantity()">
+                                                        <i class="bi bi-clipboard-plus-fill"></i>
+                                                    </button>
+                                                    <input type="text" id="quantity" class="quantity-input"
+                                                           value="1" readonly="">
+                                                    <button type="button" onclick="decreaseQuantity()">
+                                                        <i class="bi bi-clipboard-minus-fill"></i>
+                                                    </button>
+
+                                                </div>
+                                            </div>
+
+
+                                            <div class="cart-and-bay-btn">
+                                                <a class="btn hvr-hover  hvr-hover-2" data-fancybox-close="" href="#">
+                                                    افزودن به
+                                                    سبد
+                                                    خرید
+                                                    <i class="bi bi-cart-plus bi-detail-product"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+
+
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-xl-12 col-lg-12 col-md-12">
+                        <div class="index-services stayle-border-bottom  border-top ">
+                            <div class="container-fluid">
+                                <div class="row box-srvices">
+                                    <div class="col-lg-3 col-md-3 col-sm-3 ">
+                                        <div class="item text-center">
+                                            <span class="d-block w-100">
+                                                <i class="bi bi-chat-left-text"></i>
+                                                <span class="title d-block w-100 py-2">پشتیبانی 24 ساعته</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-3 col-sm-3 ">
+                                        <div class="item text-center">
+                                            <span class="d-block w-100">
+                                                <i class="bi bi-shield-check"></i>
+                                                <span class="title d-block w-100 py-2">ضمانت بازگشت وجه</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-3 col-sm-3 ">
+                                        <div class="item text-center">
+                                            <span class="d-block w-100">
+                                                <i class="bi bi-geo-alt-fill"></i>
+                                                <span class="title d-block w-100 py-2">تحویل فوری</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-3 col-sm-3 ">
+                                        <div class="item text-center">
+                                            <span class="d-block w-100">
+                                                <i class="bi bi-award-fill"></i>
+                                                <span class="title d-block w-100 py-2">ضمانت محصول</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-10 col-lg-10 col-md-12 m-auto p-3">
+                        <div class="product-excerpt mt-3 border stayle-border-bottom pt-3">
+                            <h4 class=" text-neutral PdpShortReview">@Model.Name</h4>
+                            <p class="text-body-1 text-neutral-800">
+                                @Model.Description
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row  single-product-reverse">
+                <div class="col-lg-5 col-md-10">
+                    <div class="product-review-form bg-white mt-3 p-3 rounded">
+                        <!--Start Action Create Form Comment -->
+                        <form action="/Product/CreateComment/11" data-ajax="true" data-ajax-mode="replace"
+                              data-ajax-success="successComment" data-ajax-update="#ListComment" id="form0"
+                              method="post">
+                            <input name="__RequestVerificationToken" type="hidden"
+                                   value="srnjYEk0IoAan4ZuMdNbAAkZT4FAoQyI1MfbS6KFMzRGHMUivZYOSc8aMrgvwWzXUM1MOKO1WZhQhCzewXhqAvClPjKfTTqSyPQ4ZeAyTXI1"><input data-val="true" data-val-number="The field ProductID must be a number."
+                                                                                                                                                               data-val-required="The ProductID field is required." id="ProductID" name="ProductID"
+                                                                                                                                                               type="hidden" value="11"><input data-val="true"
+                                                                                                                                                                                               data-val-number="The field UserID must be a number." id="UserID" name="UserID"
+                                                                                                                                                                                               type="hidden" value=""><input data-val="true"
+                                                                                                                                                                                                                             data-val-number="The field ParentID must be a number." id="ParentID" name="ParentID"
+                                                                                                                                                                                                                             type="hidden" value="">
+                            <div id="CreateComment">
+                                <div class="set-rate d-flex">
+                                    <span class="w-100 d-inline-block pe-3">امتیاز شما </span>
+                                    <div class="box-rate w-100 text-end ">
+                                        <input type="radio" id="5" value="5" name="rate">
+                                        <label for="5"></label>
+                                        <input type="radio" id="4" value="4" name="rate">
+                                        <label for="4"></label>
+                                        <input type="radio" id="3" value="3" name="rate">
+                                        <label for="3"></label>
+                                        <input type="radio" id="2" value="2" name="rate">
+                                        <label for="2"></label>
+                                        <input type="radio" id="1" value="1" name="rate">
+                                        <label for="1"></label>
+                                    </div>
+                                </div>
+                                <input value="" class="form-control" data-val="true"
+                                       data-val-required="لطفا نام و نام خانوادگی  را وارد کنید" id="Name" name="Name"
+                                       placeholder="نام شما (الزامی)" type="text"><span class="field-validation-valid text-danger" data-valmsg-for="Name"
+                                                                                        data-valmsg-replace="true"></span><input value="" class="control-label col-md-2"
+                                                                                                                                 data-val="true" data-val-email="ایمیل وارد شده معتبر نمی باشد"
+                                                                                                                                 data-val-required="لطفا ایمیل  را وارد کنید" id="Email" name="Email"
+                                                                                                                                 placeholder="ایمیل خود را وارد کنید (الزامی)" type="text"><span class="field-validation-valid text-danger" data-valmsg-for="Email"
+                                                                                                                                                                                                 data-valmsg-replace="true"></span> <textarea class="form-control" cols="20"
+                                                                                                                                                                                                                                              data-val="true" data-val-required="لطفا نظر  خود را را وارد کنید" id="Comment"
+                                                                                                                                                                                                                                              name="Comment" placeholder="نظر شما..." rows="2"></textarea>
+                                <span class="field-validation-valid text-danger" data-valmsg-for="Comment"
+                                      data-valmsg-replace="true"></span>
+
+                                <button type="submit">ارسال دیدگاه</button>
+
+                            </div>
+
+                        </form>
+
+                        <!--End Action Create Form Comment -->
+                    </div>
+                </div>
+                <div class="col-lg-7 col-md-12 product-content bg-white rounded mt-3 p-3">
+                    <ul class="nav nav-tabs border-0 mb-2" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab"
+                                    data-bs-target="#home" type="button" role="tab" aria-controls="home"
+                                    aria-selected="true">
+                                جزئیات محصول
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-one" data-bs-toggle="tab" data-bs-target="#profile"
+                                    type="button" role="tab" aria-controls="profile" aria-selected="false"
+                                    tabindex="-1">
+                                ویژگی ها
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-two" data-bs-toggle="tab"
+                                    data-bs-target="#ListComment" type="button" role="tab" aria-controls="contact"
+                                    aria-selected="false" tabindex="-1">
+                                نظرات کاربران
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active p-3 " id="home" role="tabpanel"
+                             aria-labelledby="home-tab">
+                            <h3 class="text-h5 text-neutral">تیشرت</h3>
+
+                            <p>لذت ببریددددددددد دددددد</p>
+
+                        </div>
+                        <div class="tab-pane fade p-3" id="profile" role="tabpanel" aria-labelledby="pills-one">
+                            <div class="container mt-5">
+                                <!-- بخش ویژگی‌های محصول با رنگ‌های قابل انتخاب -->
+                                <div class="row">
+                                    <div class="col-lg-3 col-xl-3 col-md-3 col-12  mb-3">
+                                        <div class="card feature-card">
+                                            <div class="card-body">
+                                                <i class="fas fa-ruler-combined"></i>
+                                                <h5 class="card-title">اندازه</h5>
+                                                <p class="card-text">30x20x10 سانتیمتر</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-xl-3 col-md-3 col-12  mb-3">
+                                        <div class="card feature-card">
+                                            <div class="card-body">
+                                                <i class="fas fa-weight-hanging"></i>
+                                                <h5 class="card-title">وزن</h5>
+                                                <p class="card-text">1.5 کیلوگرم</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-3 col-xl-3 col-md-3 col-12  mb-3">
+                                        <div class="card feature-card">
+                                            <div class="card-body">
+                                                <i class="fas fa-cogs"></i>
+                                                <h5 class="card-title">جنس</h5>
+                                                <p class="card-text">پلاستیک با کیفیت</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-xl-3 col-md-3 col-12  mb-3">
+                                        <div class="card feature-card">
+                                            <div class="card-body">
+                                                <i class="fas fa-calendar-check"></i>
+                                                <h5 class="card-title">گارانتی</h5>
+                                                <p class="card-text">یک سال</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Start Show Product Comments-->
+                        <div class="product-comment tab-pane fade  p-3 " id="ListComment" role="tabpanel"
+                             aria-labelledby="pills-two">
+
+                            <div class="review-item-box border-bottom mb-3">
+                                <!-- لیست نظرات -->
+                                <div class="reviews-list">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <h5 class="card-title">محمد رضایی</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">mohammad@example.com</h6>
+                                            <div class="star-rating">
+                                                <input type="radio" id="star5-mohammad" name="rating-mohammad"
+                                                       value="5" checked disabled>
+                                                <label for="star5-mohammad" title="5 ستاره">&#9733;</label>
+                                                <input type="radio" id="star4-mohammad" name="rating-mohammad"
+                                                       value="4" disabled>
+                                                <label for="star4-mohammad" title="4 ستاره">&#9733;</label>
+                                                <input type="radio" id="star3-mohammad" name="rating-mohammad"
+                                                       value="3" disabled>
+                                                <label for="star3-mohammad" title="3 ستاره">&#9733;</label>
+                                                <input type="radio" id="star2-mohammad" name="rating-mohammad"
+                                                       value="2" disabled>
+                                                <label for="star2-mohammad" title="2 ستاره">&#9733;</label>
+                                                <input type="radio" id="star1-mohammad" name="rating-mohammad"
+                                                       value="1" disabled>
+                                                <label for="star1-mohammad" title="1 ستاره">&#9733;</label>
+                                            </div>
+                                            <p class="card-text">این محصول فوق‌العاده است! به همه توصیه می‌کنم.</p>
+                                            <small class="text-muted">ارسال شده در ۲۰ دی ۱۴۰۲</small>
+
+                                            <!-- پاسخ‌ها -->
+                                            <div class="replies">
+                                                <div class="card mb-2">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title">فروشنده</h6>
+                                                        <p class="card-text">
+                                                            ممنون از نظر شما! خوشحالیم که از محصول
+                                                            راضی هستید.
+                                                        </p>
+                                                        <small class="text-muted">
+                                                            پاسخ داده شده در ۲۱ دی
+                                                            ۱۴۰۲
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- فرم پاسخ -->
+                                            <div class="reply-form">
+                                                <form>
+                                                    <div class="mb-3">
+                                                        <label for="reply" class="form-label">پاسخ شما</label>
+                                                        <textarea class="form-control" id="reply" rows="2"
+                                                                  placeholder="پاسخ خود را بنویسید"></textarea>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-secondary btn-sm">
+                                                        ارسال
+                                                        پاسخ
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <h5 class="card-title">زهرا احمدی</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">zahra@example.com</h6>
+                                            <div class="star-rating">
+                                                <input type="radio" id="star4-zahra" name="rating-zahra" value="4"
+                                                       checked disabled>
+                                                <label for="star4-zahra" title="4 ستاره">&#9733;</label>
+                                                <input type="radio" id="star3-zahra" name="rating-zahra" value="3"
+                                                       disabled>
+                                                <label for="star3-zahra" title="3 ستاره">&#9733;</label>
+                                                <input type="radio" id="star2-zahra" name="rating-zahra" value="2"
+                                                       disabled>
+                                                <label for="star2-zahra" title="2 ستاره">&#9733;</label>
+                                                <input type="radio" id="star1-zahra" name="rating-zahra" value="1"
+                                                       disabled>
+                                                <label for="star1-zahra" title="1 ستاره">&#9733;</label>
+                                            </div>
+                                            <p class="card-text">کیفیت محصول واقعاً خوب بود. ارزش خرید دارد!</p>
+                                            <small class="text-muted">ارسال شده در ۱۸ دی ۱۴۰۲</small>
+
+                                            <!-- پاسخ‌ها -->
+                                            <div class="replies">
+                                                <div class="card mb-2">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title">پشتیبانی</h6>
+                                                        <p class="card-text">
+                                                            خوشحالیم که از کیفیت محصول راضی هستید.
+                                                            از بازخورد شما متشکریم!
+                                                        </p>
+                                                        <small class="text-muted">
+                                                            پاسخ داده شده در ۱۹ دی
+                                                            ۱۴۰۲
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- فرم پاسخ -->
+                                            <div class="reply-form">
+                                                <form>
+                                                    <div class="mb-3">
+                                                        <label for="reply" class="form-label">پاسخ شما</label>
+                                                        <textarea class="form-control" id="reply" rows="2"
+                                                                  placeholder="پاسخ خود را بنویسید"></textarea>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-secondary btn-sm">
+                                                        ارسال
+                                                        پاسخ
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--** End Show Product Comments **-->
+
+                    </div>
+                </div>
+
+
+            </div>
+            <!--Start Featured Products -->
+            <section class="product-feature ">
+                <div class="row my-5">
+                    <div class="col-lg-12">
+                        <div class="title-all text-center">
+                            <h5 class="grow text-h5 text-neutral-900">محصولات مرتبط</h5>
+                            <p>محصولات مشابه را ببنید و از خرید خود لذت ببرید</p>
+
+                            <a class="grow text-h5 text-neutral-900" href="#">
+                                مشاهده همه
+                            </a>
+
+                        </div>
+
+                        <div class="swiper  border stayle-border-bottom py-5" id="swiper-Product-Feature">
+                            <div class="swiper-wrapper" style="height: auto;">
+                                <div class="swiper-slide">
+
+                                    <div class="special-grid top-featured">
+                                        <div class="products-single fix">
+                                            <div class="box-img-hover">
+                                                <div class="type-lb">
+                                                    <p class="new">جدید</p>
+                                                </div>
+                                                <img src="img/img-pro-02.jpg" class="img-fluid" alt="Image">
+                                                <div class="mask-icon">
+                                                    <ul class="p-0">
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right" title="مشاهده">
+                                                                <i class="bi bi-eye"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right" title="مقایسه کنید">
+                                                                <i class="bi bi-arrow-repeat"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right"
+                                                               title="افزودن به علاقه مندی ها">
+                                                                <i class="bi bi-heart"></i>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                    <a class="cart" href="#">افزودن به سبد خرید</a>
+                                                </div>
+                                            </div>
+                                            <div class="why-text">
+                                                <h4>Lorem ipsum dolor sit amet</h4>
+                                                <h5> $9.79</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+
+                                    <div class="special-grid top-featured">
+                                        <div class="products-single fix">
+                                            <div class="box-img-hover">
+                                                <div class="type-lb">
+                                                    <p class="new">جدید</p>
+                                                </div>
+                                                <img src="img/img-pro-03.jpg" class="img-fluid" alt="Image">
+                                                <div class="mask-icon">
+                                                    <ul class="p-0">
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right" title="مشاهده">
+                                                                <i class="bi bi-eye"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right" title="مقایسه کنید">
+                                                                <i class="bi bi-arrow-repeat"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right"
+                                                               title="افزودن به علاقه مندی ها">
+                                                                <i class="bi bi-heart"></i>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                    <a class="cart" href="#">افزودن به سبد خرید</a>
+                                                </div>
+                                            </div>
+                                            <div class="why-text">
+                                                <h4>Lorem ipsum dolor sit amet</h4>
+                                                <h5> $9.79</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+
+                                    <div class="special-grid top-featured">
+                                        <div class="products-single fix">
+                                            <div class="box-img-hover">
+                                                <div class="type-lb">
+                                                    <p class="new">جدید</p>
+                                                </div>
+                                                <img src="img/img-pro-04.jpg" class="img-fluid" alt="Image">
+                                                <div class="mask-icon">
+                                                    <ul class="p-0">
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right" title="مشاهده">
+                                                                <i class="bi bi-eye"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right" title="مقایسه کنید">
+                                                                <i class="bi bi-arrow-repeat"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right"
+                                                               title="افزودن به علاقه مندی ها">
+                                                                <i class="bi bi-heart"></i>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                    <a class="cart" href="#">افزودن به سبد خرید</a>
+                                                </div>
+                                            </div>
+                                            <div class="why-text">
+                                                <h4>Lorem ipsum dolor sit amet</h4>
+                                                <h5> $9.79</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+
+                                    <div class="special-grid top-featured">
+                                        <div class="products-single fix">
+                                            <div class="box-img-hover">
+                                                <div class="type-lb">
+                                                    <p class="new">جدید</p>
+                                                </div>
+                                                <img src="img/img-pro-01.jpg" class="img-fluid" alt="Image">
+                                                <div class="mask-icon">
+                                                    <ul class="p-0">
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right" title="مشاهده">
+                                                                <i class="bi bi-eye"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right" title="مقایسه کنید">
+                                                                <i class="bi bi-arrow-repeat"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right"
+                                                               title="افزودن به علاقه مندی ها">
+                                                                <i class="bi bi-heart"></i>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                    <a class="cart" href="#">افزودن به سبد خرید</a>
+                                                </div>
+                                            </div>
+                                            <div class="why-text">
+                                                <h4>Lorem ipsum dolor sit amet</h4>
+                                                <h5> $9.79</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+
+                                    <div class="special-grid top-featured">
+                                        <div class="products-single fix">
+                                            <div class="box-img-hover">
+                                                <div class="type-lb">
+                                                    <p class="new">جدید</p>
+                                                </div>
+                                                <img src="img/img-pro-01.jpg" class="img-fluid" alt="Image">
+                                                <div class="mask-icon">
+                                                    <ul class="p-0">
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right" title="مشاهده">
+                                                                <i class="bi bi-eye"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right" title="مقایسه کنید">
+                                                                <i class="bi bi-arrow-repeat"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right"
+                                                               title="افزودن به علاقه مندی ها">
+                                                                <i class="bi bi-heart"></i>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                    <a class="cart" href="#">افزودن به سبد خرید</a>
+                                                </div>
+                                            </div>
+                                            <div class="why-text">
+                                                <h4>Lorem ipsum dolor sit amet</h4>
+                                                <h5> $9.79</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+
+                                    <div class="special-grid top-featured">
+                                        <div class="products-single fix">
+                                            <div class="box-img-hover">
+                                                <div class="type-lb">
+                                                    <p class="new">جدید</p>
+                                                </div>
+                                                <img src="img/img-pro-01.jpg" class="img-fluid" alt="Image">
+                                                <div class="mask-icon">
+                                                    <ul class="p-0">
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right" title="مشاهده">
+                                                                <i class="bi bi-eye"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right" title="مقایسه کنید">
+                                                                <i class="bi bi-arrow-repeat"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right"
+                                                               title="افزودن به علاقه مندی ها">
+                                                                <i class="bi bi-heart"></i>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                    <a class="cart" href="#">افزودن به سبد خرید</a>
+                                                </div>
+                                            </div>
+                                            <div class="why-text">
+                                                <h4>Lorem ipsum dolor sit amet</h4>
+                                                <h5> $9.79</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+
+                                    <div class="special-grid top-featured">
+                                        <div class="products-single fix">
+                                            <div class="box-img-hover">
+                                                <div class="type-lb">
+                                                    <p class="new">جدید</p>
+                                                </div>
+                                                <img src="img/img-pro-01.jpg" class="img-fluid" alt="Image">
+                                                <div class="mask-icon">
+                                                    <ul class="p-0">
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right" title="مشاهده">
+                                                                <i class="bi bi-eye"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right" title="مقایسه کنید">
+                                                                <i class="bi bi-arrow-repeat"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" data-bs-toggle="tooltip"
+                                                               data-bs-placement="right"
+                                                               title="افزودن به علاقه مندی ها">
+                                                                <i class="bi bi-heart"></i>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                    <a class="cart" href="#">افزودن به سبد خرید</a>
+                                                </div>
+                                            </div>
+                                            <div class="why-text">
+                                                <h4>Lorem ipsum dolor sit amet</h4>
+                                                <h5> $9.79</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </section>
+
+            <!--END Featured Products -->
+        </div>
+    </div>
+
+</section>
+
+<!-- End Product Detail -->

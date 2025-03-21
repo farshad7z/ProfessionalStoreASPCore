@@ -1,4 +1,5 @@
-﻿@{
+﻿@using EShop.Core.Entities.Enums
+@{
     ViewData["Title"] = "فروشگاه اینترنتی بازار پال";
 }
 
@@ -784,6 +785,7 @@
                 </div>
 
                 <div class="row special-list">
+
                     <div class="col-lg-3 col-md-6 special-grid best-seller">
                         <div class="products-single fix">
                             <div class="box-img-hover">
@@ -919,6 +921,9 @@
                             </div>
                         </div>
                     </div>
+
+                @await Component.InvokeAsync("ProductList", new { filterType = ProductFilterType.Latest })
+
                 </div>
             </div>
         </div>

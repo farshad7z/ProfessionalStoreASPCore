@@ -16,7 +16,7 @@ namespace EShop.Infrastructure.Convertors
         /// <param name="thumbnailPath">مسیر ذخیره‌سازی تصویر بندانگشتی</param>
         /// <param name="width">عرض بندانگشتی (پیش‌فرض: 150 پیکسل)</param>
         /// <param name="height">ارتفاع بندانگشتی (پیش‌فرض: 150 پیکسل)</param>
-        public static void CreateThumbnail(IFormFile file, string thumbnailPath, int width = 150, int height = 150)
+        public static void CreateThumbnail(IFormFile file, string thumbnailPath, int width = 270, int height = 250)
         {
             using var image = Image.Load(file.OpenReadStream());
 

@@ -1,0 +1,61 @@
+﻿@using EShop.Core.DTOs.ViewModels.Admin.Product
+@model AdminProductSEOViewModel
+
+@{
+    ViewData["Title"] = "SEO";
+}
+<div class="row">
+    <div class="col-md-8">
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <h2>جزییات سئو برای   @ViewBag.ProductName</h2>
+
+            <hr />
+
+            <form asp-action="SEO" method="post">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.ProductId)
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="MetaTitle" class="control-label col-md-2"></label>
+                    <div class="col-md-10">
+                        <input asp-for="MetaTitle" class="form-control" />
+                        <span asp-validation-for="MetaTitle" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="MetaDescription" class="control-label col-md-2"></label>
+                    <div class="col-md-10">
+                        <input asp-for="MetaDescription" class="form-control" />
+                        <span asp-validation-for="MetaDescription" class="text-danger"></span>
+                    </div>
+                </div>
+    
+                <div class="form-group">
+                    <label asp-for="MetaKeywords" class="control-label col-md-10"></label>
+                    <div class="col-md-10">
+                        <input asp-for="MetaKeywords" class="form-control" />
+                        <span asp-validation-for="MetaKeywords" class="text-danger"></span>
+                    </div>
+                </div >
+                <div class="form-group">
+                    <label asp-for="Slug" class="control-label col-md-2"></label>
+                    <div class="col-md-10">
+                        <input asp-for="Slug" class="form-control" />
+                        <span asp-validation-for="Slug" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 mt-3 col-md-10">
+                        <input type="submit" value="ثبت تصویر" class="btn btn-success" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+

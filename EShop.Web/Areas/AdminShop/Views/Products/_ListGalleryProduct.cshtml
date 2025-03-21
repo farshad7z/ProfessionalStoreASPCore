@@ -1,0 +1,49 @@
+﻿@model IEnumerable<ProductGallery>
+
+
+
+<table class="table table-bordered text-center">
+    @{
+        if (Model.Any())
+        {
+     <tr>
+        <th>تصویر</th>
+        <th>عنوان</th>
+        <th></th>
+    </tr>
+
+            @foreach (var gallery in Model)
+            {
+                <!--** Id For Rows **-->
+                <tr id="trIdGallery_@gallery.GalleryId">
+                    <td>
+                        <img class="img-thumbnail"
+                             src="@Url.Content($"~/uploads/productgalleries/thumbnail/thumbnail_{gallery.ImageName}")"
+                             alt="@gallery.Title" />
+                    </td>
+                    <td>
+                        @gallery.Title
+                    </td>
+
+                    <td>
+                        <a class="btn btn-danger" onclick="Delete(@gallery.GalleryId)">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+   
+            <span class="text-danger">
+                در حال حاظر عکسی برای گالری محصول در نظر گرفته نشده است
+            </span>
+
+        }
+
+    }
+
+
+
+</table>
