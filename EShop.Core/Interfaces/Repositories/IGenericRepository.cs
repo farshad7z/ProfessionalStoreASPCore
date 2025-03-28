@@ -19,6 +19,15 @@ namespace EShop.Core.Interfaces.Repositories
         /// <param name="includeProperties">لیست ویژگی‌های مرتبط (Navigation Properties) که باید شامل شوند. این ویژگی‌ها به صورت رشته‌ای با کاما جدا شده‌اند (مثل "Property1.Property2").</param>
         /// <returns>لیستی از موجودیت‌هایی که با شرط فیلتر مطابقت دارند.</returns>
         Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, string includeProperties = null);
+
+        /// <summary>
+        /// دریافت تمامی موجودیت‌ها با امکان فیلتر و بارگذاری روابط مرتبط به صورت Type-Safe.
+        /// </summary>
+        /// <param name="filter">عبارت شرطی برای فیلتر داده‌ها (اختیاری).</param>
+        /// <param name="include">تابعی برای بارگذاری روابط مرتبط با استفاده از Include و ThenInclude (اختیاری).</param>
+        /// <returns>لیستی از موجودیت‌های مورد نظر.</returns>
+        public Task<IEnumerable<T>> GetAllWithIncludeAsync(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IQueryable<T>> include = null);
+
         /// <summary>
         /// تمام موجودیت‌ها را با گزینه فیلتر کردن و بارگذاری داده‌های مرتبط به صورت IQueryableبازیابی می‌کند.
         /// </summary>

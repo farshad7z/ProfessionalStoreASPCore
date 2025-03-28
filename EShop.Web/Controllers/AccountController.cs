@@ -118,7 +118,7 @@ namespace EShop.Web.Controllers
                 await _accountServices.RegisterUserAsync(user);
                 var result = await _accountServices.GetUserByMobileNumberAsync(user.PhoneNumber);
                 bool isLogin= await login(result, false);
-                return Redirect(returnUrl); // بازگشت به صفحه‌ای که کاربر درخواست کرده بود
+                return Redirect(returnUrl??"index"); // بازگشت به صفحه‌ای که کاربر درخواست کرده بود
             }
 
             return View(model);

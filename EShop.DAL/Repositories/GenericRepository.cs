@@ -79,6 +79,23 @@ namespace EShop.DAL.Repositories
 
         }
 
+        public async Task<IEnumerable<T>> GetAllWithIncludeAsync(Expression<Func<T, bool>> filter = null,
+            Func<IQueryable<T>, IQueryable<T>> include = null)
+        {
+            IQueryable<T> query = _dbSet;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if (include != null)
+            {
+                query = include(query);
+            }
+
+            return await query.ToListAsync();
+        }
 
         public async Task<IQueryable<T>> GetAllAsQueryable(Expression<Func<T, bool>> filter = null, string includeProperties = null)
         {

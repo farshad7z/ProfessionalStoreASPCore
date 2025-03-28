@@ -1,4 +1,5 @@
-﻿using EShop.Core.Entities.Models;
+﻿using EShop.Core.DTOs.ViewModels.Admin.Category;
+using EShop.Core.Entities.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace EShop.Core.Interfaces.Services.Public
         Task<IEnumerable<ProductCategory>> GetAllAsync();
        Task<IEnumerable<ProductCategory>> GetCategoryForMenuAsync();
         Task<IEnumerable<ProductCategory>> GetCategoryOnMainPageAsync();
+        Task<IEnumerable<AdminProductCategoriesOnIndexViewModel>> GetAllForIndexCategoryAsync();
+
 
     }
 }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using EShop.Core.Enums;
+using EShop.Core.Entities.Models.Products;
 
 namespace EShop.Core.Entities.Models
 {
@@ -22,6 +23,8 @@ namespace EShop.Core.Entities.Models
         public string? Description { get; set; } // توضیحات دسته‌بندی
 
         public int? ParentId { get; set; } // دسته‌بندی والد
+        [MaxLength(250)]
+        public string? ImageName { get; set; } 
 
         [MaxLength(200, ErrorMessage = "نوع منو نمی‌تواند بیشتر از {1} کاراکتر باشد.")]
         public MenuType MenuType { get; set; } = MenuType.CategoryOnly; // محل نمایش در منو
@@ -39,13 +42,15 @@ namespace EShop.Core.Entities.Models
 
         public bool IsCategoryOnMain { get; set; } = false;
 
-        public bool IsDeleted { get; set; } = false; 
-        
+        public bool IsDeleted { get; set; } = false;
+
 
         #region Relations
         public virtual ProductCategory? Parent { get; set; }
         public virtual ICollection<ProductCategory> Children { get; set; } = new HashSet<ProductCategory>();
-        public ICollection<ProductSelectCategory>? ProductSelectCategory { get; set; } // گروه‌های انتخابی
+        public virtual ICollection<ProductSelectCategory>? ProductSelectCategory { get; set; } // گروه‌های انتخابی
+        public virtual ICollection<CategoryFeature>? Features { get; set; }
+
 
         #endregion
     }

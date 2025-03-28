@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="~/Public/plugin/hint-css/hint-css.css">
     <link rel="stylesheet" href="~/Site/style.css" />
 
-        <!-- For Gallery -->
+    <!-- For Gallery -->
     <link href="~/public/plugin/fancybox/jquery.fancybox.min.css" rel="stylesheet" />
     <title>سایت فروشگاهی بازار پال</title>
 
@@ -109,12 +109,12 @@
                                     }
                                     else
                                     {
-                                                                            <li data-bs-toggle="modal" data-bs-target="#AdminloginShopModal" data-bs-placement="bottom" title="ورود به بخش ادمین" class="d-inline-block">
-                                        <a href="#">
-                                            <span>حساب فروشگاه من</span>
-                                            <i class="bi bi-shop" aria-label="فروشگاه"></i>
-                                        </a>
-                                    </li>
+                                        <li data-bs-toggle="modal" data-bs-target="#AdminloginShopModal" data-bs-placement="bottom" title="ورود به بخش ادمین" class="d-inline-block">
+                                            <a href="#">
+                                                <span>حساب فروشگاه من</span>
+                                                <i class="bi bi-shop" aria-label="فروشگاه"></i>
+                                            </a>
+                                        </li>
                                     }
 
                                 }
@@ -209,6 +209,13 @@
                             <ul class="text-center">
                                 @if (User.Identity.IsAuthenticated)
                                 {
+                                    var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+
+                                    if (string.IsNullOrEmpty(userName) || userName.Trim().Length < 1)
+                                    {
+                                        userName = "کاربر";
+                                    }
+
                                     <li data-bs-toggle="tooltip"
                                         data-bs-placement="bottom"
                                         title="حساب کاربری"
@@ -216,14 +223,13 @@
                                         <a asp-controller="Account" asp-action="LoginRegister">
                                             <i class="bi bi-person"></i>
                                             <span style="display: block !important;">
-                                                @(User.FindFirst(ClaimTypes.Name)?.Value ?? "کاربر") عزیز خوش آمدید
+                                                @userName عزیز خوش آمدید
                                             </span>
                                         </a>
                                     </li>
                                 }
                                 else
                                 {
-
                                     <li data-bs-toggle="tooltip"
                                         data-bs-placement="bottom"
                                         title="ثبت نام ورود"
@@ -233,11 +239,8 @@
                                             <span style="display: block !important;">ورود | ثبت نام</span>
                                         </a>
                                     </li>
-
-
-
-
                                 }
+
                                 @*            <li data-bs-toggle="modal"
                                         data-bs-target="#loginRegisterModal"
                                         data-bs-placement="bottom"

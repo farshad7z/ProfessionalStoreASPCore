@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EShop.Core.Constants;
 using EShop.Core.Enums;
+using EShop.Core.Entities.Models.Products;
 
 
 namespace EShop.DAL.Context
@@ -22,11 +23,14 @@ namespace EShop.DAL.Context
         #endregion
 
         #region Product
+
+        public DbSet<ProductFeatureValue> ProductFeatureValues { get; set; }
+        public DbSet<CategoryFeature> CategoryFeatures { get; set; }
         public DbSet<ProductGallery> ProductGalleries { set; get; }
         public DbSet<ProductSEO> ProductSEOs { get; set; }
         public DbSet<ProductSelectCategory> ProductSelectCategories { get; set; }
         public DbSet<Product> Products { get; set; }
-        public DbSet<ProductCategory> productCategories { get; set; }
+        public DbSet<ProductCategory> ProductCategories { get; set; }
 
         #endregion
 
@@ -45,8 +49,16 @@ namespace EShop.DAL.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             #region Table attribute definition
+
+            #region Product
+            modelBuilder.Entity<ProductFeatureValue>(entity =>
+            entity.HasKey(pfv => pfv.Id));
+
+            modelBuilder.Entity<CategoryFeature>(entity =>
+           entity.HasKey(cf => cf.Id));
+
             modelBuilder.Entity<ProductGallery>(entity =>
-            entity.HasKey(pg => pg.GalleryId));
+                       entity.HasKey(pg => pg.GalleryId));
 
             modelBuilder.Entity<ProductSEO>(entity =>
             entity.HasKey(pc => pc.Id));
@@ -57,23 +69,20 @@ namespace EShop.DAL.Context
             modelBuilder.Entity<Product>(entity =>
             entity.HasKey(p => p.Id));
 
+            modelBuilder.Entity<ProductCategory>(entity =>
+            entity.HasKey(pc => pc.CategoryId));
+
+            #endregion
+
+            #region Public
             modelBuilder.Entity<Shop>(entity =>
-            {
-                entity.HasKey(s => s.ShopId);
-            });
+                    {
+                        entity.HasKey(s => s.ShopId);
+                    });
 
             modelBuilder.Entity<Slide>(entity =>
             entity.HasKey(s => s.SlideId));
 
-
-            modelBuilder.Entity<ProductCategory>(entity =>
-            entity.HasKey(pc => pc.CategoryId));
-
-            modelBuilder.Entity<ProductCategory>(entity =>
-            {
-                entity.HasKey(pc => pc.CategoryId);
-
-            });
 
 
             modelBuilder.Entity<Role>(entity =>
@@ -97,16 +106,37 @@ namespace EShop.DAL.Context
                 entity.HasKey(uc => new { uc.UserId, uc.ClaimId })
                       .HasName("PK_UserClaims");
             });
+            #endregion
+
 
             #endregion
 
             #region Relations
 
+            #region Product
+
+            modelBuilder.Entity<ProductFeatureValue>(entity =>
+            {
+                entity.HasOne(pf => pf.Feature) // ارتباط یک به یک با CategoryFeature
+                      .WithMany() // هر ویژگی ممکن است چندین ویژگی مقدار داشته باشد
+                      .HasForeignKey(pf => pf.FeatureId) // تنظیم کلید خارجی
+                      .OnDelete(DeleteBehavior.Cascade); // حذف رفتار مناسب در صورت حذف
+            });
+
+            modelBuilder.Entity<CategoryFeature>(entity =>
+            {
+                entity.HasOne(cf => cf.Category)
+                  .WithMany(c => c.Features)
+                  .HasForeignKey(cf => cf.CategoryId)
+                  .OnDelete(DeleteBehavior.Cascade);
+            });
+
+
             modelBuilder.Entity<ProductGallery>(entity =>
-            entity.HasOne(pg => pg.Product)
-           .WithMany(p => p.Galleries)
-           .HasForeignKey(pg => pg.ProductId)
-           .OnDelete(DeleteBehavior.Cascade));
+                   entity.HasOne(pg => pg.Product)
+                  .WithMany(p => p.Galleries)
+                  .HasForeignKey(pg => pg.ProductId)
+                  .OnDelete(DeleteBehavior.Cascade));
 
             modelBuilder.Entity<ProductSEO>(entity =>
             entity.HasOne(ps => ps.Product)
@@ -135,24 +165,6 @@ namespace EShop.DAL.Context
             .HasForeignKey(p => p.ShopId)
              .OnDelete(DeleteBehavior.Restrict));
 
-            modelBuilder.Entity<Employee>(entity =>
-            {
-                entity.HasOne(e => e.Shop)
-                      .WithMany(s => s.Employees)
-                      .HasForeignKey(e => e.ShopId)
-                      .OnDelete(DeleteBehavior.Cascade); // حذف کارمندان در صورت حذف فروشگاه
-            });
-
-            modelBuilder.Entity<Shop>(entity =>
-            {
-                entity.HasKey(s => s.ShopId);
-
-                entity.HasOne(s => s.User)
-                      .WithOne(u => u.OwnedShop)
-                      .HasForeignKey<Shop>(s => s.OwnerId)
-                      .OnDelete(DeleteBehavior.Restrict); // Cascade delete, delete the shop when the user is deleted
-            });
-
             modelBuilder.Entity<ProductCategory>(entity =>
             entity.HasOne(pc => pc.Parent)
             .WithMany(p => p.Children)
@@ -173,6 +185,26 @@ namespace EShop.DAL.Context
                       .OnDelete(DeleteBehavior.Restrict)
                       .HasConstraintName("FK_UserRole_Roles");
             });
+            #endregion
+
+            #region Public
+            modelBuilder.Entity<Employee>(entity =>
+                    {
+                        entity.HasOne(e => e.Shop)
+                              .WithMany(s => s.Employees)
+                              .HasForeignKey(e => e.ShopId)
+                              .OnDelete(DeleteBehavior.Cascade); // حذف کارمندان در صورت حذف فروشگاه
+                    });
+
+            modelBuilder.Entity<Shop>(entity =>
+            {
+                entity.HasKey(s => s.ShopId);
+
+                entity.HasOne(s => s.User)
+                      .WithOne(u => u.OwnedShop)
+                      .HasForeignKey<Shop>(s => s.OwnerId)
+                      .OnDelete(DeleteBehavior.Restrict); // Cascade delete, delete the shop when the user is deleted
+            });
 
             modelBuilder.Entity<UserClaim>(entity =>
             {
@@ -188,6 +220,12 @@ namespace EShop.DAL.Context
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_UserClaims_Claims");
             });
+            #endregion
+
+
+
+
+
 
             #endregion
 
