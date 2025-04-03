@@ -1,0 +1,39 @@
+﻿@using EShop.Core.Entities.Enums
+@model EShop.Core.Entities.Models.Products.Feature
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Feature</h4>
+<hr />
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Type" class="form-label"></label>
+                    <select asp-for="Type" asp-items="Html.GetEnumSelectList<FeatureType>()" class="form-control">
+                        <option value="">انتخاب کنید</option>
+                    </select>
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="ایجاد ویژگی" class="btn btn-success mt-3" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+<div>
+    <a asp-action="Index" class="btn btn-secondary">بازگشت به مدیریت دسته‌بندی‌ها</a>
+</div>

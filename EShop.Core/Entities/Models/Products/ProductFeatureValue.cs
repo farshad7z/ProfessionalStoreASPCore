@@ -11,14 +11,19 @@ namespace EShop.Core.Entities.Models.Products
     {
         public int Id { get; set; }
 
-        public int FeatureId { get; set; } // ارتباط با ویژگی
+        public int? FeatureId { get; set; } //
+        public int? ProductId { get; set; } // ارتباط با محصول
 
         [MaxLength(100)]
         public required string Value { get; set; } // مقدار ویژگی (مثلاً "آبی" یا "XL")
-        #region Relations
-        public CategoryFeature Feature { get; set; } // تغییر به CategoryFeature
 
+        #region Relations
+
+        public virtual Feature? Feature { get; set; }
+        public virtual Product Product { get; set; }
         #endregion
+
+        
     }
 
 }

@@ -3,88 +3,146 @@
 @{
     ViewData["Title"] = "مدیریت دسته بندی ";
 }
-
-<h1>Index</h1>
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+<h1>مدیریت دسته بندی ها</h1>
 
 <p>
-    <a asp-action="Create">ایجاد دسته بندی جدید</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.CategoryId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MenuType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Image)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Slug)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsCategoryOnMain)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsDeleted)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CategoryId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MenuType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Image)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Slug)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsCategoryOnMain)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsDeleted)
-            </td>
-            <td>
-                @Html.ActionLink("افزودن ویژگی", "CategoryFeature", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("ویرایش", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("مشخصات", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("حذف", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <a asp-action="Create" class="btn btn-info">ایجاد دسته بندی جدید</a>
+</p
+
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                    <h6 class="text-white text-capitalize ps-3">مدیریت دسته‌بندی‌ها</h6>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <div class="table-responsive p-0">
+                    <table class="table align-items-center mb-0">
+                        <thead>
+                            <tr class="text-center">
+                                <th>ردیف</th>
+                                <th>نام دسته‌بندی</th>
+                                <th>توضیحات</th>
+                                <th>نوع منو</th>
+                                <th>تصویر</th>
+                                <th>Slug</th>
+                                <th>تاریخ ایجاد</th>
+                                <th>تاریخ بروزرسانی</th>
+                                <th>وضعیت در صفحه اصلی</th>
+                                <th>وضعیت</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int count = 0;
+                            }
+                            @foreach (var item in Model)
+                            {
+                                count++;
+                                <tr>
+                                    <td class="text-center">
+                                        @count
+                                    </td>
+                                    <td class="text-center">
+                                        @item.Name
+                                    </td>
+                                    <td class="text-center">
+                                        @item.Description
+                                    </td>
+                                    <td class="text-center">
+                                        @item.MenuType
+                                    </td>
+                                    <td class="text-center">
+                                        @if (item.Image !=null)
+                                        {
+                                            <img src="@Url.Content($"~/uploads/productCategories/thumbnail/thumbnail_{item.Image}")" class="avatar avatar-sm me-3 border-radius-lg" alt="@item.Slug" />
+                                        }
+                                        else
+                                        {
+                                            <img src="@Url.Content($"~/uploads/productCategories/thumbnail/default.png")" class="avatar avatar-sm me-3 border-radius-lg" alt="@item.Slug" />
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @item.Slug
+                                    </td>
+                                    <td class="text-center">
+                                        @item.CreatedAt.ToString("yyyy/MM/dd")
+                                    </td>
+                                    <td class="text-center">
+                                        @item.UpdatedAt?.ToString("yyyy/MM/dd")
+                                    </td>
+                                    <td class="text-center">
+                                        @if (item.IsCategoryOnMain)
+                                        {
+                                            <span class="badge badge-sm bg-gradient-success">فعال</span>
+                                        }
+                                        else
+                                        {                                
+                                            <span class="badge badge-sm bg-gradient-danger">غیر فعال </span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+
+                                        @if (item.IsDeleted)
+                                        {
+                                            <span class="badge badge-sm bg-gradient-danger">حذف شده</span>
+                                        }
+                                        else
+                                        {                        
+                                            <span class="badge badge-sm bg-gradient-success">فعال </span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="@Url.Action("Edit", "Category", new { id = item.CategoryId })" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="ویرایش">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="@Url.Action("Details", "Category", new { id = item.CategoryId })" class="text-info font-weight-bold text-xs ms-2" data-toggle="tooltip" title="مشخصات">
+                                            <i class="bi bi-info-circle"></i>
+                                        </a>
+                                                   <a href="@Url.Action("Delete", "Category", new { id = item.CategoryId })" class="text-danger font-weight-bold text-xs ms-2" data-toggle="tooltip" title="حذف" onclick="return confirm('آیا مطمئن هستید؟');">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                        <a href="@Url.Action("managecategoryfeatures", "productcategories", new { id = item.CategoryId })" class="text-info font-weight-bold text-xs ms-2" data-toggle="tooltip" title="افزودن ویژگی">
+                                            <i class="bi bi-file-diff"></i>
+                                       </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var alertBox = document.querySelector(".alert-success");
+        if (alertBox) {
+            setTimeout(function () {
+                alertBox.style.transition = "opacity 0.5s ease";
+                alertBox.style.opacity = 0;
+                setTimeout(function () {
+                    alertBox.style.display = "none";
+                }, 500);
+            }, 3000);
+
+            alertBox.addEventListener("click", function () {
+                alertBox.style.transition = "opacity 0.5s ease";
+                alertBox.style.opacity = 0;
+                setTimeout(function () {
+                    alertBox.style.display = "none";
+                }, 500);
+            });
+        }
+    });
+</script>

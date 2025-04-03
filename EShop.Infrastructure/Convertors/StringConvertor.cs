@@ -1,21 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace EShop.Infrastructure.Convertors
 {
     public static class StringConvertor
     {
-        /// <summary>
-        ///تابع برای تبدیل کاراکترهای فارسی به معادل‌های لاتین (تبدیل کاراکترهای فارسی به حروف لاتین)
-        /// </summary>
-        /// <param name="متن فارسی"></param>
-        /// <returns></returns>
-        public static string PersianToLatinMap(string persianText)
+        private static readonly Lazy<Dictionary<string, string>> _persianToEnglishDictionary = new(() =>
         {
-            // دیکشنری برای تبدیل کاراکترهای فارسی به معادل‌های لاتین
+            string wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            if (!Directory.Exists(wwwRootPath))
+                wwwRootPath = Path.Combine(AppContext.BaseDirectory, "wwwroot");
+
+            string filePath = Path.Combine(wwwRootPath, "Resources", "PersianToEnglish_dictionary.json");
+
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException("فایل دیکشنری پیدا نشد!", filePath);
+
+            string jsonContent = File.ReadAllText(filePath);
+            var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonContent) ?? new();
+
+            if (dictionary.Count == 0)
+                throw new InvalidOperationException("دیکشنری بارگذاری نشده یا خالی است.");
+
+            return dictionary;
+        });
+
+        /// <summary>
+        /// تبدیل متن فارسی به معادل انگلیسی بر اساس دیکشنری
+        /// </summary>
+        private static string PersianToEnglish(string persianText)
+        {
+            return _persianToEnglishDictionary.Value.TryGetValue(persianText, out var english) ? english : persianText;
+        }
+
+        /// <summary>
+        /// تبدیل متن فارسی به معادل انگلیسی یا لاتین
+        /// </summary>
+        public static string PersianToLatinOrEnglish(string persianText)
+        {
+            var englishText = PersianToEnglish(persianText);
+            return (englishText == persianText) ? PersianToLatinMap(persianText) : englishText;
+        }
+
+        /// <summary>
+        /// تبدیل حروف فارسی به معادل‌های لاتین
+        /// </summary>
+        private static string PersianToLatinMap(string persianText)
+        {
             var persianToLatinMap = new Dictionary<char, string>
             {
                 { 'آ', "a" }, { 'ا', "a" }, { 'ب', "b" }, { 'پ', "p" }, { 'ت', "t" },
@@ -27,22 +61,12 @@ namespace EShop.Infrastructure.Convertors
                 { 'و', "v" }, { 'ه', "h" }, { 'ی', "y" }
             };
 
-            // تبدیل متن فارسی به معادل‌های لاتین
             var latinText = new StringBuilder();
             foreach (var character in persianText)
             {
-                if (persianToLatinMap.ContainsKey(character))
-                {
-                    latinText.Append(persianToLatinMap[character]);
-                }
-                else
-                {
-                    latinText.Append(character);
-                }
+                latinText.Append(persianToLatinMap.TryGetValue(character, out var latin) ? latin : character.ToString());
             }
-
             return latinText.ToString();
         }
     }
-
 }

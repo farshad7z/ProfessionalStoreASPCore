@@ -9,10 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Microsoft.AspNetCore.Mvc.Rendering;
+using EShop.Core.Entities.Models.Products;
 namespace EShop.BLL.Services.Public
 {
-   public class ProductCategoryServices : IProductCategoryServices
+    public class ProductCategoryServices : IProductCategoryServices
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -20,9 +21,30 @@ namespace EShop.BLL.Services.Public
         {
             _unitOfWork = unitOfWork;
         }
+
+        public async Task<int> AddAsync(ProductCategory model)
+        {
+            await _unitOfWork.Repository<ProductCategory>().AddAsync(model);
+            await _unitOfWork.SaveAsync();
+            return model.CategoryId;
+        }
+
+        public async Task<int> AddFeatureInProductCategoryAsync(List<CategoryFeatureValue> model)
+        {
+            // اضافه کردن ویژگی‌ها به دسته‌بندی
+            await _unitOfWork.Repository<CategoryFeatureValue>().AddRangeAsync(model);
+
+            // ذخیره تغییرات
+            await _unitOfWork.SaveAsync();
+
+            // بازگشت تعداد رکوردهای افزوده شده
+            return model.Count;
+        }
+
+
         public async Task<IEnumerable<ProductCategory>> GetAllAsync()
         {
-           return await _unitOfWork.Repository<ProductCategory>().GetAllAsync();
+            return await _unitOfWork.Repository<ProductCategory>().GetAllAsync();
         }
 
         public async Task<IEnumerable<AdminProductCategoriesOnIndexViewModel>> GetAllForIndexCategoryAsync()
@@ -51,15 +73,94 @@ namespace EShop.BLL.Services.Public
             }).ToList();
         }
 
+        public async Task<List<SelectListItem>> GetAllForSelectParentAsync()
+        {
+            // دریافت دسته‌بندی‌ها با شرایط خاص
+            var categories = await _unitOfWork.Repository<ProductCategory>()
+                .GetAllAsync(pc => pc.IsDeleted == false
+                                   && pc.MenuType != Core.Enums.MenuType.CategoryOnly
+                                   && pc.MenuType != Core.Enums.MenuType.TertiaryMenu);
+
+            // تبدیل داده‌ها به SelectListItem
+            var categoryItems = categories.Select(c => new SelectListItem
+            {
+                Value = c.CategoryId.ToString(),
+                Text = c.Name
+            }).ToList();
+
+            return categoryItems;
+        }
+
+        public async Task<ProductCategory> GetCategoryByIdAsync(int id)
+        {
+            return await _unitOfWork.Repository<ProductCategory>()
+                 .FindSingleOrDefaultAsync(pc => pc.CategoryId == id);
+        }
+
+        public async Task<ProductCategory> GetCategoryByNameAsync(string name)
+        {
+            return await _unitOfWork.Repository<ProductCategory>().FindSingleOrDefaultAsync(pc => pc.Name == name);
+
+        }
+
+        public async Task<CategoryFeatureValue?> GetCategoryFeatureByCategoryIdAndFeatureIdAsync(int categoryId, int featureId)
+        {
+            return await _unitOfWork.Repository<CategoryFeatureValue>()
+                .FindSingleOrDefaultAsync(cfv => cfv.CategoryId == categoryId && cfv.FeatureId == featureId);
+        }
 
         public async Task<IEnumerable<ProductCategory>> GetCategoryForMenuAsync()
         {
-            return await _unitOfWork.Repository<ProductCategory>().FindAsync(pc=>pc.MenuType != Core.Enums.MenuType.CategoryOnly);
+            return await _unitOfWork.Repository<ProductCategory>().FindAsync(pc => pc.MenuType != Core.Enums.MenuType.CategoryOnly);
         }
 
         public async Task<IEnumerable<ProductCategory>> GetCategoryOnMainPageAsync()
         {
-            return await _unitOfWork.Repository<ProductCategory>().FindAsync(pc => pc.MenuType != Core.Enums.MenuType.CategoryOnly && pc.IsCategoryOnMain==true);
+            return await _unitOfWork.Repository<ProductCategory>().FindAsync(pc => pc.MenuType != Core.Enums.MenuType.CategoryOnly && pc.IsCategoryOnMain == true);
+        }
+
+        public async Task<IEnumerable<AdminFeatureViewModel>> GetFeaturesByCategoryIdAsync(int categoryId)
+        {
+            var categoryFeatures = await _unitOfWork.Repository<CategoryFeatureValue>()
+                .GetAllWithIncludeAsync(
+                    cfv => cfv.CategoryId == categoryId,
+                    query => query.Include(cfv => cfv.Feature) // Eager Loading برای Feature
+                );
+
+            return categoryFeatures.Select(scf => new AdminFeatureViewModel
+            {
+                Id = scf.Id,
+                FeatureId = scf.FeatureId,
+                Name = scf.Feature.Name,
+                CategoryId=categoryId
+            });
+        }
+
+        public async Task<bool> IsCategoryFeatureExistsAsync(int categoryId, List<int> selectFeatureIds)
+        {
+            // پیدا کردن ویژگی‌هایی که به این دسته‌بندی و ویژگی‌ها تعلق دارند
+            var existingFeatures = await _unitOfWork.Repository<CategoryFeatureValue>()
+                .FindAsync(cfv => cfv.CategoryId == categoryId && selectFeatureIds.Contains(cfv.FeatureId));
+
+            // اگر ویژگی‌هایی یافت شوند، به این معناست که قبلاً اضافه شده‌اند
+            return existingFeatures.Any();
+        }
+
+        public async Task<bool> IsCategoryNameExistsAsync(string name)
+        {
+            return await _unitOfWork.Repository<ProductCategory>().ExistsAsync(pc => pc.Name == name);
+        }
+
+        public async Task<bool> IsCategorySlugExistsAsync(string slug)
+        {
+            return await _unitOfWork.Repository<ProductCategory>().ExistsAsync(pc => pc.Slug == slug);
+        }
+
+        public async Task RemoveFeatureFromCategoryAsync(CategoryFeatureValue categoryFeatureValue)
+        {
+
+            await _unitOfWork.Repository<CategoryFeatureValue>().DeleteAsync(categoryFeatureValue);
+            await _unitOfWork.SaveAsync();
         }
     }
 }

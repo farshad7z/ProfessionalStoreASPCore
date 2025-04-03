@@ -34,16 +34,19 @@ namespace EShop.Core.Entities.Models
         public DateTime? UpdatedAt { get; set; }
 
         #region Relations
+
+        public virtual ICollection<ProductFeatureValue>? ProductFeatureValue { get; set; } // تصاویر محصول
+
         public Shop? Shop { get; set; } // فروشگاه مرتبط
         public ProductSEO? ProductSEO { get; set; }
-        public ICollection<ProductVariant> ProductVariants { get; set; } = new HashSet<ProductVariant>(); // لیست ترکیب‌ها
-        public ICollection<ProductGallery>? Galleries { get; set; } // تصاویر محصول
+        public virtual ICollection<ProductVariant> ProductVariants { get; set; } = new HashSet<ProductVariant>(); // لیست ترکیب‌ها
+        public virtual  ICollection<ProductGallery>? Galleries { get; set; } // تصاویر محصول
 
         // Other Relationships
-        //public ICollection<ProductFeature> Features { get; set; } // ویژگی‌ها
+        public virtual ICollection<ProductFeatureValue> Features { get; set; } // ویژگی‌ها
         //public ICollection<ProductComment> Comments { get; set; } // نظرات
 
-        public ICollection<ProductSelectCategory> ProductSelectCategory { get; set; } = new HashSet<ProductSelectCategory>(); // گروه‌های انتخابی
+        public virtual ICollection<ProductSelectCategory> ProductSelectCategory { get; set; } = new HashSet<ProductSelectCategory>(); // گروه‌های انتخابی
         #endregion
     }
 }

@@ -31,7 +31,7 @@ namespace EShop.Core.Entities.Models
 
         [StringLength(50, ErrorMessage = "کلاس آیکون نمی‌تواند بیشتر از {1} کاراکتر باشد.")]
         public string? IconClass { get; set; } // کلاس آیکون دسته‌بندی (برای UI)
-        [StringLength(50, ErrorMessage = "کلاس آیکون نمی‌تواند بیشتر از {1} کاراکتر باشد.")]
+        [StringLength(50, ErrorMessage = "بوم رنگی  نمی‌تواند بیشتر از {1} کاراکتر باشد.")]
         public string? IconColor { get; set; } // _ آیکون دسته‌بندی (برای رنگ
 
         [StringLength(150, ErrorMessage = "Slug نمی‌تواند بیشتر از {1} کاراکتر باشد.")]
@@ -49,7 +49,7 @@ namespace EShop.Core.Entities.Models
         public virtual ProductCategory? Parent { get; set; }
         public virtual ICollection<ProductCategory> Children { get; set; } = new HashSet<ProductCategory>();
         public virtual ICollection<ProductSelectCategory>? ProductSelectCategory { get; set; } // گروه‌های انتخابی
-        public virtual ICollection<CategoryFeature>? Features { get; set; }
+        public virtual ICollection<CategoryFeatureValue>? CategoryFeatureValue { get; set; }
 
 
         #endregion

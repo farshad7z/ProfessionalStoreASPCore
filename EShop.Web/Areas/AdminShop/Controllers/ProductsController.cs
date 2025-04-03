@@ -7,6 +7,7 @@ using EShop.Core.Interfaces.Services;
 using EShop.Core.Interfaces.Services.Public;
 using EShop.DAL.Migrations;
 using EShop.Infrastructure.Convertors;
+using EShop.Infrastructure.Generator;
 using EShop.Infrastructure.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -143,7 +144,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
 
 
                 // تولید نام یکتا برای تصویر
-                string imageName = GenerateImageName(model.Name, extension);
+                string imageName = NameGenerator.GenerateImageName(model.Name, extension);
 
                 //string? imageName = model.Name != null
                 //    ? $"{"عکس-تصویر"}-{model.Name.Replace(" ", "-").ToLower()}-{StringConvertor.PersianToLatinMap(model.Name).Replace(" ", "-").ToLower()}-{Guid.NewGuid().ToString()}{extension}"
@@ -332,7 +333,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
 
 
                         // تولید نام یکتا برای تصویر
-                        string imageName = GenerateImageName(model.Name, extension);
+                        string imageName = NameGenerator.GenerateImageName(model.Name, extension);
 
                         string thumbImageName = "thumbnail_" + imageName;
 
@@ -415,75 +416,6 @@ namespace EShop.Web.Areas.AdminShop.Controllers
         #endregion
 
 
-        #region Functions
-
-        /// <summary>
-        /// تولید نام فایل تصویر مناسب برای سئو، با استفاده از نام محصول و پسوند فایل.
-        /// نام تولیدشده شامل معادل فارسی و انگلیسی نام محصول + GUID برای یکتا بودن است.
-        /// </summary>
-        /// <param name="productName">نام محصول</param>
-        /// <param name="extension">پسوند فایل (مثلاً .jpg, .png)</param>
-        /// <returns>نام فایل مناسب برای SEO</returns>
-        string GenerateImageName(string productName, string extension)
-        {
-            if (string.IsNullOrWhiteSpace(productName))
-                return $"{Guid.NewGuid()}{extension}";
-
-            string seoName = productName.Replace(" ", "-").ToLower();
-            string latinName = StringConvertor.PersianToLatinMap(productName).Replace(" ", "-").ToLower();
-
-            string imageName = $"عکس-تصویر-{seoName}-{latinName}-{Guid.NewGuid()}{extension}";
-            return System.Text.RegularExpressions.Regex.Replace(imageName, "-{2,}", "-"); // حذف --- اضافی
-        }
-
-
-
-        // متد برای ساخت Thumbnail
-        private bool IsValidImage(IFormFile file)
-        {
-            var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
-            if (string.IsNullOrEmpty(ext) || !_permittedExtensions.Contains(ext))
-                return false;
-
-            if (file.Length == 0 || file.Length > _fileSizeLimit)
-                return false;
-
-            // بررسی امضای باینری فایل (Magic Numbers)
-            using (var reader = new BinaryReader(file.OpenReadStream()))
-            {
-                var signatures = GetImageSignatures(ext);
-                var headerBytes = reader.ReadBytes(signatures.Max(s => s.Length));
-                return signatures.Any(signature => headerBytes.Take(signature.Length).SequenceEqual(signature));
-            }
-        }
-
-        private List<byte[]> GetImageSignatures(string extension)
-        {
-            var signatures = new List<byte[]>();
-            switch (extension)
-            {
-                case ".jpg":
-                case ".jpeg":
-                    signatures.Add(new byte[] { 0xFF, 0xD8, 0xFF });
-                    break;
-                case ".png":
-                    signatures.Add(new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A });
-                    break;
-                case ".gif":
-                    signatures.Add(Encoding.ASCII.GetBytes("GIF87a"));
-                    signatures.Add(Encoding.ASCII.GetBytes("GIF89a"));
-                    break;
-            }
-            return signatures;
-        }
-
-
-
-
-        #endregion
-
-
-
         //--** Start Gallery Cods **--
         #region Gallery
 
@@ -541,7 +473,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
 
                 // تولید نام یکتا برای تصویر
                 string? imageName = model.Title != null
-                    ? $"{"عکس-تصویر-گالری"}-{model.Title.Replace(" ", "-").ToLower()}-{StringConvertor.PersianToLatinMap(model.Title).Replace(" ", "-").ToLower()}-{Guid.NewGuid().ToString()}{extension}"
+                    ? $"{"عکس-تصویر-گالری"}-{model.Title.Replace(" ", "-").ToLower()}-{StringConvertor.PersianToLatinOrEnglish(model.Title).Replace(" ", "-").ToLower()}-{Guid.NewGuid().ToString()}{extension}"
                     : $"{Guid.NewGuid().ToString()}{extension}";
                 imageName = System.Text.RegularExpressions.Regex.Replace(imageName, "-{2,}", "-");
 

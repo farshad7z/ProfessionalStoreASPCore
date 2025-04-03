@@ -1,4 +1,5 @@
 ﻿using EShop.Infrastructure.Convertors;
+using EShop.Infrastructure.Generator;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging.Signing;
 
@@ -44,10 +45,8 @@ namespace EShop.Web.Areas.AdminShop.Controllers
             var extension = Path.GetExtension(file.FileName);
 
             // تولید نام یکتا برای تصویر
-            string? safeFileName = productName != null
-                ? $"{"عکس-تصویر"}-{productName.Replace(" ", "-").ToLower()}-{StringConvertor.PersianToLatinMap(productName).Replace(" ", "-").ToLower()}-{Guid.NewGuid().ToString("N")}{extension}"
-                : $"{Guid.NewGuid().ToString()}{extension}";
-            safeFileName = System.Text.RegularExpressions.Regex.Replace(safeFileName, "-{2,}", "-");
+            string? safeFileName = NameGenerator.GenerateImageName(productName, extension);
+               
             // تغییر نام فایل (جلوگیری از حملات)
             var filePath = Path.Combine(uploadPath, safeFileName);
 

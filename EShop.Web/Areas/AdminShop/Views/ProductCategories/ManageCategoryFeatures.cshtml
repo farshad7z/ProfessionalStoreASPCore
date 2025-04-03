@@ -1,0 +1,155 @@
+﻿@using EShop.Core.DTOs.ViewModels.Admin.Category
+@model AdminCategoryFeatureViewModel
+@{
+    ViewData["Title"] = "مدیریت ویژگی های دسته بندی";
+    // استخراج آی دی‌های ویژگی‌های انتخاب شده جهت فیلتر کردن در لیست گزینه‌های select
+    var selectedFeatureIds = Model.SelectedFeatures.Select(sf => sf.FeatureId).ToHashSet();
+}
+<div class="card">
+    <div class="card-header">
+        <h5>ویژگی‌های دسته بندی: @Model.CategoryName</h5>
+    </div>
+    <div class="card-body">
+        <!-- لیست ویژگی‌های انتخاب شده -->
+        <div class="mb-4">
+            <h6>ویژگی های موجود</h6>
+            <table class="table table-striped" id="selected-features-table">
+                <thead>
+                    <tr>
+                        <th>ردیف</th>
+                        <th>نام ویژگی</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var feature in Model.SelectedFeatures)
+                    {
+                        <tr id="feature-row-@feature.FeatureId">
+                            <td>@feature.FeatureId</td>
+                            <td>@feature.Name</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-danger delete-feature-btn"
+                                        data-category-id="@Model.CategoryId" data-feature-id="@feature.FeatureId">
+                                    حذف
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- فرم انتخاب و افزودن ویژگی‌های جدید -->
+        <div>
+            <h6>افزودن ویژگی‌های جدید</h6>
+            <div class="row">
+                <div class="col-md-8">
+                    <select id="feature-select" class="form-control select2" multiple="multiple" data-placeholder="انتخاب ویژگی ها">
+                        @foreach (var feature in Model.Features.Where(f => !selectedFeatureIds.Contains(f.Id)))
+                        {
+                            <option value="@feature.Id">@feature.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    @Html.AntiForgeryToken()
+                    <button type="button" id="add-feature-btn" class="btn btn-primary">افزودن ویژگی ها</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // تابع افزودن ویژگی‌ها به دسته‌بندی
+        async function addFeatures(categoryId) {
+            const selectedOptions = $('#feature-select option:selected'); // گزینه‌های انتخاب شده
+            const featureIds = selectedOptions.map((_, option) => option.value).get();
+            const featureNames = selectedOptions.map((_, option) => option.text).get(); // نام ویژگی‌ها
+
+            if (!featureIds || featureIds.length === 0) {
+                alert('هیچ ویژگی انتخاب نشده!');
+                return;
+            }
+
+            $('#add-feature-btn').prop('disabled', true);
+            try {
+                const response = await fetch('/AdminShop/ProductCategories/AddFeatures', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({
+                        CategoryId: categoryId,
+                        FeatureIds: featureIds
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    result.addedFeatures.forEach((feature, index) => {
+                        $('#selected-features-table tbody').append(`
+                            <tr id="feature-row-${feature.featureId}">
+                                <td>${feature.featureId}</td>
+                                <td>${featureNames[index]}</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-danger delete-feature-btn"
+                                            data-category-id="${categoryId}" data-feature-id="${feature.featureId}">
+                                        حذف
+                                    </button>
+                                </td>
+                            </tr>
+                        `);
+                    });
+                    $('#feature-select').val(null).trigger('change');
+                    alert(result.message);
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('خطایی رخ داد!');
+            }
+            $('#add-feature-btn').prop('disabled', false);
+        }
+
+        // تابع حذف ویژگی از دسته‌بندی
+        async function deleteFeature(categoryId, featureId) {
+            if (!confirm('آیا مطمئن هستید؟')) return;
+            try {
+                const response = await fetch('/AdminShop/ProductCategories/DeleteFeature', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({ categoryId: categoryId, featureId: featureId })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    $(`#feature-row-${featureId}`).remove();
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('خطایی رخ داد!');
+            }
+        }
+
+        // رویداد کلیک برای دکمه افزودن ویژگی‌ها
+        document.getElementById('add-feature-btn').addEventListener('click', function(event) {
+            event.preventDefault();
+            addFeatures(@Model.CategoryId);
+        });
+
+        // استفاده از delegation برای مدیریت رویداد کلیک روی دکمه‌های حذف
+        $('#selected-features-table').on('click', '.delete-feature-btn', function(event) {
+            event.preventDefault();
+            const categoryId = $(this).data('category-id');
+            const featureId = $(this).data('feature-id');
+            deleteFeature(categoryId, featureId);
+        });
+    </script>
+}

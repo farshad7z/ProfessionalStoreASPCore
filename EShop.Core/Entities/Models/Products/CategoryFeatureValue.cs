@@ -9,21 +9,19 @@ using System.Threading.Tasks;
 namespace EShop.Core.Entities.Models.Products
 {
 
-    public class CategoryFeature
+    public class CategoryFeatureValue
     {
         public int Id { get; set; }
 
-        [MaxLength(100)]
-        public required string Name { get; set; } // مثال: "رنگ"، "حافظه"
-
-        public FeatureType Type { get; set; } // enum: Text, Number, Range
-
-        public int CategoryId { get; set; }
+        public int FeatureId { get; set; } // ارتباط با ویژگی
+        public int CategoryId { get; set; } // ارتباط با دسته محصولات
+        
+        //[MaxLength(100)]
+        //public required string Value { get; set; } // مقدار ویژگی (مثلاً "آبی" یا "XL")
 
         #region Relation
         public ProductCategory Category { get; set; }
-        public virtual ICollection<ProductFeatureValue>? ProductFeatureValue { get; set; }
-
+        public  Feature Feature { get; set; }
         #endregion
     }
 }

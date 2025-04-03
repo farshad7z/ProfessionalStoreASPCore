@@ -1,0 +1,18 @@
+﻿@using EShop.Core.DTOs.ViewModels.Admin.Category
+@model IEnumerable<AdminFeatureViewModel>
+
+@foreach (var feature in Model)
+{
+    <tr id="feature-@feature.FeatureId">
+        <td>@feature.Name</td>
+        <td>
+            <button class="btn btn-danger btn-sm"
+                    hx-post="@Url.Action("DeleteFeature", "ProductCategories")"
+                    hx-vals='{"CategoryId": "@feature.CategoryId", "FeatureId": "@feature.FeatureId"}'
+                    hx-target="#feature-@feature.FeatureId"
+                    hx-swap="outerHTML">
+                حذف
+            </button>
+        </td>
+    </tr>
+}

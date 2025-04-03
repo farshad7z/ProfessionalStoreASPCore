@@ -1,0 +1,28 @@
+﻿@model IEnumerable<EShop.Core.Entities.Models.Products.Feature>
+
+<h1>ویژگی‌ها</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>نام ویژگی</th>
+            <th>نوع ویژگی</th>
+            <th>عملیات</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var feature in Model)
+        {
+            <tr>
+                <td>@feature.Name</td>
+                <td>@feature.Type</td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = feature.Id })" class="btn btn-primary">ویرایش</a>
+                    <a href="@Url.Action("Delete", new { id = feature.Id })" class="btn btn-danger">حذف</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("Create")" class="btn btn-success">ایجاد ویژگی جدید</a>

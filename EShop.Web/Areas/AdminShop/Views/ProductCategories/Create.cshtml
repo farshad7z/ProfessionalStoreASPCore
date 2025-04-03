@@ -1,0 +1,133 @@
+﻿@model EShop.Core.DTOs.ViewModels.Admin.Category.AdminCreateCategoryViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering;
+
+@{
+    ViewData["Title"] = "ایجاد دسته‌بندی جدید";
+}
+
+<div class="container mt-5">
+    <h2>@ViewData["Title"]</h2>
+    <hr />
+
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div class="row">
+            <!-- نام دسته بندی -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- توضیحات -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- دسته بندی والد -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="ParentId" class="control-label"></label>
+                    <select asp-for="ParentId" class="form-control" asp-items="Model.ParentCategories">
+                        <option value="">بدون والد</option>
+                    </select>
+                    <span asp-validation-for="ParentId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- آپلود تصویر -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="ImageFile" class="control-label"></label>
+                    <input asp-for="ImageFile" type="file" class="form-control" />
+                    <span asp-validation-for="ImageFile" class="text-danger"></span>
+                    <img id="previewImage" src="" class="img-thumbnail mt-2" style="max-width: 200px; display: none;" />
+                </div>
+            </div>
+
+            <!-- نوع منو -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="MenuType" class="control-label"></label>
+                    <select asp-for="MenuType" class="form-control">
+                        <option value="CategoryOnly">فقط در دسته‌بندی‌ها</option>
+                        <option value="MainMenu">منو اصلی</option>
+                        <option value="SecondaryMenu">زیرمنو سطح دوم</option>
+                        <option value="TertiaryMenu">زیرمنو سطح سوم</option>
+                    </select>
+                    <span asp-validation-for="MenuType" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- کلاس آیکون -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="IconClass" class="control-label"></label>
+                    <input asp-for="IconClass" class="form-control" />
+                    <span asp-validation-for="IconClass" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- انتخاب رنگ آیکون -->
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label asp-for="IconColor" class="control-label"></label>
+                    <input asp-for="IconColor" type="color" class="form-control" />
+                    <span asp-validation-for="IconColor" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- اسلاگ -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Slug" class="control-label"></label>
+                    <input asp-for="Slug" class="form-control" />
+                    <span asp-validation-for="Slug" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- نمایش در صفحه اصلی -->
+            <div class="col-md-6">
+                <div class="form-group form-check">
+                    <input asp-for="IsCategoryOnMain" type="checkbox" class="form-check-input" @* checked="checked" *@ />
+                    <label asp-for="IsCategoryOnMain" class="form-check-label"></label>
+                    <span asp-validation-for="IsCategoryOnMain" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- دکمه ارسال -->
+            <div class="col-md-12 text-center mt-3">
+                <button type="submit" class="btn btn-success">ایجاد دسته‌بندی</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
+
+<div>
+    <a asp-action="Index" class="btn btn-secondary">بازگشت به مدیریت دسته‌بندی‌ها</a>
+</div>
+
+<!-- پیش‌نمایش تصویر انتخاب شده -->
+<script>
+    document.querySelector('input[name="ImageFile"]').addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const previewImage = document.getElementById('previewImage');
+                previewImage.src = e.target.result;
+                previewImage.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>

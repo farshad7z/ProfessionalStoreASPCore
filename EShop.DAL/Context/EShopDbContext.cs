@@ -24,8 +24,9 @@ namespace EShop.DAL.Context
 
         #region Product
 
+        public DbSet<Feature> Features { get; set; }
         public DbSet<ProductFeatureValue> ProductFeatureValues { get; set; }
-        public DbSet<CategoryFeature> CategoryFeatures { get; set; }
+        public DbSet<CategoryFeatureValue> CategoryFeatureValues { get; set; }
         public DbSet<ProductGallery> ProductGalleries { set; get; }
         public DbSet<ProductSEO> ProductSEOs { get; set; }
         public DbSet<ProductSelectCategory> ProductSelectCategories { get; set; }
@@ -54,7 +55,7 @@ namespace EShop.DAL.Context
             modelBuilder.Entity<ProductFeatureValue>(entity =>
             entity.HasKey(pfv => pfv.Id));
 
-            modelBuilder.Entity<CategoryFeature>(entity =>
+            modelBuilder.Entity<CategoryFeatureValue>(entity =>
            entity.HasKey(cf => cf.Id));
 
             modelBuilder.Entity<ProductGallery>(entity =>
@@ -115,21 +116,34 @@ namespace EShop.DAL.Context
 
             #region Product
 
+
             modelBuilder.Entity<ProductFeatureValue>(entity =>
             {
-                entity.HasOne(pf => pf.Feature) // ارتباط یک به یک با CategoryFeature
-                      .WithMany() // هر ویژگی ممکن است چندین ویژگی مقدار داشته باشد
-                      .HasForeignKey(pf => pf.FeatureId) // تنظیم کلید خارجی
-                      .OnDelete(DeleteBehavior.Cascade); // حذف رفتار مناسب در صورت حذف
+                entity.HasOne(pf => pf.Feature)
+                      .WithMany(f => f.ProductFeatureValue)
+                      .HasForeignKey(pf => pf.FeatureId)
+                      .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(pf => pf.Product)
+                      .WithMany(p => p.ProductFeatureValue)
+                      .HasForeignKey(pf => pf.ProductId)
+                      .OnDelete(DeleteBehavior.SetNull); 
             });
 
-            modelBuilder.Entity<CategoryFeature>(entity =>
+
+            modelBuilder.Entity<CategoryFeatureValue>(entity =>
             {
-                entity.HasOne(cf => cf.Category)
-                  .WithMany(c => c.Features)
-                  .HasForeignKey(cf => cf.CategoryId)
-                  .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(cfv => cfv.Category)
+                    .WithMany(c => c.CategoryFeatureValue)
+                    .HasForeignKey(cfv => cfv.CategoryId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(cfv => cfv.Feature)
+                    .WithMany(f => f.CategoryFeatureValue) // اینجا نام کلکشن مربوطه در Feature را چک کنید
+                    .HasForeignKey(cfv => cfv.FeatureId) // مقدار صحیح را جایگزین کنید
+                    .OnDelete(DeleteBehavior.Restrict);
             });
+
 
 
             modelBuilder.Entity<ProductGallery>(entity =>
@@ -171,6 +185,11 @@ namespace EShop.DAL.Context
             .HasForeignKey(PC => PC.ParentId)
             .OnDelete(DeleteBehavior.Restrict)); // جلوگیری از حذف دسته‌بندی‌ها اگر والد حذف شود
 
+
+            #endregion
+
+            #region Public
+
             modelBuilder.Entity<UserRole>(entity =>
             {
                 entity.HasOne(ur => ur.User)
@@ -185,9 +204,7 @@ namespace EShop.DAL.Context
                       .OnDelete(DeleteBehavior.Restrict)
                       .HasConstraintName("FK_UserRole_Roles");
             });
-            #endregion
 
-            #region Public
             modelBuilder.Entity<Employee>(entity =>
                     {
                         entity.HasOne(e => e.Shop)
@@ -221,9 +238,6 @@ namespace EShop.DAL.Context
                         .HasConstraintName("FK_UserClaims_Claims");
             });
             #endregion
-
-
-
 
 
 
