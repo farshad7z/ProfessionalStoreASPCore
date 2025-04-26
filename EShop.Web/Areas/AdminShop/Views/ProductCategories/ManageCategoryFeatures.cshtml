@@ -18,6 +18,8 @@
                     <tr>
                         <th>ردیف</th>
                         <th>نام ویژگی</th>
+                        <th>اجباری است</th>
+                        <th>واریانت است</th>
                         <th>عملیات</th>
                     </tr>
                 </thead>
@@ -27,6 +29,19 @@
                         <tr id="feature-row-@feature.FeatureId">
                             <td>@feature.FeatureId</td>
                             <td>@feature.Name</td>
+                            <td>
+                                <input type="checkbox" class="form-check-input mandatory-checkbox"
+                                       data-category-id="@Model.CategoryId"
+                                       data-feature-id="@feature.FeatureId"
+                                @(feature.IsRequired ? "checked" : "") />
+                            </td>
+                            <td>
+                                <input type="checkbox" class="form-check-input variant-checkbox"
+                                       data-category-id="@Model.CategoryId"
+                                       data-feature-id="@feature.FeatureId"
+                                @(feature.IsVariant ? "checked" : "") />
+                            </td>
+
                             <td>
                                 <button type="button" class="btn btn-sm btn-danger delete-feature-btn"
                                         data-category-id="@Model.CategoryId" data-feature-id="@feature.FeatureId">
@@ -62,7 +77,11 @@
 
 @section Scripts {
     <script>
-        // تابع افزودن ویژگی‌ها به دسته‌بندی
+        /// <summary>
+        /// ویژگی‌های انتخاب شده را به دسته‌بندی مشخص اضافه می‌کند.
+         /// </summary>
+        ///<param name="categoryId">شناسه (ID) دسته‌بندی که ویژگی‌ها باید به آن اضافه شوند.</param>
+        /// <returns>در صورت موفقیت، لیست ویژگی‌های اضافه شده به جدول نمایش داده می‌شود.</returns>
         async function addFeatures(categoryId) {
             const selectedOptions = $('#feature-select option:selected'); // گزینه‌های انتخاب شده
             const featureIds = selectedOptions.map((_, option) => option.value).get();
@@ -88,20 +107,30 @@
                 });
                 const result = await response.json();
                 if (result.success) {
-                    result.addedFeatures.forEach((feature, index) => {
-                        $('#selected-features-table tbody').append(`
-                            <tr id="feature-row-${feature.featureId}">
-                                <td>${feature.featureId}</td>
-                                <td>${featureNames[index]}</td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-danger delete-feature-btn"
-                                            data-category-id="${categoryId}" data-feature-id="${feature.featureId}">
-                                        حذف
-                                    </button>
-                                </td>
-                            </tr>
-                        `);
-                    });
+                            result.addedFeatures.forEach((feature, index) => {
+            $('#selected-features-table tbody').append(`
+                <tr id="feature-row-${feature.featureId}">
+                    <td>${feature.featureId}</td>
+                    <td>${featureNames[index]}</td>
+                    <td>
+                        <input type="checkbox" class="form-check-input mandatory-checkbox"
+                               data-category-id="${categoryId}"
+                               data-feature-id="${feature.featureId}" />
+                    </td>
+                    <td>
+                        <input type="checkbox" class="form-check-input variant-checkbox"
+                               data-category-id="${categoryId}"
+                               data-feature-id="${feature.featureId}" />
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-danger delete-feature-btn"
+                                data-category-id="${categoryId}" data-feature-id="${feature.featureId}">
+                            حذف
+                        </button>
+                    </td>
+                </tr>
+            `);
+        });
                     $('#feature-select').val(null).trigger('change');
                     alert(result.message);
                 } else {
@@ -114,8 +143,13 @@
             $('#add-feature-btn').prop('disabled', false);
         }
 
-        // تابع حذف ویژگی از دسته‌بندی
-        async function deleteFeature(categoryId, featureId) {
+        /// <summary>
+        /// یک ویژگی مشخص را از یک دسته‌بندی حذف می‌کند.
+        /// </summary>
+        /// <param name="categoryId">شناسه (ID) دسته‌بندی مورد نظر.</param>
+        /// <param name="featureId">شناسه (ID) ویژگی‌ای که باید حذف شود.</param>
+        /// <returns>در صورت موفقیت، سطر مربوط به ویژگی از جدول حذف می‌شود.</returns>
+          async function deleteFeature(categoryId, featureId) {
             if (!confirm('آیا مطمئن هستید؟')) return;
             try {
                 const response = await fetch('/AdminShop/ProductCategories/DeleteFeature', {
@@ -151,5 +185,50 @@
             const featureId = $(this).data('feature-id');
             deleteFeature(categoryId, featureId);
         });
+
+
+                // وقتی روی چک‌باکس اجبار یا واریانت کلیک شد
+        $('#selected-features-table').on('change', '.mandatory-checkbox, .variant-checkbox', function () {
+            const categoryId = $(this).data('category-id');
+            const featureId = $(this).data('feature-id');
+            const isRequired = $(this).closest('tr').find('.mandatory-checkbox').is(':checked');
+            const isVariant = $(this).closest('tr').find('.variant-checkbox').is(':checked');
+
+            updateFeatureStatus(categoryId, featureId, isRequired, isVariant);
+        });
+
+        /// <summary>
+        /// وضعیت یک ویژگی در دسته‌بندی (اجباری بودن یا واریانت بودن) را به‌روزرسانی می‌کند.
+        /// </summary>
+        /// <param name="categoryId">شناسه (ID) دسته‌بندی مورد نظر.</param>
+        /// <param name="featureId">شناسه (ID) ویژگی مورد نظر.</param>
+        /// <param name="IsRequired">آیا ویژگی باید اجباری باشد یا خیر.</param>
+        /// <param name="isVariant">آیا ویژگی باید به عنوان واریانت ثبت شود یا خیر.</param>
+        /// <returns>در صورت موفقیت، اطلاعات ویژگی بدون ریفرش صفحه به‌روزرسانی می‌شود.</returns>
+        async function updateFeatureStatus(categoryId, featureId, IsRequired, isVariant) {
+            try {
+                const response = await fetch('/AdminShop/ProductCategories/UpdateFeatureStatus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({
+                        CategoryId: categoryId,
+                        FeatureId: featureId,
+                        IsRequired: IsRequired,
+                        IsVariant: isVariant
+                    })
+                });
+                const result = await response.json();
+                if (!result.success) {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('خطایی رخ داد!');
+            }
+        }
+
     </script>
 }

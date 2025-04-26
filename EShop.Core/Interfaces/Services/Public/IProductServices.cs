@@ -1,4 +1,5 @@
 ﻿using EShop.Core.Entities.Models;
+using EShop.Core.Entities.Models.Products;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,8 +41,16 @@ namespace EShop.Core.Interfaces.Services.Public
         /// </summary>
         Task UpdateProductSelectCategoriesAsync(int productId, List<int> newCategoryIds);
         /// <summary>
+        /// دریافت اطلاعات محصول به همراه دسته‌بندی‌های انتخاب‌شده.
+        /// </summary>
+        Task<Product> GetByIdAndIncludeSelectProductCategoryAsync(int productId);
+        /// <summary>
         /// دریافت لیست دسته بندی های یک محصول با Id
         /// /// </summary>
         Task<IEnumerable<int>> GetProductSelectCategoriesByIdAsync(int productId);
+        /// <summary>
+        ///افزودن ویژگی جدید به محصول .
+        /// </summary>
+        Task<bool> AddFeatureToProductAsync(int productId, int featureId, string value);
     }
 }

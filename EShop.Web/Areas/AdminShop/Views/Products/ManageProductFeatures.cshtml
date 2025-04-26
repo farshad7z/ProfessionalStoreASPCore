@@ -1,0 +1,275 @@
+﻿@using EShop.Core.DTOs.ViewModels.Admin.Product
+@model AdminManageProductFeaturesViewModel
+@using Newtonsoft.Json
+
+<div class="card">
+    <div class="card-header">
+        <h5>مدیریت ویژگی های محصول: @Model.ProductName</h5>
+    </div>
+    <div class="card-body">
+        <!-- لیست ویژگیهای ذخیرهشده -->
+        <h6>ویژگی های ثبت ‌شده:</h6>
+        <table class="table table-striped" id="saved-features-table">
+            <thead>
+                <tr>
+                    <th>نام ویژگی</th>
+                    <th>مقدار</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var feature in Model.SavedProductFeatures)
+                {
+                    <tr id="saved-feature-row-@feature.FeatureId">
+                        <td>@feature.FeatureName</td>
+                        <td>
+                            @if (feature.FeatureType == EShop.Core.Entities.Enums.FeatureType.Range)
+                            {
+                                <span>@feature.RangeMin - @feature.RangeMax</span>
+                            }
+                            else
+                            {
+                                <span>@feature.Value</span>
+                            }
+                        </td>
+                        <td>
+                            <button onclick="deleteFeature(@feature.FeatureId)"
+                                    class="btn btn-sm btn-danger">
+                                حذف
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- لیست ویژگیهای موجود -->
+        <h6>افزودن ویژگی جدید:</h6>
+        <table class="table table-striped" id="available-features-table">
+            <thead>
+                <tr>
+                    <th>نام ویژگی</th>
+                    <th>نوع ویژگی</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var feature in Model.Features)
+                {
+                    <tr id="feature-row-@feature.FeatureId">
+                        <td>@feature.FeatureName</td>
+                        <td>@feature.FeatureType.ToString()</td>
+                        <td>
+                            <button onclick="addFeature(@feature.FeatureId, '@feature.FeatureName', '@feature.FeatureType')"
+                                    class="btn btn-sm btn-primary">
+                                افزودن
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+            const productColors = @Html.Raw(JsonConvert.SerializeObject(ViewBag.ProductColors));
+
+                async function addFeature(featureId, featureName, featureType) {
+            let value = null;
+
+            if (featureType === "Range") {
+                const { value: formValues } = await Swal.fire({
+                    title: `محدوده ویژگی: ${featureName}`,
+                    html:
+                        '<input id="range-min" class="swal2-input" placeholder="حداقل مقدار">' +
+                        '<input id="range-max" class="swal2-input" placeholder="حداکثر مقدار">',
+                    focusConfirm: false,
+                    preConfirm: () => {
+                        const min = document.getElementById('range-min').value;
+                        const max = document.getElementById('range-max').value;
+                        if (!min || !max || isNaN(min) || isNaN(max)) {
+                            Swal.showValidationMessage('لطفاً مقادیر عددی معتبر وارد کنید');
+                            return false;
+                        }
+                        return `${min}-${max}`;
+                    },
+                    confirmButtonText: 'ثبت'
+                });
+
+                if (!formValues) return;
+                value = formValues;
+            }
+
+            else if (featureType?.toLowerCase() === "boolean") {
+                const { value: boolValue } = await Swal.fire({
+                    title: `مقدار ویژگی: ${featureName}`,
+                    input: 'radio',
+                    inputOptions: {
+                        'true': 'دارد',
+                        'false': 'ندارد'
+                    },
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'لطفاً یکی از گزینه‌ها را انتخاب کنید';
+                        }
+                    },
+                    confirmButtonText: 'ثبت'
+                });
+
+                if (!boolValue) return;
+                value = boolValue;
+            }
+
+          else if (featureType === "Color") {
+    const colorOptions = productColors;
+    const { value: selectedColor } = await Swal.fire({
+        title: `انتخاب رنگ برای: ${featureName}`,
+        input: 'select',
+        inputOptions: Object.fromEntries(
+            colorOptions.map(c => [
+                c.Name, 
+                `<span style="display:inline-flex;align-items:center">
+                    <span style="width:16px;height:16px;background:${c.ColorCode};border-radius:50%;margin-left:5px"></span>
+                    ${c.Title}
+                </span>`
+            ])
+        ),
+        inputPlaceholder: 'انتخاب رنگ...',
+        showCancelButton: true,
+        confirmButtonText: 'ثبت',
+        inputValidator: (value) => {
+            if (!value) {
+                return 'لطفاً یک رنگ انتخاب کنید!';
+            }
+        },
+        // فعال کردن HTML در گزینه‌ها
+        inputHtml: true
+    });
+    if (!selectedColor) return;
+    value = selectedColor;
+}
+
+            else {
+                const { value: inputValue } = await Swal.fire({
+                    title: `مقدار ویژگی: ${featureName}`,
+                    input: 'text',
+                    inputPlaceholder: 'مقدار را وارد کنید',
+                    confirmButtonText: 'ثبت',
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'مقدار نمی‌تواند خالی باشد!';
+                        }
+                    }
+                });
+
+                if (!inputValue) return;
+                value = inputValue;
+            }
+
+            try {
+                const response = await fetch('/AdminShop/Product/AddProductFeature', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    body: JSON.stringify({
+                        ProductId: @Model.ProductId,
+                        FeatureId: featureId,
+                        Value: value
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    $('#saved-features-table tbody').append(`
+                        <tr id="saved-feature-row-${featureId}">
+                            <td>${featureName}</td>
+                            <td>${colorOptions[value] || value}</td>
+                            <td>
+                                <button onclick="deleteFeature(${featureId})"
+                                        class="btn btn-sm btn-danger">
+                                    حذف
+                                </button>
+                            </td>
+                        </tr>
+                    `);
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'موفق!',
+                        text: result.message,
+                        confirmButtonText: 'باشه'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'هشدار!',
+                        text: result.message,
+                        confirmButtonText: 'باشه'
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطا!',
+                    text: 'خطایی رخ داد. لطفاً دوباره تلاش کنید.',
+                    confirmButtonText: 'باشه'
+                });
+            }
+        }
+
+
+        async function deleteFeature(featureId){
+            const isConfirmed = await Swal.fire({
+                icon: 'warning',
+                title: 'هشدار!',
+                text: 'آیا مطمئن هستید؟',
+                showCancelButton: true,
+                confirmButtonText: 'بله',
+                cancelButtonText: 'لغو',
+                reverseButtons: true
+            });
+
+            if (!isConfirmed.isConfirmed) return;
+
+            try {
+                const response = await fetch(`/AdminShop/Product/DeleteProductFeature/${@Model.ProductId}/${featureId}`, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    }
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    $(`#saved-feature-row-${featureId}`).remove();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'موفق!',
+                        text: 'ویژگی با موفقیت حذف شد!',
+                        confirmButtonText: 'باشه'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطا!',
+                        text: result.message,
+                        confirmButtonText: 'باشه'
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطا!',
+                    text: 'خطایی رخ داد. لطفاً دوباره تلاش کنید.',
+                    confirmButtonText: 'باشه'
+                });
+            }
+        }
+    </script>
+}

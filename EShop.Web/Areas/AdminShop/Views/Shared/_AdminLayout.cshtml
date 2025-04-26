@@ -53,6 +53,10 @@
     <link id="pagestyle" href="~/admin/assets/css/material-dashboard.css?v=3.0.0" rel="stylesheet" />
     <link rel="stylesheet" href="~/Public/css/bootstrap.rtl.css">
     <link rel="stylesheet" href="~/Public/css/bootstrap-icons.css">
+
+    <!--   Costoum   -->
+    <link href="~/public/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+
 </head>
 
 <body class="g-sidenav-show rtl bg-gray-200">
@@ -254,15 +258,19 @@
     </div>
     <!--   Core JS Files   -->
     <script src="~/admin/assets/js/core/popper.min.js"></script>
-@*     <script src="~/admin/assets/js/core/bootstrap.min.js"></script>
+    @*     <script src="~/admin/assets/js/core/bootstrap.min.js"></script>
  *@    
      <script src="~/Public/js/jQuery.js"></script>
     <script src="~/Public/js/bootstrap.min.js"></script>
     <script src="~/admin/assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="~/admin/assets/js/plugins/smooth-scrollbar.min.js"></script>
     <script src="~/admin/assets/js/plugins/chartjs.min.js"></script>
-   <script>
-       @*  
+
+    <!--   Costoum   -->
+    <script src="~/public/lib/sweetalert2/sweetalert2.min.js"></script>
+
+    <script>
+        @*  
         var ctx = document.getElementById("chart-bars").getContext("2d");
 
         new Chart(ctx, {
@@ -510,13 +518,13 @@
         });
     </script>
     <script> *@
-        var win = navigator.platform.indexOf('Win') > -1;
-        if (win && document.querySelector('#sidenav-scrollbar')) {
-          var options = {
-            damping: '0.5'
-          }
-          Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-        }
+            var win = navigator.platform.indexOf('Win') > -1;
+            if (win && document.querySelector('#sidenav-scrollbar')) {
+              var options = {
+                damping: '0.5'
+              }
+              Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+            }
     </script>
     <!-- Github buttons -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>

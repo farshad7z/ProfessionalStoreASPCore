@@ -1,4 +1,5 @@
-﻿using EShop.Core.Entities.Models;
+﻿using EShop.Core.DTOs.ViewModels.Admin.Category;
+using EShop.Core.Entities.Models;
 using EShop.Core.Entities.Models.Products;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,22 @@ namespace EShop.Core.Interfaces.Services.Public
         /// اپدیت اطلاعات ویژگی.
         /// </summary>
         Task UpdateFeatureAsync(Feature model);
+
+        /// <summary>
+        /// دریافت لیست ویژگی‌های مرتبط با دسته‌بندی‌های مشخص.
+        /// فقط ویژگی‌هایی که به دسته‌بندی‌ها تخصیص داده شده‌اند، بازگردانده می‌شوند.
+        /// </summary>
+        /// <param name="categoryIds">لیستی از شناسه‌های دسته‌بندی.</param>
+        /// <returns>لیستی از ویژگی‌ها (با مقداردهی) که مربوط به دسته‌بندی‌های ورودی هستند.</returns>
+        Task<IEnumerable<CategoryFeature>> GetListFeaturesByCategoryIdsAsync(List<int> categoryIds);
+
+        /// <summary>
+        /// دریافت لیست ویژگی‌های مرتبط با محصول مشخص.
+        /// فقط ویژگی‌هایی که به محصول تخصیص داده شده‌اند، بازگردانده می‌شوند.
+        /// </summary>
+        /// <param name="productId">شناسه محصول.</param>
+        /// <returns>لیستی از ویژگی‌ها (با مقداردهی) که مربوط به محصول ورودی هستند.</returns>
+        Task<IEnumerable<ProductFeature>> GetListFeaturesValuesByProductIdAsync(int categoryId);
 
     }
 }

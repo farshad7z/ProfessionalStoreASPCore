@@ -35,7 +35,7 @@ namespace EShop.Core.Entities.Models
 
         #region Relations
 
-        public virtual ICollection<ProductFeatureValue>? ProductFeatureValue { get; set; } // تصاویر محصول
+        public virtual ICollection<ProductFeature>? ProductFeatureValue { get; set; } // تصاویر محصول
 
         public Shop? Shop { get; set; } // فروشگاه مرتبط
         public ProductSEO? ProductSEO { get; set; }
@@ -43,7 +43,7 @@ namespace EShop.Core.Entities.Models
         public virtual  ICollection<ProductGallery>? Galleries { get; set; } // تصاویر محصول
 
         // Other Relationships
-        public virtual ICollection<ProductFeatureValue> Features { get; set; } // ویژگی‌ها
+        public virtual ICollection<ProductFeature> Features { get; set; } // ویژگی‌ها
         //public ICollection<ProductComment> Comments { get; set; } // نظرات
 
         public virtual ICollection<ProductSelectCategory> ProductSelectCategory { get; set; } = new HashSet<ProductSelectCategory>(); // گروه‌های انتخابی

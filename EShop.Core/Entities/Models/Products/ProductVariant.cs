@@ -16,7 +16,7 @@ namespace EShop.Core.Entities.Models.Products
         [MaxLength(250)]
         public required string VariantName { get; set; } // نام ترکیب (مثلاً "آبی - 54 - ابریشم - خارجی")
 
-        public decimal Price { get; set; } // قیمت این ترکیب
+        public decimal? Price { get; set; } // قیمت این ترکیب
 
         public int StockQuantity { get; set; } // موجودی این ترکیب
 

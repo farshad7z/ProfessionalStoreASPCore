@@ -46,7 +46,17 @@ namespace EShop.DAL.Repositories
         {
             return await _dbSet.SingleOrDefaultAsync(predicate);
         }
+        public async Task<T?> GetFirstOrDefaultAsync(
+            Expression<Func<T, bool>> predicate,
+            Func<IQueryable<T>, IQueryable<T>>? include = null)
+        {
+            IQueryable<T> query = _dbSet;
 
+            if (include != null)
+                query = include(query);
+
+            return await query.FirstOrDefaultAsync(predicate);
+        }
         public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
         {
             return await _dbSet.AnyAsync(predicate);

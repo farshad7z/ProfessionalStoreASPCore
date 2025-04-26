@@ -16,7 +16,7 @@ namespace EShop.Core.Entities.Models.Products
 
         #region Relations
 
-        public ProductFeatureValue ProductFeatureValue { get; set; }  
+        public ProductFeature ProductFeatureValue { get; set; }  
         public ProductVariant ProductVariant { get; set; }
         #endregion
     }

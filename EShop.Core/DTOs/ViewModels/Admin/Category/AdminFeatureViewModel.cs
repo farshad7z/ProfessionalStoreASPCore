@@ -6,5 +6,9 @@
         public int FeatureId { get; set; }
         public int? CategoryId { get; set; }
         public string Name { get; set; }
+        public bool IsVariant { get; set; }
+        public bool IsRequired { get; set; }
+
+
     }
 }

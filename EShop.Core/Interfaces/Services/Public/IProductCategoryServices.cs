@@ -91,11 +91,11 @@ namespace EShop.Core.Interfaces.Services.Public
         /// <summary>
         ///افزودن ویژگی ها به دسته بندی .
         /// </summary>
-        Task<int> AddFeatureInProductCategoryAsync(List<CategoryFeatureValue> model);
+        Task<int> AddFeatureInProductCategoryAsync(List<CategoryFeature> model);
         /// <summary>
         /// پاک کردن  ویژگی از دسته بندی محصول .
         /// </summary>
-        Task RemoveFeatureFromCategoryAsync(CategoryFeatureValue categoryFeatureValue);
+        Task RemoveFeatureFromCategoryAsync(CategoryFeature categoryFeatureValue);
 
         /// <summary>
         /// به طور غیرهمزمان اطلاعات ویژگی مرتبط با دسته‌بندی را بر اساس شناسه‌های ورودی برمی‌گرداند.
@@ -103,7 +103,14 @@ namespace EShop.Core.Interfaces.Services.Public
         /// <param name="categoryId">شناسه دسته‌بندی</param>
         /// <param name="featureId">شناسه ویژگی</param>
         /// <returns>مقدار ویژگی دسته‌بندی، یا `null` اگر پیدا نشد</returns>
-        Task<CategoryFeatureValue?> GetCategoryFeatureByCategoryIdAndFeatureIdAsync(int categoryId, int featureId);
+        Task<CategoryFeature?> GetCategoryFeatureByCategoryIdAndFeatureIdAsync(int categoryId, int featureId);
+
+        /// <summary>
+        /// به طور غیر همزمان ویژگی یک دسته‌بندی را به‌روزرسانی می‌کند.
+        /// </summary>
+        /// <param name="model">مدل ویژگی دسته‌بندی با مقادیر جدید</param>
+        /// <returns>مقدار عددی که نشان‌دهنده تعداد رکوردهای به‌روزرسانی شده است</returns>
+        Task<int> UpdateCategoryFeatureAsync(CategoryFeature model);
 
     }
 }

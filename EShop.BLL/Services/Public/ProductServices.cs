@@ -25,6 +25,11 @@ namespace EShop.BLL.Services
             return model.Id;
         }
 
+        public Task<bool> AddFeatureToProductAsync(int productId, int featureId, string value)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<int>? AddProductCategoryAsync(ProductSelectCategory model)
         {
             await _unitOfWork.Repository<ProductSelectCategory>().AddAsync(model);
@@ -42,6 +47,15 @@ namespace EShop.BLL.Services
             return await _unitOfWork.Repository<Product>()
         .GetAllAsync(includeProperties: "ProductSelectCategory.ProductCategory");
         }
+
+        public async Task<Product?> GetByIdAndIncludeSelectProductCategoryAsync(int productId)
+        {
+            return await _unitOfWork.Repository<Product>().GetFirstOrDefaultAsync(
+                predicate: p => p.Id == productId,
+                include: q => q.Include(p => p.ProductSelectCategory)
+            );
+        }
+
 
         public async Task<Product?> GetByIdAsync(int productId)
         {

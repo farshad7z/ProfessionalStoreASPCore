@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
@@ -14,13 +15,12 @@ namespace EShop.Infrastructure.Extensions
         /// در صورتی که مقدار `Enum` دارای `DisplayAttribute` باشد، مقدار `Name` آن برگردانده می‌شود،  
         /// در غیر این صورت، مقدار `Enum` به صورت رشته‌ای برگردانده می‌شود.
         /// </returns>
-        public static string GetDisplayName(this Enum value)
+        public static string GetEnumDescription<TEnum>(TEnum value) where TEnum : Enum
         {
-            if (value == null) return string.Empty;
-
-            var field = value.GetType().GetField(value.ToString());
-            var attribute = field?.GetCustomAttribute<DisplayAttribute>();
-            return attribute?.Name ?? value.ToString();
+            var field = typeof(TEnum).GetField(value.ToString());
+            var attr = field?.GetCustomAttributes(typeof(DescriptionAttribute), false)
+                             .FirstOrDefault() as DescriptionAttribute;
+            return attr?.Description ?? value.ToString();
         }
     }
 }

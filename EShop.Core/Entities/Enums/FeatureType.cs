@@ -7,12 +7,6 @@ using System.Threading.Tasks;
 
 namespace EShop.Core.Entities.Enums
 {
-
-
-
-
-
-
     public enum FeatureType
     {
         [Display(Name = "متنی")]

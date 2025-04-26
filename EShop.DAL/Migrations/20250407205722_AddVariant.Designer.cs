@@ -4,6 +4,7 @@ using EShop.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EShop.DAL.Migrations
 {
     [DbContext(typeof(EShopDbContext))]
-    partial class EShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250407205722_AddVariant")]
+    partial class AddVariant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,35 +24,6 @@ namespace EShop.DAL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("CategoryFeature", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FeatureId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsRequired")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsVariant")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("FeatureId");
-
-                    b.ToTable("CategoryFeatures");
-                });
 
             modelBuilder.Entity("EShop.Core.Entities.Models.AppClaim", b =>
                 {
@@ -839,6 +813,29 @@ namespace EShop.DAL.Migrations
                     b.ToTable("ProductSelectCategories");
                 });
 
+            modelBuilder.Entity("EShop.Core.Entities.Models.Products.CategoryFeatureValue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FeatureId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("FeatureId");
+
+                    b.ToTable("CategoryFeatureValues");
+                });
+
             modelBuilder.Entity("EShop.Core.Entities.Models.Products.Feature", b =>
                 {
                     b.Property<int>("Id")
@@ -860,7 +857,7 @@ namespace EShop.DAL.Migrations
                     b.ToTable("Features");
                 });
 
-            modelBuilder.Entity("EShop.Core.Entities.Models.Products.ProductFeature", b =>
+            modelBuilder.Entity("EShop.Core.Entities.Models.Products.ProductFeatureValue", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1272,25 +1269,6 @@ namespace EShop.DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("CategoryFeature", b =>
-                {
-                    b.HasOne("EShop.Core.Entities.Models.ProductCategory", "Category")
-                        .WithMany("CategoryFeatureValue")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EShop.Core.Entities.Models.Products.Feature", "Feature")
-                        .WithMany("CategoryFeature")
-                        .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Feature");
-                });
-
             modelBuilder.Entity("EShop.Core.Entities.Models.Employee", b =>
                 {
                     b.HasOne("EShop.Core.Entities.Models.Shop", "Shop")
@@ -1372,7 +1350,26 @@ namespace EShop.DAL.Migrations
                     b.Navigation("ProductCategory");
                 });
 
-            modelBuilder.Entity("EShop.Core.Entities.Models.Products.ProductFeature", b =>
+            modelBuilder.Entity("EShop.Core.Entities.Models.Products.CategoryFeatureValue", b =>
+                {
+                    b.HasOne("EShop.Core.Entities.Models.ProductCategory", "Category")
+                        .WithMany("CategoryFeatureValue")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EShop.Core.Entities.Models.Products.Feature", "Feature")
+                        .WithMany("CategoryFeatureValue")
+                        .HasForeignKey("FeatureId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Feature");
+                });
+
+            modelBuilder.Entity("EShop.Core.Entities.Models.Products.ProductFeatureValue", b =>
                 {
                     b.HasOne("EShop.Core.Entities.Models.Products.Feature", "Feature")
                         .WithMany("ProductFeatureValue")
@@ -1406,7 +1403,7 @@ namespace EShop.DAL.Migrations
 
             modelBuilder.Entity("EShop.Core.Entities.Models.Products.ProductVariantFeature", b =>
                 {
-                    b.HasOne("EShop.Core.Entities.Models.Products.ProductFeature", "ProductFeatureValue")
+                    b.HasOne("EShop.Core.Entities.Models.Products.ProductFeatureValue", "ProductFeatureValue")
                         .WithMany()
                         .HasForeignKey("ProductFeatureValueId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1507,7 +1504,7 @@ namespace EShop.DAL.Migrations
 
             modelBuilder.Entity("EShop.Core.Entities.Models.Products.Feature", b =>
                 {
-                    b.Navigation("CategoryFeature");
+                    b.Navigation("CategoryFeatureValue");
 
                     b.Navigation("ProductFeatureValue");
                 });

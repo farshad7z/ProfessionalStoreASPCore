@@ -258,7 +258,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
             // فیلتر ویژگی‌هایی که قبلاً اضافه نشده‌اند
             var newFeatures = request.FeatureIds
                 .Except(listCategoryFeatures.Select(lcf => lcf.FeatureId))
-                .Select(featureId => new CategoryFeatureValue
+                .Select(featureId => new CategoryFeature
                 {
                     CategoryId = request.CategoryId,
                     FeatureId = featureId
@@ -289,6 +289,42 @@ namespace EShop.Web.Areas.AdminShop.Controllers
             await _productCategoryService.RemoveFeatureFromCategoryAsync(categoryFeatureValue);
             return Json(new { success = true });
         }
+
+
+        // اکشن برای به‌روزرسانی وضعیت ویژگی (اجباری یا واریانت بودن) در دسته‌بندی
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateFeatureStatus([FromBody] AdminUpdateFeatureStatusRequest request)
+        {
+            // اعتبارسنجی مدل ورودی
+            if (!ModelState.IsValid)
+                return BadRequest("داده‌های نامعتبر!");
+
+            // دریافت ویژگی برای دسته‌بندی
+            var categoryFeature = await _productCategoryService
+                .GetCategoryFeatureByCategoryIdAndFeatureIdAsync(request.CategoryId, request.FeatureId);
+
+            if (categoryFeature == null)
+                return Json(new { success = false, message = "این ویژگی در دسته‌بندی وجود ندارد!" });
+
+            try
+            {
+                // به‌روزرسانی وضعیت ویژگی
+                categoryFeature.IsRequired = request.IsRequired;
+                categoryFeature.IsVariant = request.IsVariant;
+
+                // ذخیره‌سازی تغییرات در دیتابیس
+                await _productCategoryService.UpdateCategoryFeatureAsync(categoryFeature);
+
+                return Json(new { success = true, message = "وضعیت ویژگی با موفقیت به‌روزرسانی شد." });
+            }
+            catch (Exception ex)
+            {
+                // ثبت خطا برای دیباگ کردن
+                return Json(new { success = false, message = "خطایی رخ داد. لطفاً مجدداً تلاش کنید." });
+            }
+        }
+
     }
 
 

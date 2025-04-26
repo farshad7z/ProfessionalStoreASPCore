@@ -23,10 +23,11 @@ namespace EShop.DAL.Context
         #endregion
 
         #region Product
-
+        public DbSet<ProductVariantFeature> ProductVariantFeatures { get; set; }
+        public DbSet<ProductVariant> ProductVariants { get; set; }
         public DbSet<Feature> Features { get; set; }
-        public DbSet<ProductFeatureValue> ProductFeatureValues { get; set; }
-        public DbSet<CategoryFeatureValue> CategoryFeatureValues { get; set; }
+        public DbSet<ProductFeature> ProductFeatureValues { get; set; }
+        public DbSet<CategoryFeature> CategoryFeatures { get; set; }
         public DbSet<ProductGallery> ProductGalleries { set; get; }
         public DbSet<ProductSEO> ProductSEOs { get; set; }
         public DbSet<ProductSelectCategory> ProductSelectCategories { get; set; }
@@ -52,10 +53,41 @@ namespace EShop.DAL.Context
             #region Table attribute definition
 
             #region Product
-            modelBuilder.Entity<ProductFeatureValue>(entity =>
+
+            modelBuilder.Entity<ProductVariantFeature>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                // ایندکس یونیک برای جلوگیری از تکرار ویژگی در یک واریانت
+                entity.HasIndex(e => new { e.ProductVariantId, e.ProductFeatureValueId }).IsUnique();
+
+            });
+
+            modelBuilder.Entity<ProductVariant>(entity =>
+            {
+            
+                entity.HasKey(pv => pv.Id);
+
+                entity.Property(pv => pv.VariantName)
+                      .HasMaxLength(250)
+                      .IsRequired();
+
+                entity.Property(pv => pv.Price)
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+
+                entity.Property(pv => pv.StockQuantity)
+                      .IsRequired();
+
+                entity.Property(pv => pv.IsAvailable)
+                      .IsRequired()
+                      .HasDefaultValue(true);
+            });
+
+            modelBuilder.Entity<ProductFeature>(entity =>
             entity.HasKey(pfv => pfv.Id));
 
-            modelBuilder.Entity<CategoryFeatureValue>(entity =>
+            modelBuilder.Entity<CategoryFeature>(entity =>
            entity.HasKey(cf => cf.Id));
 
             modelBuilder.Entity<ProductGallery>(entity =>
@@ -116,8 +148,47 @@ namespace EShop.DAL.Context
 
             #region Product
 
+            // ==============================
+            // ProductVariant
+            // ==============================
+            modelBuilder.Entity<ProductVariant>(entity =>
+            {
 
-            modelBuilder.Entity<ProductFeatureValue>(entity =>
+                entity.HasOne(pv => pv.Product)
+                      .WithMany(p => p.ProductVariants)
+                      .HasForeignKey(pv => pv.ProductId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // ==============================
+            // ProductVariantFeature
+            // ==============================
+            modelBuilder.Entity<ProductVariantFeature>(entity =>
+            {
+            
+                entity.HasOne(pvf => pvf.ProductVariant)
+                      .WithMany(pv => pv.VariantFeatures)
+                      .HasForeignKey(pvf => pvf.ProductVariantId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(pvf => pvf.ProductFeatureValue)
+                      .WithMany() // یا اگر خواستی navigation از اون سمت هم بذار
+                      .HasForeignKey(pvf => pvf.ProductFeatureValueId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+            // ==============================
+            // ProductVariant
+            // ==============================
+            modelBuilder.Entity<ProductVariant>(entity =>
+            { 
+                entity.HasOne(pv => pv.Product)
+                      .WithMany(p => p.ProductVariants)
+                      .HasForeignKey(pv => pv.ProductId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+
+            modelBuilder.Entity<ProductFeature>(entity =>
             {
                 entity.HasOne(pf => pf.Feature)
                       .WithMany(f => f.ProductFeatureValue)
@@ -127,11 +198,11 @@ namespace EShop.DAL.Context
                 entity.HasOne(pf => pf.Product)
                       .WithMany(p => p.ProductFeatureValue)
                       .HasForeignKey(pf => pf.ProductId)
-                      .OnDelete(DeleteBehavior.SetNull); 
+                      .OnDelete(DeleteBehavior.SetNull);
             });
 
 
-            modelBuilder.Entity<CategoryFeatureValue>(entity =>
+            modelBuilder.Entity<CategoryFeature>(entity =>
             {
                 entity.HasOne(cfv => cfv.Category)
                     .WithMany(c => c.CategoryFeatureValue)
@@ -139,7 +210,7 @@ namespace EShop.DAL.Context
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(cfv => cfv.Feature)
-                    .WithMany(f => f.CategoryFeatureValue) // اینجا نام کلکشن مربوطه در Feature را چک کنید
+                    .WithMany(f => f.CategoryFeature) // اینجا نام کلکشن مربوطه در Feature را چک کنید
                     .HasForeignKey(cfv => cfv.FeatureId) // مقدار صحیح را جایگزین کنید
                     .OnDelete(DeleteBehavior.Restrict);
             });

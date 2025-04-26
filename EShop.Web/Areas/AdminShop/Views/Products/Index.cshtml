@@ -178,14 +178,13 @@
                                         }
                                     </td>
                                     <td class="text-center">
-                                        <a href="/adminshop/products/edit/@product.Id" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="ویرایش">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                        <a href="#" class="text-danger font-weight-bold text-xs ms-2" data-toggle="tooltip" title="حذف" onclick="return confirm('آیا مطمئن هستید؟');">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
+                             
+
                                         <a href="/adminshop/products/galleries/@product.Id" class="text-info font-weight-bold text-xs ms-2" data-toggle="tooltip" title="گالری">
                                             <i class="bi bi-image"></i>
+                                        </a>
+                                        <a href="@Url.Action("manageproductfeatures", "products", new { id = product.Id })" class="text-info font-weight-bold text-xs ms-2" data-toggle="tooltip" title="افزودن ویژگی">
+                                            <i class="bi bi-bookmark-plus-fill"></i>
                                         </a>
                                         <a href="#"@* /Admin/Products/Variants/@product.Id *@ class="text-warning font-weight-bold text-xs ms-2" data-toggle="tooltip" title="واریانت‌ها">
                                             <i class="bi bi-box"></i>
@@ -195,6 +194,12 @@
                                            data-toggle="tooltip"
                                            title="سئو">
                                             <i class="bi bi-search"></i>
+                                        </a>
+                                        <a href="/adminshop/products/edit/@product.Id" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="ویرایش">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="#" class="text-danger font-weight-bold text-xs ms-2" data-toggle="tooltip" title="حذف" onclick="return confirm('آیا مطمئن هستید؟');">
+                                            <i class="bi bi-trash"></i>
                                         </a>
 
                                     </td>

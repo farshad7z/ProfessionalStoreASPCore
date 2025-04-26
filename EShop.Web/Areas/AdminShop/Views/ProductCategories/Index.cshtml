@@ -111,9 +111,15 @@
                                                    <a href="@Url.Action("Delete", "Category", new { id = item.CategoryId })" class="text-danger font-weight-bold text-xs ms-2" data-toggle="tooltip" title="حذف" onclick="return confirm('آیا مطمئن هستید؟');">
                                             <i class="bi bi-trash"></i>
                                         </a>
-                                        <a href="@Url.Action("managecategoryfeatures", "productcategories", new { id = item.CategoryId })" class="text-info font-weight-bold text-xs ms-2" data-toggle="tooltip" title="افزودن ویژگی">
-                                            <i class="bi bi-file-diff"></i>
-                                       </a>
+                                                       <td class="text-center">
+
+                                        @if (item.IsParent==false)
+                                        {
+                                            <a href="@Url.Action("managecategoryfeatures", "productcategories", new { id = item.CategoryId })" class="text-info font-weight-bold text-xs ms-2" data-toggle="tooltip" title="افزودن ویژگی">
+                                                <i class="bi bi-bookmark-plus-fill"></i>                                                  
+                                            </a> 
+                                        }
+                                  
                                     </td>
                                 </tr>
                             }

@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Entities\Models\Products\CategoryFeatureValue.cs" />
+    <None Include="Entities\Models\Products\CategoryFeature.cs" />
   </ItemGroup>
 
   <ItemGroup>

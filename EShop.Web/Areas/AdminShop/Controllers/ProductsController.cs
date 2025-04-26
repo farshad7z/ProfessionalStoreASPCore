@@ -2,7 +2,9 @@
 using EShop.BLL.Services.Public;
 using EShop.Core.DTOs.ViewModels.Admin.Product;
 using EShop.Core.DTOs.ViewModels.Product;
+using EShop.Core.Entities.Enums;
 using EShop.Core.Entities.Models;
+using EShop.Core.Entities.Models.Products;
 using EShop.Core.Interfaces.Services;
 using EShop.Core.Interfaces.Services.Public;
 using EShop.DAL.Migrations;
@@ -11,6 +13,7 @@ using EShop.Infrastructure.Generator;
 using EShop.Infrastructure.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis;
@@ -32,11 +35,13 @@ namespace EShop.Web.Areas.AdminShop.Controllers
     [Authorize, Authorize(AuthenticationSchemes = "AdminAuth")]
     public class ProductsController : Controller
     {
-        private readonly IProductServices _productServices;
-        private readonly IProductCategoryServices _productCategoryServices; // برای کار با دسته‌ها
-        private readonly IAccountServices _AccountServices;
-        private readonly IProductGalleryServices _productGalleryServices;
+        private readonly IProductServices _productService;
+        private readonly IProductCategoryServices _productCategoryService; // برای کار با دسته‌ها
+        private readonly IAccountServices _AccountService;
+        private readonly IProductGalleryServices _productGalleryService;
         private readonly IProductSEOService _productSEOService;
+        private readonly IFeatureService _featureService;
+        private readonly IVariantServices _variantService;
 
         private readonly IWebHostEnvironment _env;
 
@@ -46,18 +51,23 @@ namespace EShop.Web.Areas.AdminShop.Controllers
 
 
         public ProductsController(
-              IProductServices productServices
-            , IProductCategoryServices productCategoryServices
-            , IAccountServices AccountServices
-            , IProductGalleryServices productGalleryServices
+              IProductServices productService
+            , IProductCategoryServices productCategoryService
+            , IAccountServices AccountService
+            , IProductGalleryServices productGalleryService
             , IProductSEOService productSEOService
+            , IFeatureService featureService
+            , IVariantServices variantService
+
             , IWebHostEnvironment env)
         {
-            _AccountServices = AccountServices;
-            _productServices = productServices;
-            _productCategoryServices = productCategoryServices;
-            _productGalleryServices = productGalleryServices;
+            _AccountService = AccountService;
+            _productService = productService;
+            _productCategoryService = productCategoryService;
+            _productGalleryService = productGalleryService;
             _productSEOService = productSEOService;
+            _featureService = featureService;
+            _variantService = variantService;
             _env = env;
 
         }
@@ -66,7 +76,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
         // GET: ProductsController
         public async Task<ActionResult> Index()
         {
-            var allProducts = await _productServices.GetAllProductsWithCategoriesAsync();
+            var allProducts = await _productService.GetAllProductsWithCategoriesAsync();
 
 
             ViewBag.ImagePath = "~/uploads/products/thumbnail";
@@ -81,7 +91,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
         public async Task<IActionResult> Create()
         {
             AdminProductCreateViewModel model = new AdminProductCreateViewModel();
-            var categories = await _productCategoryServices.GetAllAsync();
+            var categories = await _productCategoryService.GetAllAsync();
 
             // تبدیل دسته‌بندی‌ها به ساختار درختی
             var categoryTree = BuildCategoryTree(categories, null);
@@ -128,7 +138,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    ViewBag.CategoryList = new MultiSelectList(await _productCategoryServices.GetAllAsync(), "CategoryId", "Name");
+                    ViewBag.CategoryList = new MultiSelectList(await _productCategoryService.GetAllAsync(), "CategoryId", "Name");
                     return View(model);
                 }
 
@@ -137,7 +147,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
                 if (string.IsNullOrEmpty(extension))
                 {
                     ModelState.AddModelError("ImageProduct", "فرمت تصویر شناخته نشده است.");
-                    ViewBag.CategoryList = new MultiSelectList(await _productCategoryServices.GetAllAsync(), "CategoryId", "Name");
+                    ViewBag.CategoryList = new MultiSelectList(await _productCategoryService.GetAllAsync(), "CategoryId", "Name");
                     return View(model);
                 }
 
@@ -173,18 +183,18 @@ namespace EShop.Web.Areas.AdminShop.Controllers
                     return View(model);
                 }
 
-                bool exists = await _AccountServices.IsExistsEmployeeAndHasShopByUserIdAsync(userIdInt);
+                bool exists = await _AccountService.IsExistsEmployeeAndHasShopByUserIdAsync(userIdInt);
                 if (!exists)
                 {
                     ModelState.AddModelError("PublicError", "شما در هیچ فروشگاهی کارمند نیستید.");
                     return View(model);
                 }
 
-                var employeeDetails = await _AccountServices.GetDetailsEmployeeByUserIdAsync(userIdInt);
+                var employeeDetails = await _AccountService.GetDetailsEmployeeByUserIdAsync(userIdInt);
                 int shopId = employeeDetails.ShopId ?? 0;
                 if (model.DiscountedPrice > model.Price)
                 {
-                    ViewBag.CategoryList = new MultiSelectList(await _productCategoryServices.GetAllAsync(), "CategoryId", "Name");
+                    ViewBag.CategoryList = new MultiSelectList(await _productCategoryService.GetAllAsync(), "CategoryId", "Name");
                     ModelState.AddModelError("DiscountedPrice", "قیمت تخفیف نباید بیشتر از قیمت اصلی کالا باشد.");
                     return View(model);
                 }
@@ -205,14 +215,14 @@ namespace EShop.Web.Areas.AdminShop.Controllers
                 };
 
                 // افزودن محصول به دیتابیس
-                await _productServices.AddAsync(product);
+                await _productService.AddAsync(product);
 
                 // ذخیره ارتباط محصول با دسته‌ها
                 if (model.SelectedCategoryIds != null && model.SelectedCategoryIds.Any())
                 {
                     foreach (var catId in model.SelectedCategoryIds)
                     {
-                        await _productServices.AddProductCategoryAsync(new ProductSelectCategory { ProductId = product.Id, ProductCategoryId = catId });
+                        await _productService.AddProductCategoryAsync(new ProductSelectCategory { ProductId = product.Id, ProductCategoryId = catId });
                     }
                 }
 
@@ -235,11 +245,11 @@ namespace EShop.Web.Areas.AdminShop.Controllers
         // GET: ProductsController/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            var product = await _productServices.GetByIdAsync(id);
+            var product = await _productService.GetByIdAsync(id);
             if (product == null) return NotFound();
 
 
-            var selectedCategories = await _productServices.GetProductSelectCategoriesByIdAsync(id);
+            var selectedCategories = await _productService.GetProductSelectCategoriesByIdAsync(id);
             List<int> selectedCategoryIds = selectedCategories?.ToList() ?? new List<int>();
 
             var model = new AdminProductEditViewModel
@@ -258,7 +268,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
             };
 
 
-            var categories = await _productCategoryServices.GetAllAsync();
+            var categories = await _productCategoryService.GetAllAsync();
 
             // تبدیل دسته‌بندی‌ها به ساختار درختی
             var categoryTree = BuildCategoryTree(categories, null);
@@ -302,7 +312,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
                     return View(model);
                 }
 
-                var product = await _productServices.GetByIdAsync(model.ProductId);
+                var product = await _productService.GetByIdAsync(model.ProductId);
                 if (product == null) return NotFound();
 
                 product.Name = model.Name;
@@ -315,7 +325,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
                 product.UpdatedAt = DateTime.Now;
 
                 // حذف دسته‌بندی‌های قبلی و افزودن دسته‌های جدید
-                await _productServices.UpdateProductSelectCategoriesAsync(model.ProductId, model.SelectedCategoryIds);
+                await _productService.UpdateProductSelectCategoriesAsync(model.ProductId, model.SelectedCategoryIds);
 
                 // اگر تصویر جدیدی آپلود شده باشد
                 if (model.ImageProduct != null && model.ImageProduct.FileName != product.ProductImageName)
@@ -376,7 +386,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
 
                 }
 
-                await _productServices.UpdateAsync(product);
+                await _productService.UpdateAsync(product);
                 return RedirectToAction("Index");
             }
             catch (IOException ex)
@@ -464,7 +474,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
                     return View(model);
                 }
 
-                bool exists = await _AccountServices.IsExistsEmployeeAndHasShopByUserIdAsync(userIdInt);
+                bool exists = await _AccountService.IsExistsEmployeeAndHasShopByUserIdAsync(userIdInt);
                 if (!exists)
                 {
                     ModelState.AddModelError("PublicError", "شما در هیچ فروشگاهی کارمند نیستید.");
@@ -501,7 +511,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
 
                 };
 
-                await _productGalleryServices.AddAsync(gallery);
+                await _productGalleryService.AddAsync(gallery);
 
 
                 // ذخیره و بهینه‌سازی تصویر اصلی
@@ -526,7 +536,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
 
         public async Task<ActionResult> DeleteGallery(int id)
         {
-            var gallery = await _productGalleryServices.GetGalleryByIdAsync(id);
+            var gallery = await _productGalleryService.GetGalleryByIdAsync(id);
             //عکس های قبلی
 
             if (!string.IsNullOrEmpty(gallery.ImageName))
@@ -544,7 +554,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
 
                 if (System.IO.File.Exists(mainImagePath)) System.IO.File.Delete(mainImagePath);
                 if (System.IO.File.Exists(thumbnailPath)) System.IO.File.Delete(thumbnailPath);
-                await _productGalleryServices.DeleleAsync(gallery);
+                await _productGalleryService.DeleleAsync(gallery);
 
             }
 
@@ -557,11 +567,12 @@ namespace EShop.Web.Areas.AdminShop.Controllers
 
         public async Task<ActionResult> ListGalleryProduct(int productId)
         {
-            var listGallery = await _productGalleryServices.GetGalleriesForProductAsync(productId);
+            var listGallery = await _productGalleryService.GetGalleriesForProductAsync(productId);
             return PartialView("_ListGalleryProduct", listGallery);
         }
 
         #endregion
+
         //--** End Gallery Cods **--
 
 
@@ -569,7 +580,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
         #region SEO
 
 
-        public async Task<ActionResult> SEO(int productId,string? productName)
+        public async Task<ActionResult> SEO(int productId, string? productName)
         {
             var seo = await _productSEOService.GetSEOByIdProductAsync(productId);
             ViewBag.ProductName = productName ?? "محصول";
@@ -590,7 +601,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
             {
                 // ذخیره‌سازی داده‌ها در دیتابیس
                 await _productSEOService.AddUpdateAsync(model);
-                return RedirectToAction("Index","Products");
+                return RedirectToAction("Index", "Products");
             }
             catch (Exception ex)
             {
@@ -605,5 +616,165 @@ namespace EShop.Web.Areas.AdminShop.Controllers
         #endregion
         //--** End SEO Cods **--
 
+        //--** Start Feature And Variand Cods **--
+        #region Feature Cods
+
+        // GET: /AdminShop/Products/ManageProductFeaturesAndVariant/5
+        [HttpGet]
+        public async Task<IActionResult> ManageProductFeatures(int id)
+        {
+            ViewBag.ProductColors = EnumHelper.GetProductColorItems<ProductColor>();
+
+            // مرحله ۱: دریافت اطلاعات محصول از دیتابیس
+            var product = await _productService.GetByIdAndIncludeSelectProductCategoryAsync(id);
+            if (product == null) return NotFound();
+
+            // مرحله ۲: دریافت لیست شناسه‌های دسته‌بندی‌های این محصول
+            var categoryIds = product.ProductSelectCategory
+                                     .Select(pc => pc.ProductCategoryId)
+                                     .ToList();
+
+            // مرحله ۳: به صورت موازی دریافت کن:
+            // - ویژگی‌های مرتبط با دسته‌بندی‌ها
+            // - مقادیر ذخیره‌شده برای این محصول
+            //var featuresTask = _featureService.GetListFeaturesByCategoryIdsAsync(categoryIds);
+            //var existingValuesTask = _featureService.GetListFeaturesValuesByProductIdAsync(id);
+
+            // مرحله ۴: صبر کن تا هر دو عملیات بالا همزمان تموم بشن
+            //await Task.WhenAll(featuresTask, existingValuesTask);
+
+            // مرحله ۵: استخراج نتایج از Task‌ها
+            var features = await _featureService.GetListFeaturesByCategoryIdsAsync(categoryIds);
+            var existingValues = await _featureService.GetListFeaturesValuesByProductIdAsync(id);
+
+
+
+            // مرحله6: ساخت ViewModel نهایی برای نمایش در صفحه
+            var vm = new AdminManageProductFeaturesViewModel
+            {
+                ProductId = product.Id,
+                ProductName = product.Name,
+
+                Features = features.Select(f =>
+                {
+                    var item = new AdminFeatureItemViewModel
+                    {
+                        FeatureId = f.Id,
+                        FeatureName = f.Feature.Name,
+                        FeatureType = f.Feature.Type
+                    };
+                    
+                    return item;
+
+                }).ToList(),
+                SavedProductFeatures = existingValues.Select(spf =>
+                {
+                    var item = new AdminFeatureItemViewModel
+                    {
+                        FeatureId = spf.Feature.Id,
+                        FeatureName = spf.Feature.Name,
+                        FeatureType = spf.Feature.Type
+
+                    };
+                    if (spf.Feature.Type == FeatureType.Range && !string.IsNullOrWhiteSpace(spf.Value))
+                    {
+                        try
+                        {
+                            var parts = spf.Value.Split('-');
+
+                            if (parts.Length == 2 &&
+                                decimal.TryParse(parts[0], out var min) &&
+                                decimal.TryParse(parts[1], out var max))
+                            {
+                                item.RangeMin = min;
+                                item.RangeMax = max;
+                            }
+                        }
+                        catch
+                        {
+                            // در صورت خطا، مقدار پیشفرض یا خالی تنظیم شود
+                            item.RangeMin = null;
+                            item.RangeMax = null;
+                        }
+                    }
+                    else
+                    {
+                        item.Value = spf.Value;
+                    }
+                    return item;
+
+                }).ToList(),
+            };
+
+            return View(vm);
+        }
+
+
+        // POST: ذخیره ویژگی‌ها
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddProductFeatures(AdminManageProductFeaturesViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            foreach (var f in model.Features)
+            {
+                var value = f.FeatureType == FeatureType.Range
+                    ? $"{f.RangeMin}-{f.RangeMax}"
+                    : f.Value ?? string.Empty;
+
+                await _productService
+                    .AddFeatureToProductAsync(model.ProductId, f.FeatureId, value);
+            }
+
+            return RedirectToAction(nameof(ManageProductFeatures), new { id = model.ProductId });
+        }
+
+        //// POST AJAX: افزودن واریانت جدید
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> AddVariant([FromBody] AdminAddVariantRequest request)
+        //{
+        //    if (request.FeatureValueIds == null || !request.FeatureValueIds.Any())
+        //        return Json(new { success = false, message = "هیچ مقدار ویژگی انتخاب نشده!" });
+
+        //    var variant = new ProductVariant
+        //    {
+        //        ProductId = request.ProductId,
+        //        VariantName = request.VariantName,
+        //        Price = request.Price,
+        //        StockQuantity = request.StockQuantity
+        //    };
+        //    await _productVariantService.AddAsync(variant);
+
+        //    foreach (var fvId in request.FeatureValueIds)
+        //        await _productVariantService.AddFeatureAsync(variant.Id, fvId);
+
+        //    return Json(new { success = true });
+        //}
+
+        //// POST AJAX: حذف واریانت
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+
+
+        //{
+        //    var ok = await _productVariantService.DeleteAsync(request.VariantId);
+        //    if (!Ok) return Json(new { success = false, message = "حذف واریانت ناموفق بود!" });
+        //    return Json(new { success = true });
+        //}
+
+
+        #endregion
+        //--** End Feature Cods **--
+
+        //--** Start Variand Cods **--
+        #region Variand Cods
+        #endregion
+        //--** End Variand Cods **--
+
     }
+
 }
+

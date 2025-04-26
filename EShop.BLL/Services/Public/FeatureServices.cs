@@ -1,7 +1,10 @@
-﻿using EShop.Core.Entities.Models;
+﻿using EShop.Core.DTOs.ViewModels.Admin.Category;
+using EShop.Core.Entities.Models;
 using EShop.Core.Entities.Models.Products;
 using EShop.Core.Interfaces.Services.Public;
 using EShop.Core.Interfaces.UnitOfWork;
+using EShop.DAL.Migrations;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +13,11 @@ using System.Threading.Tasks;
 
 namespace EShop.BLL.Services.Public
 {
-    public class FeatureService : IFeatureService
+    public class FeatureServices : IFeatureService
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public FeatureService(IUnitOfWork unitOfWork)
+        public FeatureServices(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -41,5 +44,29 @@ namespace EShop.BLL.Services.Public
             _unitOfWork.Repository<Feature>().Update(model);
             await _unitOfWork.SaveAsync();
         }
+
+        public async Task<IEnumerable<CategoryFeature?>> GetListFeaturesByCategoryIdsAsync(List<int> categoryIds)
+        {
+            var result = await _unitOfWork.Repository<CategoryFeature>()
+                .GetAllWithIncludeAsync(
+                    c => categoryIds.Contains(c.CategoryId),
+                    include: query => query.Include(c => c.Feature)
+                );
+
+            return result;
+        }
+
+        public async Task<IEnumerable<ProductFeature>> GetListFeaturesValuesByProductIdAsync(int productId)
+        {
+            var result = await _unitOfWork.Repository<ProductFeature>()
+                .GetAllWithIncludeAsync(
+                    c => c.ProductId == productId, 
+                    include: query => query.Include(c => c.Feature) // شامل ویژگی‌ها
+                );
+
+            return result;
+        }
+
+
     }
 }

@@ -49,7 +49,7 @@ namespace EShop.Core.Entities.Models
         public virtual ProductCategory? Parent { get; set; }
         public virtual ICollection<ProductCategory> Children { get; set; } = new HashSet<ProductCategory>();
         public virtual ICollection<ProductSelectCategory>? ProductSelectCategory { get; set; } // گروه‌های انتخابی
-        public virtual ICollection<CategoryFeatureValue>? CategoryFeatureValue { get; set; }
+        public virtual ICollection<CategoryFeature>? CategoryFeatureValue { get; set; }
 
 
         #endregion

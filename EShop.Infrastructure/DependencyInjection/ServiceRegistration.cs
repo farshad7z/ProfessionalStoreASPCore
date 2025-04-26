@@ -37,7 +37,8 @@ namespace EShop.Infrastructure.DependencyInjection
 
 
             //Public
-            services.AddScoped<IFeatureService, FeatureService>();
+            services.AddScoped<IVariantServices, VariantServices>();
+            services.AddScoped<IFeatureService, FeatureServices>();
             services.AddScoped<IProductSEOService, ProductSEOService>();
             services.AddScoped<IProductGalleryServices, ProductGalleryServices>();
             services.AddScoped<IAccountServices, AccountServices>();

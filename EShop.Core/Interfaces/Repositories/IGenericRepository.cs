@@ -11,7 +11,17 @@ namespace EShop.Core.Interfaces.Repositories
         /// <param name="id">شناسه (ID) موجودیت مورد نظر.</param>
         /// <returns>اگر موجودیت پیدا شود، آن را برمی‌گرداند؛ در غیر این صورت، مقدار null بازمی‌گرداند.</returns>
         Task<T?> GetByIdAsync(int id);
-
+        /// <summary>
+        /// اولین موجودیتی را که با شرط مشخص‌شده مطابقت دارد، پیدا می‌کند.
+        /// </summary>
+        /// <param name="predicate">عبارت شرطی برای یافتن موجودیت.</param>
+        /// <param name="include">
+        /// تابعی اختیاری برای بارگذاری روابط مرتبط با موجودیت (مانند Include و ThenInclude) به صورت Type-Safe.
+        /// </param>
+        /// <returns>
+        /// اگر موجودیت‌ای مطابق با شرط پیدا شود، آن موجودیت را برمی‌گرداند؛ در غیر این صورت، مقدار null بازمی‌گرداند.
+        /// </returns>
+        Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IQueryable<T>>? include = null);
         /// <summary>
         /// تمام موجودیت‌ها را با گزینه فیلتر کردن و بارگذاری داده‌های مرتبط بازیابی می‌کند.
         /// </summary>

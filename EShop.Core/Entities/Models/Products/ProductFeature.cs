@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EShop.Core.Entities.Models.Products
 {
-    public class ProductFeatureValue
+    public class ProductFeature
     {
         public int Id { get; set; }
 

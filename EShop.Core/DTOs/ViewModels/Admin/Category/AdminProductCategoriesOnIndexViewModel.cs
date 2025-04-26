@@ -31,6 +31,8 @@ namespace EShop.Core.DTOs.ViewModels.Admin.Category
         public bool IsCategoryOnMain { get; set; } = false;
 
         public bool IsDeleted { get; set; } = false;
+        public bool IsParent { get; set; } = false;
+
 
     }
 
