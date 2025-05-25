@@ -41,6 +41,10 @@ namespace EShop.Core.DTOs.ViewModels.Product
         [Required(ErrorMessage = "حداقل یک دسته باید انتخاب شود.")]
         public List<int> SelectedCategoryIds { get; set; } = new();
 
+        [Display(Name = "دسته اصلی محصول")]
+        [Required(ErrorMessage = "انتخاب دسته اصلی الزامی است.")]
+        public int? MainCategoryId { get; set; }
+
         public List<CategoryViewModel>? Categories { get; set; }
 
 

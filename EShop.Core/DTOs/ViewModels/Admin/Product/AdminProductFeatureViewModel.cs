@@ -14,17 +14,4 @@ namespace EShop.Core.DTOs.ViewModels.Admin.Product
 
     }
 
-    public class AdminFeatureItemViewModel
-    {
-        public int FeatureId { get; set; }
-        public string FeatureName { get; set; }
-        public FeatureType FeatureType { get; set; }
-
-        // برای ویژگی‌های Text یا Number
-        public string? Value { get; set; }
-
-        // برای ویژگی‌های Range
-        public decimal? RangeMin { get; set; }
-        public decimal? RangeMax { get; set; }
-    }
 }

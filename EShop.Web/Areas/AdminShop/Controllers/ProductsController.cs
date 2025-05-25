@@ -7,6 +7,7 @@ using EShop.Core.Entities.Models;
 using EShop.Core.Entities.Models.Products;
 using EShop.Core.Interfaces.Services;
 using EShop.Core.Interfaces.Services.Public;
+using EShop.Core.ViewModels.Common;
 using EShop.DAL.Migrations;
 using EShop.Infrastructure.Convertors;
 using EShop.Infrastructure.Generator;
@@ -41,7 +42,8 @@ namespace EShop.Web.Areas.AdminShop.Controllers
         private readonly IProductGalleryServices _productGalleryService;
         private readonly IProductSEOService _productSEOService;
         private readonly IFeatureService _featureService;
-        private readonly IVariantServices _variantService;
+        private readonly IVariantServices _productVariantService;
+        private readonly IPublicServices _publicService;
 
         private readonly IWebHostEnvironment _env;
 
@@ -57,8 +59,8 @@ namespace EShop.Web.Areas.AdminShop.Controllers
             , IProductGalleryServices productGalleryService
             , IProductSEOService productSEOService
             , IFeatureService featureService
-            , IVariantServices variantService
-
+            , IVariantServices productVariantService
+            , IPublicServices publicService
             , IWebHostEnvironment env)
         {
             _AccountService = AccountService;
@@ -67,7 +69,8 @@ namespace EShop.Web.Areas.AdminShop.Controllers
             _productGalleryService = productGalleryService;
             _productSEOService = productSEOService;
             _featureService = featureService;
-            _variantService = variantService;
+            _productVariantService = productVariantService;
+            _publicService = publicService;
             _env = env;
 
         }
@@ -222,7 +225,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
                 {
                     foreach (var catId in model.SelectedCategoryIds)
                     {
-                        await _productService.AddProductCategoryAsync(new ProductSelectCategory { ProductId = product.Id, ProductCategoryId = catId });
+                        await _productService.AddProductCategoryAsync(new ProductSelectCategory { ProductId = product.Id, ProductCategoryId = catId, IsMainCategory = catId == model.MainCategoryId });
                     }
                 }
 
@@ -617,6 +620,8 @@ namespace EShop.Web.Areas.AdminShop.Controllers
         //--** End SEO Cods **--
 
         //--** Start Feature And Variand Cods **--
+
+
         #region Feature Cods
 
         // GET: /AdminShop/Products/ManageProductFeaturesAndVariant/5
@@ -659,11 +664,11 @@ namespace EShop.Web.Areas.AdminShop.Controllers
                 {
                     var item = new AdminFeatureItemViewModel
                     {
-                        FeatureId = f.Id,
+                        FeatureId = f.FeatureId,
                         FeatureName = f.Feature.Name,
                         FeatureType = f.Feature.Type
                     };
-                    
+
                     return item;
 
                 }).ToList(),
@@ -713,46 +718,129 @@ namespace EShop.Web.Areas.AdminShop.Controllers
         // POST: ذخیره ویژگی‌ها
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddProductFeatures(AdminManageProductFeaturesViewModel model)
+        public async Task<IActionResult> AddProductFeature([FromBody] AddFeaturViewModel model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
+            // بررسی اولیه ورودی‌ها
+            if (string.IsNullOrWhiteSpace(model.Value) || model.ProductId <= 0 || model.FeatureId <= 0)
+                return Json(ResponseModel<bool>.Fail("داده‌های ورودی نامعتبر است", 400));
 
-            foreach (var f in model.Features)
+            // بررسی وجود محصول
+            var product = await _productService.GetByIdAsync(model.ProductId);
+            if (product == null)
+                return Json(ResponseModel<bool>.Fail("محصول مورد نظر یافت نشد", 404));
+
+            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null || !int.TryParse(userId, out int userIdInt))
             {
-                var value = f.FeatureType == FeatureType.Range
-                    ? $"{f.RangeMin}-{f.RangeMax}"
-                    : f.Value ?? string.Empty;
-
-                await _productService
-                    .AddFeatureToProductAsync(model.ProductId, f.FeatureId, value);
+                return Json(ResponseModel<bool>.Fail("کاربر وارد شده غیر مجاز است.", 404));
             }
 
-            return RedirectToAction(nameof(ManageProductFeatures), new { id = model.ProductId });
+            // بررسی دسترسی کاربر به محصول
+            var accessResult = await _publicService.IsAccessUserToThisProductAsync(userIdInt, model.ProductId, product.ShopId ?? 0);
+            if (!accessResult.IsSuccess || !accessResult.Data)
+                return Json(ResponseModel<bool>.Fail(accessResult.Message, 403));
+
+            // افزودن ویژگی به محصول (اینجا باید متد واقعی خودتو صدا بزنی)
+            var result = await _productService.AddFeatureToProductAsync(model.ProductId, model.FeatureId, model.Value);
+            if (!result.IsSuccess)
+            {
+                return Json(ResponseModel<bool>.Fail(result.Message, result.StatusCode));
+            }
+
+            return Json(ResponseModel<bool>.Success(true, result.Message));
+
         }
 
-        //// POST AJAX: افزودن واریانت جدید
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> AddVariant([FromBody] AdminAddVariantRequest request)
-        //{
-        //    if (request.FeatureValueIds == null || !request.FeatureValueIds.Any())
-        //        return Json(new { success = false, message = "هیچ مقدار ویژگی انتخاب نشده!" });
+        #endregion
+        //--** End Feature Cods **--
 
-        //    var variant = new ProductVariant
-        //    {
-        //        ProductId = request.ProductId,
-        //        VariantName = request.VariantName,
-        //        Price = request.Price,
-        //        StockQuantity = request.StockQuantity
-        //    };
-        //    await _productVariantService.AddAsync(variant);
+        //--** Start Variand Cods **--
+        #region Variant Cods
 
-        //    foreach (var fvId in request.FeatureValueIds)
-        //        await _productVariantService.AddFeatureAsync(variant.Id, fvId);
 
-        //    return Json(new { success = true });
-        //}
+        [HttpGet]
+        public async Task<IActionResult> ManageProductVariants(int id)
+        {
+            // مرحله ۱: دریافت اطلاعات محصول
+            var product = await _productService.GetByIdAsync(id);
+            if (product == null)
+            {
+                TempData["error_message"] = "محصول مورد نظر یافت نشد.";
+                return NotFound();
+            }
+
+            // مرحله ۲: دریافت ویژگی‌های مرتبط با دسته‌بندی اصلی و مقادیرشان برای این محصول
+            var featureValues = await _featureService.GetFeatureValuesOfMainCategoryByProductIdAsync(id);
+            if (featureValues == null || !featureValues.Any())
+            {
+                TempData["error_message"] = "هیچ ویژگی مرتبط با دسته‌بندی اصلی برای این محصول یافت نشد.";
+                return NotFound();
+            }
+
+            // مرحله ۳: فیلتر ویژگی‌هایی که برای واریانت تعریف شده‌اند (IsVariant)
+            var variantFeatures = featureValues
+                .Where(f => f.Feature != null
+                && f.Feature.CategoryFeature != null
+                && f.Feature.CategoryFeature.Any(cf => cf.IsVariant))
+                .Select(f => new AdminFeatureItemViewModel
+                {
+                    FeatureId = f.FeatureId ?? 0,
+                    FeatureValueId = f.Id,
+                    FeatureName = f.Feature.Name,
+                    FeatureType = f.Feature.Type,
+                    Value = f.Value
+                }).ToList();
+
+            // مرحله ۴: دریافت واریانت‌های ذخیره‌شده برای این محصول
+            var existingVariants = await _productVariantService.GetVariantsByProductIdAsync(id);
+
+            var savedVariants = existingVariants.Select(v => new AdminVariantItemViewModel
+            {
+                VariantId = v.Id,
+                VariantName = v.VariantName,
+                Price = v.Price,
+                StockQuantity = v.StockQuantity,
+                IsAvailable = v.IsAvailable
+            }).ToList();
+
+            // مرحله ۵: ساخت ViewModel نهایی
+            var vm = new AdminManageProductVariantsViewModel
+            {
+                ProductId = product.Id,
+                ProductName = product.Name,
+                FeatureValues = variantFeatures,
+                SavedVariants = savedVariants
+            };
+
+            return View(vm);
+        }
+
+
+
+
+        // POST AJAX: افزودن واریانت جدید
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddVariant([FromBody] AdminAddVariantViewModel request)
+        {
+            if (request.SelectedFeatureValueIds == null || !request.SelectedFeatureValueIds.Any())
+                return Json(new { success = false, message = "هیچ مقدار ویژگی انتخاب نشده!" });
+
+            var variant = new ProductVariant
+            {
+                ProductId = request.ProductId,
+                VariantName = request.VariantName,
+                Price = request.Price,
+                StockQuantity = request.StockQuantity,
+                IsAvailable = request.IsAvailable
+            };
+            await _productVariantService.AddVariantToProductAsync(variant);
+            
+            await _productVariantService.AddRangeFeatureToProductVariantFeatureAsync(variant.Id, request.SelectedFeatureValueIds);
+
+            return Json(new { success = true, message = "واریانت با موفقیت اضافه شد." });
+        }
+
 
         //// POST AJAX: حذف واریانت
         //[HttpPost]
@@ -765,12 +853,6 @@ namespace EShop.Web.Areas.AdminShop.Controllers
         //    return Json(new { success = true });
         //}
 
-
-        #endregion
-        //--** End Feature Cods **--
-
-        //--** Start Variand Cods **--
-        #region Variand Cods
         #endregion
         //--** End Variand Cods **--
 

@@ -16,6 +16,7 @@ namespace EShop.Core.Entities.Models
         public int ProductId { get; set; }
 
         public int ProductCategoryId { get; set; }
+        public bool IsMainCategory { get; set; } = false; // آیا این دسته‌بندی اصلی است؟
 
         #region Relations
         public Product? Product { get; set; }

@@ -44,7 +44,8 @@ namespace EShop.Infrastructure.DependencyInjection
             services.AddScoped<IAccountServices, AccountServices>();
             services.AddScoped<IProductCategoryServices, ProductCategoryServices>();
             services.AddScoped<IProductServices, ProductServices>();
-
+            services.AddScoped<IPublicServices, PublicServices>();
+            
             //services.AddScoped<ICategoryService, CategoryService>();
             #endregion
 

@@ -10,13 +10,35 @@ using System.Threading.Tasks;
 
 namespace EShop.BLL.Services.Public
 {
-  public class VariantServices: IVariantServices
+    public class VariantServices : IVariantServices
     {
         private readonly IUnitOfWork _unitOfWork;
 
         public VariantServices(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
+        }
+        public async Task<int> AddRangeFeatureToProductVariantFeatureAsync(int productVariantId, List<int> featureValueIds)
+        {
+            if (featureValueIds == null || !featureValueIds.Any())
+                return 0;
+
+            var variantFeatures = featureValueIds
+                .Select(fvId => new ProductVariantFeature
+                {
+                    ProductVariantId = productVariantId,
+                    ProductFeatureValueId = fvId
+                }).ToList();
+
+            await _unitOfWork.Repository<ProductVariantFeature>().AddRangeAsync(variantFeatures);
+            return await _unitOfWork.SaveAsync();
+        }
+
+
+        public async Task<int> AddVariantToProductAsync(ProductVariant model)
+        {
+            await _unitOfWork.Repository<ProductVariant>().AddAsync(model);
+           return await _unitOfWork.SaveAsync();
         }
 
         public async Task<IEnumerable<ProductVariant>> GetVariantsByProductIdAsync(int productId)

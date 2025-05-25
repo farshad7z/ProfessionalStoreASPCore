@@ -64,7 +64,8 @@ namespace EShop.BLL.Services.Public
             Name = child.Name
         }).ToList(),
         MenuType = c.MenuType,
-        Image = c.IconClass,
+        //Image = c.IconClass,
+        Image = c.ImageName,
         Slug = c.Slug,
         CreatedAt = c.CreatedAt,
         UpdatedAt = c.UpdatedAt,
@@ -156,9 +157,9 @@ namespace EShop.BLL.Services.Public
             return existingFeatures.Any();
         }
 
-        public async Task<bool> IsCategoryNameExistsAsync(string name)
+        public async Task<bool> IsCategoryNameExistsAsync(string name,int? parentd)
         {
-            return await _unitOfWork.Repository<ProductCategory>().ExistsAsync(pc => pc.Name == name);
+            return await _unitOfWork.Repository<ProductCategory>().ExistsAsync(pc => pc.Name == name && pc.ParentId== parentd);
         }
 
         public async Task<bool> IsCategorySlugExistsAsync(string slug)
@@ -179,7 +180,7 @@ namespace EShop.BLL.Services.Public
             var existingFeature = await _unitOfWork.Repository<CategoryFeature>()
                 .ExistsAsync(cfv => cfv.Id == model.Id);
 
-            if (existingFeature != true)
+            if (existingFeature)
             {
                  _unitOfWork.Repository<CategoryFeature>().Update(model);
 

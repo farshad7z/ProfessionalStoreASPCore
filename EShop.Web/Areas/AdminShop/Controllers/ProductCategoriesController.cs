@@ -96,7 +96,7 @@ namespace EShop.Web.Areas.AdminShop.Controllers
 
             try
             {
-                bool isCategoryNameExist = await _productCategoryService.IsCategoryNameExistsAsync(model.Name);
+                bool isCategoryNameExist = await _productCategoryService.IsCategoryNameExistsAsync(model.Name,model.ParentId);
 
                 if (isCategoryNameExist)
                 {

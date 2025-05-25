@@ -186,7 +186,7 @@
                                         <a href="@Url.Action("manageproductfeatures", "products", new { id = product.Id })" class="text-info font-weight-bold text-xs ms-2" data-toggle="tooltip" title="افزودن ویژگی">
                                             <i class="bi bi-bookmark-plus-fill"></i>
                                         </a>
-                                        <a href="#"@* /Admin/Products/Variants/@product.Id *@ class="text-warning font-weight-bold text-xs ms-2" data-toggle="tooltip" title="واریانت‌ها">
+                                        <a href="/adminshop/products/manageproductvariants/@product.Id" class="text-warning font-weight-bold text-xs ms-2" data-toggle="tooltip" title="واریانت‌ها">
                                             <i class="bi bi-box"></i>
                                         </a>
                                         <a href="@Url.Action("SEO", "Products", new { productId = product.Id, productName = product.Name })"

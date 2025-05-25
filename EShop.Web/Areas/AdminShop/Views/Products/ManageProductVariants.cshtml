@@ -1,0 +1,175 @@
+﻿@using EShop.Core.DTOs.ViewModels.Admin.Product;
+@model AdminManageProductVariantsViewModel
+
+<h2>مدیریت واریانت‌های @Model.ProductName</h2>
+
+<!-- نمایش واریانت‌های ذخیره‌شده -->
+@if (Model.SavedVariants.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>نام واریانت</th>
+                <th>قیمت</th>
+                <th>موجودی</th>
+                <th>وضعیت</th>
+                <th>ویژگی‌ها</th>
+                <th>عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var variant in Model.SavedVariants)
+            {
+                <tr>
+                    <td>@variant.VariantName</td>
+                    <td>@variant.Price?.ToString("N0")</td>
+                    <td>@variant.StockQuantity</td>
+                    <td>@(variant.IsAvailable ? "فعال" : "غیرفعال")</td>
+                    <td>
+                        @foreach (var feature in variant.VariantFeatures)
+                        {
+                            <span>@feature.FeatureName: @feature.Value</span>
+
+                            <br />
+                        }
+                    </td>
+                    <td>
+                        <form asp-action="DeleteVariant" method="post" onsubmit="return confirm('آیا مطمئن هستید؟');">
+                            <input type="hidden" name="variantId" value="@variant.VariantId" />
+                            <input type="hidden" name="productId" value="@Model.ProductId" />
+                            <button type="submit" class="btn btn-danger btn-sm">حذف</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>هیچ واریانتی برای این محصول ثبت نشده است.</p>
+}
+
+<!-- فرم افزودن واریانت جدید -->
+<h3>افزودن واریانت جدید</h3>
+<form id="addVariantForm">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="ProductId" value="@Model.ProductId" />
+
+    @foreach (var featureGroup in Model.FeatureValues.GroupBy(f => new { f.FeatureId, f.FeatureName }))
+    {
+        <div class="form-group">
+            <label>@featureGroup.Key.FeatureName</label>
+            <select class="form-control feature-select"
+                    data-feature-id="@featureGroup.Key.FeatureId"
+                    data-feature-name="@featureGroup.Key.FeatureName">
+                <option value="">انتخاب کنید</option>
+                @foreach (var item in featureGroup)
+                {
+                    <option value="@item.FeatureValueId">@item.Value</option>
+                }
+            </select>
+        </div>
+    }
+
+    <div class="form-group">
+        <label>نام واریانت</label>
+        <input type="text" name="VariantName" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label>قیمت</label>
+        <input type="number" name="Price" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>موجودی</label>
+        <input type="number" name="StockQuantity" class="form-control" />
+    </div>
+
+    <div class="form-check">
+        <input type="checkbox" name="IsAvailable" class="form-check-input" checked />
+        <label class="form-check-label">فعال</label>
+    </div>
+
+    <button type="submit" class="btn btn-success">ثبت واریانت</button>
+</form>
+
+<div id="variantMessage" class="mt-2"></div>
+
+<!-- پیام‌های موفقیت یا خطا -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // ارسال فرم با fetch
+        document.getElementById("addVariantForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const form = e.target;
+
+            const selectedFeatureValueIds = Array.from(document.querySelectorAll(".feature-select"))
+                .map(sel => parseInt(sel.value))
+                .filter(val => !isNaN(val));
+
+            const data = {
+                productId: parseInt(form.ProductId.value),
+                variantName: form.VariantName.value,
+                price: parseFloat(form.Price.value) || null,
+                stockQuantity: parseInt(form.StockQuantity.value) || 0,
+                isAvailable: form.IsAvailable.checked,
+                selectedFeatureValueIds: selectedFeatureValueIds
+            };
+
+            const response = await fetch('@Url.Action("AddVariant", "Products")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            const msgDiv = document.getElementById("variantMessage");
+
+            if (result.success) {
+                msgDiv.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
+                form.reset();
+                updateVariantName(); // بازسازی نام بعد از reset
+            } else {
+                msgDiv.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
+            }
+        });
+
+        // ساخت خودکار نام واریانت
+        document.querySelectorAll(".feature-select").forEach(sel => {
+            sel.addEventListener("change", updateVariantName);
+        });
+
+        function updateVariantName() {
+            const featureParts = [];
+
+            document.querySelectorAll(".feature-select").forEach(select => {
+                const featureName = select.dataset.featureName;
+                const selectedOption = select.options[select.selectedIndex];
+                const selectedText = selectedOption.text;
+
+                if (selectedOption.value) {
+                    featureParts.push(`${featureName} - ${selectedText}`);
+                }
+            });
+
+            const nameInput = document.querySelector('input[name="VariantName"]');
+            nameInput.value = featureParts.join(" - ");
+        }
+    </script>
+}

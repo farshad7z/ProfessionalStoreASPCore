@@ -51,8 +51,9 @@ namespace EShop.Core.Interfaces.Services.Public
         /// بررسی می‌کند که آیا نام دسته‌بندی قبلاً ثبت شده است یا نه.
         /// </summary>
         /// <param name="name">نام دسته‌بندی</param>
+        /// <param parentId="name">Id دسته بندی والد</param>
         /// <returns>مقدار true اگر وجود دارد، در غیر این‌صورت false</returns>
-        Task<bool> IsCategoryNameExistsAsync(string name);
+        Task<bool> IsCategoryNameExistsAsync(string name,int? parentId);
 
         /// <summary>
         /// بررسی می‌کند که آیا Slug دسته‌بندی تکراری است یا نه.

@@ -59,37 +59,54 @@
         <div class="col-md-6">
             <div class="mb-3">
                 <label class="form-label">دسته‌بندی‌ها</label>
+                <div class="alert alert-info">
+                    یک یا چند دسته‌بندی را انتخاب کنید و یکی را به عنوان دسته اصلی مشخص نمایید.
+                </div>
                 <ul id="categoryTree" class="list-group">
                     @if (Model.Categories != null)
                     {
                         @foreach (var category in Model.Categories)
                         {
-                            @Html.Raw(RenderCategoryTree(category, Model.SelectedCategoryIds))
+                            @Html.Raw(RenderCategoryTree(category, Model.SelectedCategoryIds, Model.MainCategoryId))
                         }
                     }
                     else
                     {
-                        <li>خطایی رخ داد لطفا صفحه را دوباره رفرش کنید</li>
+                        <li class="list-group-item">خطایی رخ داد لطفا صفحه را دوباره رفرش کنید</li>
                     }
                 </ul>
             </div>
         </div>
     </div>
+
+
     @functions {
-        public string RenderCategoryTree(EShop.Core.DTOs.ViewModels.Admin.Product.CategoryViewModel category, List<int> selectedCategoryIds)
+        public string RenderCategoryTree(EShop.Core.DTOs.ViewModels.Admin.Product.CategoryViewModel category, List<int> selectedCategoryIds, int? mainCategoryId)
         {
             bool isChecked = selectedCategoryIds.Contains(category.CategoryId);
+            bool isMainCategory = mainCategoryId.HasValue && mainCategoryId.Value == category.CategoryId;
+
             string html = $"<li class='list-group-item'>" +
-            $"<input type='checkbox' name='SelectedCategoryIds' value='{category.CategoryId}' class='category-checkbox' " +
-            $"{(isChecked ? "checked" : "")} />" +
-            $"{category.Name}";
+            $"<div class='d-flex align-items-center'>" +
+            $"<div class='form-check me-2'>" +
+            $"<input type='checkbox' id='cat-{category.CategoryId}' name='SelectedCategoryIds' value='{category.CategoryId}' " +
+            $"class='form-check-input category-checkbox' {(isChecked ? "checked" : "")} />" +
+            $"<label class='form-check-label' for='cat-{category.CategoryId}'>{category.Name}</label>" +
+            $"</div>" +
+            $"<div class='form-check ms-3'>" +
+            $"<input type='radio' id='main-{category.CategoryId}' name='MainCategoryId' value='{category.CategoryId}' " +
+            $"class='form-check-input main-category-radio' {(isMainCategory ? "checked" : "")} " +
+            $"{(!isChecked ? "disabled" : "")} />" +
+            $"<label class='form-check-label text-primary' for='main-{category.CategoryId}'>دسته اصلی</label>" +
+            $"</div>" +
+            $"</div>";
 
             if (category.SubCategories.Any())
             {
-                html += "<ul class='list-group ms-3 mt-2' style='display: none;'>";
+                html += "<ul class='list-group ms-4 mt-2' style='display: none;'>";
                 foreach (var sub in category.SubCategories)
                 {
-                    html += RenderCategoryTree(sub, selectedCategoryIds); // بازگشتی
+                    html += RenderCategoryTree(sub, selectedCategoryIds, mainCategoryId); // بازگشتی
                 }
                 html += "</ul>";
             }
@@ -97,7 +114,9 @@
             html += "</li>";
 
             // اگر این دسته‌بندی یا زیرمجموعه‌اش انتخاب شده باشد، درخت را باز کن
-            if (isChecked || category.SubCategories.Any(sc => selectedCategoryIds.Contains(sc.CategoryId)))
+            if (isChecked || isMainCategory || category.SubCategories.Any(sc =>
+            selectedCategoryIds.Contains(sc.CategoryId) ||
+            (mainCategoryId.HasValue && mainCategoryId.Value == sc.CategoryId)))
             {
                 html = html.Replace("style='display: none;'", "style='display: block;'");
             }
@@ -105,6 +124,7 @@
             return html;
         }
     }
+
 
 
 
@@ -216,21 +236,70 @@
 
     <script>
         $(document).ready(function () {
-            $(".category-checkbox").change(function () {
+            // مدیریت نمایش و مخفی‌سازی زیردسته‌ها
+            $(document).on("change", ".category-checkbox", function () {
+                var categoryId = $(this).val();
                 var subCategories = $(this).closest("li").children("ul");
+                var radioButton = $("input[name='MainCategoryId'][value='" + categoryId + "']");
+
                 if ($(this).is(":checked")) {
                     subCategories.slideDown();
+                    radioButton.prop("disabled", false);
+
+                    // اگر هیچ رادیویی انتخاب نشده و این اولین انتخاب است، به طور خودکار دسته اصلی تنظیم شود
+                    if ($("input[name='MainCategoryId']:checked").length === 0) {
+                        radioButton.prop("checked", true);
+                    }
                 } else {
                     subCategories.slideUp();
                     subCategories.find("input[type='checkbox']")
                         .prop("checked", false)
-                        .trigger("change"); // اعمال تغییر به زیرمجموعه‌ها
+                        .trigger("change");
+
+                    // اگر دسته اصلی بود و چک‌باکس آن برداشته شد، رادیو باتن هم باید غیرفعال شود
+                    radioButton.prop("disabled", true);
+                    if (radioButton.is(":checked")) {
+                        radioButton.prop("checked", false);
+
+                        // یک دسته دیگر را به عنوان دسته اصلی انتخاب کنیم (اگر دسته‌ای انتخاب شده باشد)
+                        var firstChecked = $(".category-checkbox:checked").first();
+                        if (firstChecked.length > 0) {
+                            var firstCheckedId = firstChecked.val();
+                            $("input[name='MainCategoryId'][value='" + firstCheckedId + "']").prop("checked", true);
+                        }
+                    }
                 }
             });
 
             // نمایش پیش‌فرض زیرگروه‌های انتخاب‌شده
             $(".category-checkbox:checked").each(function () {
                 $(this).closest("li").children("ul").show();
+            });
+
+            // اطمینان از اینکه فقط دسته‌های انتخاب شده می‌توانند دسته اصلی باشند
+            $("form").on("submit", function(e) {
+                var mainCategorySelected = $("input[name='MainCategoryId']:checked").length > 0;
+                var anyCategorySelected = $("input[name='SelectedCategoryIds']:checked").length > 0;
+
+                if (!anyCategorySelected) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطا!',
+                        text: 'لطفاً حداقل یک دسته‌بندی برای محصول انتخاب کنید'
+                    });
+                    return false;
+                }
+
+                if (anyCategorySelected && !mainCategorySelected) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'هشدار!',
+                        text: 'لطفاً یک دسته به عنوان دسته اصلی محصول انتخاب کنید'
+                    });
+                    return false;
+                }
             });
         });
     </script>

@@ -50,7 +50,16 @@ namespace EShop.Core.Interfaces.Services.Public
         /// </summary>
         /// <param name="productId">شناسه محصول.</param>
         /// <returns>لیستی از ویژگی‌ها (با مقداردهی) که مربوط به محصول ورودی هستند.</returns>
-        Task<IEnumerable<ProductFeature>> GetListFeaturesValuesByProductIdAsync(int categoryId);
+        Task<IEnumerable<ProductFeature>> GetListFeaturesValuesByProductIdAsync(int productId);
+
+        /// <summary>
+        /// دریافت لیست ویژگی‌های محصول به همراه مقادیر ان که فقط مربوط به دسته‌بندی اصلی آن محصول هستند.
+        /// فقط ویژگی‌هایی که به محصول تخصیص داده شده‌اند و دسته‌بندی اصلی دارند بازگردانده می‌شوند.
+        /// </summary>
+        /// <param name="productId">شناسه محصول.</param>
+        /// <returns>لیستی از ویژگی‌های محصول که مرتبط با دسته‌بندی اصلی آن هستند.</returns>
+        Task<IEnumerable<ProductFeature>> GetFeatureValuesOfMainCategoryByProductIdAsync(int productId);
+
 
     }
 }

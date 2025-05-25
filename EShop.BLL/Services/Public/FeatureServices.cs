@@ -67,6 +67,19 @@ namespace EShop.BLL.Services.Public
             return result;
         }
 
+        public async Task<IEnumerable<ProductFeature>> GetFeatureValuesOfMainCategoryByProductIdAsync(int productId)
+        {
+            var result = await _unitOfWork.Repository<ProductFeature>()
+                .GetAllWithIncludeAsync(
+                    c => c.ProductId == productId &&
+                         c.Product.ProductSelectCategory.Any(ps => ps.IsMainCategory),
+                    include: query => query
+                        .Include(c => c.Feature)
+                            .ThenInclude(f => f.CategoryFeature) // ← اضافه شده
+                );
+
+            return result;
+        }
 
     }
 }

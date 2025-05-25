@@ -1,5 +1,6 @@
 ﻿using EShop.Core.Entities.Models;
 using EShop.Core.Entities.Models.Products;
+using EShop.Core.ViewModels.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,6 +52,6 @@ namespace EShop.Core.Interfaces.Services.Public
         /// <summary>
         ///افزودن ویژگی جدید به محصول .
         /// </summary>
-        Task<bool> AddFeatureToProductAsync(int productId, int featureId, string value);
+        Task<ResponseModel<bool>> AddFeatureToProductAsync(int productId, int featureId, string value);
     }
 }
